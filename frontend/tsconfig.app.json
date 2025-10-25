@@ -5,7 +5,13 @@
     "useDefineForClassFields": true,
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "ESNext",
-    "types": ["vite/client"],
+    "types": [
+      "vite/client",
+      // Vitest のユーティリティ（vi, Mock, MockedFunction など）の型を補完するため
+      "vitest",
+      // Vitest のグローバル関数（describe, it, expect など）を import なしで使うため
+      "vitest/globals"
+    ],
     "skipLibCheck": true,
 
     /* Bundler mode */
@@ -22,7 +28,11 @@
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+
+    "allowJs": false, // JS ファイルはプロジェクトに含めない
+    "checkJs": false, // JS ファイルはチェックしない（allowJs が false なので無意味だが明示）
+    "noImplicitAny": true // 型が不明な値は暗黙の any を禁止
   },
   "include": ["src"]
 }
