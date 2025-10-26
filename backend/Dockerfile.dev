@@ -10,10 +10,12 @@ ENV PYTHONUNBUFFERED=1
 WORKDIR /app
 
 # PostgreSQL クライアントをインストール（pg_isreadyが含まれる）
-RUN apt-get update && apt-get install -y postgresql-client && rm -rf /var/lib/apt/lists/*
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends postgresql-client \
+ && rm -rf /var/lib/apt/lists/*
 
 # Copy only requirements to leverage Docker caching
-COPY requirements requirements
+COPY requirements/dev.txt requirements/dev.txt
 
 # Install dependencies
 RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements/dev.txt
