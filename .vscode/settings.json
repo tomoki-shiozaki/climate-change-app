@@ -1,0 +1,27 @@
+{
+  // 🐍 Python 仮想環境の指定
+  "python.defaultInterpreterPath": "backend/.venv/bin/python",
+  "python.analysis.typeCheckingMode": "basic",
+
+  // 💅 コード整形・フォーマット
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "always"
+    }
+  },
+  "isort.args": ["--profile", "black"],
+
+  // 🧹 ESLint の有効化と保存時修正
+  // ESLint を有効にする
+  "eslint.enable": true,
+  // 保存時に自動で ESLint のルールに沿って修正する
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "always"
+  },
+
+  // 🧰 TypeScript の import 自動更新
+  "typescript.updateImportsOnFileMove.enabled": "always"
+}
