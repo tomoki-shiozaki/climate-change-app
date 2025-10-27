@@ -5,22 +5,46 @@
   "workspaceFolder": "/app",
   "shutdownAction": "stopCompose",
 
+  // 🧰 コンテナ作成後のコマンド
+  "postCreateCommand": "python -m pip install --upgrade pip && pip install -e .",
+
+  // 👩‍💻 VS Code 用カスタマイズ
   "customizations": {
     "vscode": {
       "extensions": [
         "ms-python.python",
         "ms-python.vscode-pylance",
         "ms-python.black-formatter",
-        "batisteo.vscode-django"
+        "ms-python.isort",
+        "batisteo.vscode-django",
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint" // ESLint も追加
       ],
       "settings": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+
         "python.defaultInterpreterPath": "/usr/local/bin/python",
-        "python.analysis.autoImportCompletions": true,
-        "editor.formatOnSave": true
+        "python.analysis.typeCheckingMode": "basic",
+
+        "[python]": {
+          "editor.defaultFormatter": "ms-python.black-formatter",
+          "editor.codeActionsOnSave": {
+            "source.organizeImports": "always"
+          }
+        },
+        "isort.args": ["--profile", "black"],
+
+        "eslint.enable": true,
+        "[javascript,javascriptreact,typescript,typescriptreact]": {
+          "editor.codeActionsOnSave": {
+            "source.fixAll.eslint": "always"
+          }
+        }
       }
     }
   },
 
-  "remoteUser": "root",
-  "postCreateCommand": "pip install -e . || true"
+  // 👤 コンテナ内のユーザー
+  "remoteUser": "vscode"
 }
