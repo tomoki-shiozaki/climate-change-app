@@ -5,10 +5,10 @@
   "workspaceFolder": "/app",
   "shutdownAction": "stopCompose",
 
-  // 🧰 コンテナ作成後のコマンド
-  "postCreateCommand": "python -m pip install --upgrade pip && pip install -e .",
+  // 依存パッケージはDockerfile.devでインストール済みなので、空でOK
+  "postCreateCommand": "",
 
-  // 👩‍💻 VS Code 用カスタマイズ
+  // VS Code 用カスタマイズ
   "customizations": {
     "vscode": {
       "extensions": [
@@ -16,35 +16,26 @@
         "ms-python.vscode-pylance",
         "ms-python.black-formatter",
         "ms-python.isort",
-        "batisteo.vscode-django",
-        "esbenp.prettier-vscode",
-        "dbaeumer.vscode-eslint" // ESLint も追加
+        "batisteo.vscode-django"
       ],
       "settings": {
         "editor.formatOnSave": true,
-        "editor.defaultFormatter": "esbenp.prettier-vscode",
-
+        "editor.defaultFormatter": "ms-python.black-formatter",
         "python.defaultInterpreterPath": "/usr/local/bin/python",
         "python.analysis.typeCheckingMode": "basic",
-
         "[python]": {
-          "editor.defaultFormatter": "ms-python.black-formatter",
           "editor.codeActionsOnSave": {
             "source.organizeImports": "always"
           }
         },
-        "isort.args": ["--profile", "black"],
-
-        "eslint.enable": true,
-        "[javascript,javascriptreact,typescript,typescriptreact]": {
-          "editor.codeActionsOnSave": {
-            "source.fixAll.eslint": "always"
-          }
-        }
+        "isort.args": ["--profile", "black"]
       }
     }
   },
 
-  // 👤 コンテナ内のユーザー
-  "remoteUser": "vscode"
+  // コンテナ内のユーザー
+  "remoteUser": "root",
+
+  // Django 開発用ポート
+  "forwardPorts": [8000]
 }
