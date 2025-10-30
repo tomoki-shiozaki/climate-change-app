@@ -34,7 +34,7 @@
   },
 
   // コンテナ内のユーザー
-  "remoteUser": "root",
+  "remoteUser": "vscode",
 
   // Django 開発用ポート
   "forwardPorts": [8000]

@@ -25,3 +25,7 @@ COPY . .
 
 # Copy entrypoint.sh to a fixed location
 RUN chmod +x /app/entrypoint.sh
+
+# 👇 非rootユーザーを作成して切り替える
+RUN useradd -m vscode && chown -R vscode:vscode /app
+USER vscode

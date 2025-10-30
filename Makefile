@@ -76,9 +76,25 @@ logs-db:
 run:
 	docker-compose run --rm backend $(cmd)
 
-# クリーンアップ系
-# 未使用イメージやボリュームをまとめて削除、停止中のコンテナを削除
-prune:
+# =========================================
+# Docker クリーンアップ系
+# =========================================
+
+# 安全に使えるメイン
+# ビルドキャッシュのみ削除
+builder-prune:
+	@echo "🧹 Dockerビルドキャッシュを削除します（安全）"
+	docker builder prune -f
+
+# 停止中のコンテナとdanglingイメージを削除
+system-prune:
+	@echo "⚠️ 停止中コンテナとタグなしイメージを削除します（安全）"
+	docker system prune -f
+
+# 強力、注意して使う
+# 停止中コンテナ・未使用イメージ・未使用ボリューム・ネットワークをまとめて削除
+full-prune:
+	@echo "💥 すべての未使用コンテナ・イメージ・ボリュームを削除します（注意）"
 	docker system prune -a --volumes -f
 
 # その他
