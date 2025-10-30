@@ -1,0 +1,31 @@
+# Pull base image
+FROM python:3.13-slim-trixie
+
+# Set environment variables
+ENV PIP_DISABLE_PIP_VERSION_CHECK=1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+# Set work directory
+WORKDIR /app
+
+# PostgreSQL クライアントをインストール（pg_isreadyが含まれる）
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends postgresql-client \
+ && rm -rf /var/lib/apt/lists/*
+
+# Copy only requirements to leverage Docker caching
+COPY requirements/dev.txt requirements/dev.txt
+
+# Install dependencies
+RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements/dev.txt
+
+# Copy project
+COPY . .
+
+# Copy entrypoint.sh to a fixed location
+RUN chmod +x /app/entrypoint.sh
+
+# 👇 非rootユーザーを作成して切り替える
+RUN useradd -m -s /bin/bash vscode && chown -R vscode:vscode /app
+USER vscode

@@ -1,0 +1,41 @@
+{
+  "name": "Django Backend (Dev Container)",
+  "dockerComposeFile": "../docker-compose.yml",
+  "service": "backend",
+  "workspaceFolder": "/app",
+  "shutdownAction": "stopCompose",
+
+  // 依存パッケージはDockerfile.devでインストール済みなので、空でOK
+  "postCreateCommand": "",
+
+  // VS Code 用カスタマイズ
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-python.black-formatter",
+        "ms-python.isort",
+        "batisteo.vscode-django"
+      ],
+      "settings": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "ms-python.black-formatter",
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "python.analysis.typeCheckingMode": "basic",
+        "[python]": {
+          "editor.codeActionsOnSave": {
+            "source.organizeImports": "always"
+          }
+        },
+        "isort.args": ["--profile", "black"]
+      }
+    }
+  },
+
+  // コンテナ内のユーザー
+  "remoteUser": "vscode",
+
+  // Django 開発用ポート
+  "forwardPorts": [8000]
+}
