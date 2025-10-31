@@ -76,6 +76,17 @@ logs-db:
 run:
 	docker-compose run --rm backend $(cmd)
 
+# ==============================
+# Docker イメージ再ビルド
+# ==============================
+# バックエンドのイメージをビルド
+build-backend:
+	docker compose build backend
+
+# キャッシュを無視して完全に再ビルド
+rebuild-backend:
+	docker compose build --no-cache backend
+
 # =========================================
 # Docker クリーンアップ系
 # =========================================
