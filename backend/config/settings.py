@@ -76,11 +76,18 @@ if GENERATE_SCHEMA:
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.TokenAuthentication",
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
     ],
     "DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer",
     ],
+}
+
+REST_AUTH = {
+    "USE_JWT": True,
+    "JWT_AUTH_COOKIE": "my-app-auth",
+    "JWT_AUTH_REFRESH_COOKIE": "my-refresh-token",
 }
 
 if DEBUG:
@@ -92,7 +99,7 @@ if DEBUG:
     )
 
 if GENERATE_SCHEMA:
-    REST_FRAMEWORK["DEFAULT_SCHEMA_CLASS"] = ["drf_spectacular.openapi.AutoSchema"]
+    REST_FRAMEWORK["DEFAULT_SCHEMA_CLASS"] = "drf_spectacular.openapi.AutoSchema"  # type: ignore
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
