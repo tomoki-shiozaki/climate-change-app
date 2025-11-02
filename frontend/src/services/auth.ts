@@ -8,10 +8,14 @@ type LoginRequest =
 type LoginResponse =
   paths["/api/v1/dj-rest-auth/login/"]["post"]["responses"]["200"]["content"]["application/json"];
 
-type RefreshRequest =
-  paths["/api/v1/dj-rest-auth/token/refresh/"]["post"]["requestBody"]["content"]["application/json"];
-type RefreshResponse =
-  paths["/api/v1/dj-rest-auth/token/refresh/"]["post"]["responses"]["200"]["content"]["application/json"];
+type LogoutResponse =
+  paths["/api/v1/dj-rest-auth/logout/"]["post"]["responses"]["200"]["content"]["application/json"];
+
+type SignupRequest =
+  paths["/api/v1/dj-rest-auth/registration/"]["post"]["requestBody"]["content"]["application/json"];
+
+type SignupResponse =
+  paths["/api/v1/dj-rest-auth/registration/"]["post"]["responses"]["201"]["content"]["application/json"];
 
 class AuthService {
   // ログイン
@@ -23,18 +27,27 @@ class AuthService {
     return response.data; // { access, refresh }
   }
 
-  // リフレッシュ
-  async refreshToken(data: RefreshRequest): Promise<RefreshResponse> {
-    const response = await apiClient.post<RefreshResponse>(
-      "/dj-rest-auth/token/refresh/",
-      data
+  // ログアウト
+  async logout(accessToken: string): Promise<LogoutResponse> {
+    const response = await apiClient.post<LogoutResponse>(
+      "/dj-rest-auth/logout/",
+      {},
+      {
+        headers: {
+          Authorization: accessToken ? `Bearer ${accessToken}` : "",
+        },
+      }
     );
-    return response.data; // { access }
+    return response.data;
   }
 
-  // ログアウト（サーバー側でリフレッシュを無効化したい場合）
-  async logout(): Promise<void> {
-    await apiClient.post("/dj-rest-auth/logout/");
+  // 新規登録
+  async signup(data: SignupRequest): Promise<SignupResponse> {
+    const response = await apiClient.post<SignupResponse>(
+      "/dj-rest-auth/registration/",
+      data
+    );
+    return response.data;
   }
 }
 
