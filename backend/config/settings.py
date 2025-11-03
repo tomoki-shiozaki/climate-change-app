@@ -58,6 +58,8 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     "dj_rest_auth",
     "dj_rest_auth.registration",
+    # Local
+    "apps.accounts.apps.AccountsConfig",
 ]
 
 GENERATE_SCHEMA = env.bool("GENERATE_SCHEMA", default=False)
@@ -92,10 +94,10 @@ REST_AUTH = {
 
 if DEBUG:
     REST_FRAMEWORK["DEFAULT_AUTHENTICATION_CLASSES"].append(
-        "rest_framework.authentication.SessionAuthentication"
+        "rest_framework.authentication.SessionAuthentication"  # type: ignore
     )
     REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"].append(
-        "rest_framework.renderers.BrowsableAPIRenderer"
+        "rest_framework.renderers.BrowsableAPIRenderer"  # type: ignore
     )
 
 if GENERATE_SCHEMA:
@@ -191,3 +193,5 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+AUTH_USER_MODEL = "accounts.CustomUser"
