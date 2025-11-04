@@ -1,0 +1,50 @@
+@startuml er
+skinparam defaultFontName "Noto Sans CJK JP"
+
+entity "ユーザーマスター" as User {
+  +ユーザーID <<PK>>
+  +ログイン名 <<UNIQUE>>
+  +メールアドレス <<UNIQUE>>
+  +パスワード
+  +登録日
+}
+
+entity "地域マスター" as Region {
+  +地域ID <<PK>>
+  +地域名
+  +ISOコード <<UNIQUE>>
+}
+
+entity "指標マスター" as Indicator {
+  +指標ID <<PK>>
+  +指標名
+  +単位
+  +説明
+  +データソースURL
+}
+
+entity "気候データ" as ClimateData {
+  +データID <<PK>>
+  +地域ID <<FK>>
+  +指標ID <<FK>>
+  +年
+  +値
+  +更新日
+}
+
+entity "ユーザーお気に入り" as Favorite {
+  +お気に入りID <<PK>>
+  +ユーザーID <<FK>>
+  +地域ID <<FK>>
+  +指標ID <<FK>>
+  +登録日
+}
+
+Region ||--o{ ClimateData : 地域ID
+Indicator ||--o{ ClimateData : 指標ID
+
+User ||--o{ Favorite : ユーザーID
+Region ||--o{ Favorite : 地域ID
+Indicator ||--o{ Favorite : 指標ID
+
+@enduml
