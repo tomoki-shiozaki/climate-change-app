@@ -2,19 +2,26 @@
 FROM python:3.13-slim-trixie
 
 # Set environment variables
-ENV PIP_DISABLE_PIP_VERSION_CHECK=1
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
+ENV PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
 
 # Set work directory
 WORKDIR /app
 
 # PostgreSQL クライアントをインストール（pg_isreadyが含まれる）
-RUN apt-get update \
- && apt-get install -y --no-install-recommends postgresql-client \
- && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends postgresql-client && \
+    rm -rf /var/lib/apt/lists/*
 
-# Copy only requirements to leverage Docker caching
+# UID, GIDをホストに合わせる（ビルド時に上書き可能）
+ARG UID=1001
+ARG GID=1001
+
+# 一致するユーザーを作成
+RUN groupadd -g $GID appuser && \
+    useradd -m -u $UID -g $GID -s /bin/bash appuser
+
 COPY requirements/dev.txt requirements/dev.txt
 
 # Install dependencies
@@ -23,9 +30,9 @@ RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements/dev.
 # Copy project
 COPY . .
 
-# Copy entrypoint.sh to a fixed location
-RUN chmod +x /app/entrypoint.sh
+# 権限修正
+RUN chown -R appuser:appuser /app && \
+    chmod +x /app/entrypoint.sh
 
-# 👇 非rootユーザーを作成して切り替える
-RUN useradd -m -s /bin/bash vscode && chown -R vscode:vscode /app
-USER vscode
+# 非rootユーザーに切り替え
+USER appuser

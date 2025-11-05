@@ -41,13 +41,32 @@ generate-schema: generate-schema-yaml generate-schema-json
 # ==============================
 
 # 開発環境の起動・停止
-# バックグラウンドで起動
+# ------------------------------
+
+# バックグラウンドで起動（Dockerfileの変更は無視）
 up:
 	docker compose up -d
 
-# 停止・削除
+# イメージを再ビルドして起動（Dockerfile変更時に使う）
+build-up:
+	docker compose up -d --build
+
+# 完全にキャッシュ無視で再ビルド
+rebuild:
+	docker compose build --no-cache
+	docker compose up -d
+
+# コンテナ停止・削除
 down:
 	docker compose down
+
+# イメージ・ボリュームも含めて完全削除（最終手段）
+clean:
+	docker compose down --rmi all --volumes --remove-orphans
+
+# ==============================
+# その他便利コマンド
+# ==============================
 
 # コンテナ内での操作
 # Django シェルに入る
@@ -136,6 +155,15 @@ docker-generate-schema-exec:
 	  backend \
 	  python manage.py spectacular --format openapi-json --file schema.json
 	@echo "✅ Generated OpenAPI schema.json in running Docker container"
+
+# ==============================
+# 開発補助
+# ==============================
+
+# UID/GID を自動で .env に書き込む（初回セットアップ用）
+setup-env:
+	echo "UID=$$(id -u)" > .env
+	echo "GID=$$(id -g)" >> .env
 
 # ==============================
 # React / Frontend

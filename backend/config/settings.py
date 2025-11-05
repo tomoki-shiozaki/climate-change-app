@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     "dj_rest_auth.registration",
     # Local
     "apps.accounts.apps.AccountsConfig",
+    "apps.climate_data.apps.ClimateDataConfig",
 ]
 
 GENERATE_SCHEMA = env.bool("GENERATE_SCHEMA", default=False)
