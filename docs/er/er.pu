@@ -12,7 +12,7 @@ entity "ユーザーマスター" as User {
 entity "地域マスター" as Region {
   +地域ID <<PK>>
   +地域名
-  +ISOコード <<UNIQUE>>
+  +ISOコード <<UNIQUE>> <<NULL可>>
 }
 
 entity "指標マスター" as Indicator {
@@ -20,16 +20,18 @@ entity "指標マスター" as Indicator {
   +指標名
   +単位
   +説明
+  +データソース名
   +データソースURL
+  +取得日
 }
 
 entity "気候データ" as ClimateData {
   +データID <<PK>>
   +地域ID <<FK>>
   +指標ID <<FK>>
-  +年
-  +値
-  +更新日
+  + 年
+  + 値
+  +取得日
 }
 
 entity "ユーザーお気に入り" as Favorite {
