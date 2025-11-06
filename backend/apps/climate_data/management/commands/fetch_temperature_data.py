@@ -37,14 +37,14 @@ class Command(BaseCommand):
                 entity = row["Entity"]
                 code = row["Code"]
                 year = row["Year"]
-                value = row.get("Near surface temperature anomaly")
+                value = row.get("near_surface_temperature_anomaly")
 
                 if not value or not year:
                     continue
 
                 region, _ = Region.objects.get_or_create(
                     name=entity,
-                    defaults={"iso_code": code or ""},
+                    defaults={"iso_code": code if code else f"NO_CODE_{entity}"},
                 )
 
                 obj, created = ClimateData.objects.update_or_create(
