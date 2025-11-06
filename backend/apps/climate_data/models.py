@@ -6,6 +6,10 @@ class Region(models.Model):
     name = models.CharField(max_length=255)
     iso_code = models.CharField(max_length=10, unique=True, blank=True)
 
+    class Meta:
+        verbose_name = "地域"
+        verbose_name_plural = "地域マスター"
+
     def __str__(self):
         return self.name
 
@@ -17,6 +21,10 @@ class Indicator(models.Model):
     data_source_name = models.CharField(max_length=255)
     data_source_url = models.URLField()
     fetched_at = models.DateTimeField(auto_now=True)  # データを取得した日
+
+    class Meta:
+        verbose_name = "指標"
+        verbose_name_plural = "指標マスター"
 
     def __str__(self):
         return self.name
@@ -39,6 +47,8 @@ class ClimateData(models.Model):
             "indicator",
             "year",
         )  # 同じ年・地域・指標の重複防止
+        verbose_name = "気候データ"
+        verbose_name_plural = "気候データ"
 
     def __str__(self):
         return f"{self.region} - {self.indicator} ({self.year})"
