@@ -20,6 +20,7 @@ class Indicator(models.Model):
     description = models.TextField(blank=True)
     data_source_name = models.CharField(max_length=255)
     data_source_url = models.URLField()
+    metadata_url = models.URLField(blank=True)
     fetched_at = models.DateTimeField(auto_now=True)  # データを取得した日
 
     class Meta:

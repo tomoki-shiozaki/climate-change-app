@@ -99,7 +99,10 @@ class Command(BaseCommand):
                                 "unit": info.get("shortUnit", info.get("unit", "")),
                                 "description": info.get("descriptionShort", ""),
                                 "data_source_name": "Our World in Data",
-                                "data_source_url": csv_url,  # CSV の URL を使用
+                                "data_source_url": csv_url,  # CSV の URL
+                                "metadata_url": info.get(
+                                    "fullMetadata", meta_url
+                                ),  # metadata URL
                             },
                         )
                         indicator_cache[column_key] = indicator
