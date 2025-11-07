@@ -1,20 +1,20 @@
-# Pull base image
+# ベースイメージ
 FROM python:3.13-slim-trixie
 
-# Set environment variables
+# 環境変数
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
-# Set work directory
+# 作業ディレクトリ作成
 WORKDIR /app
 
-# PostgreSQL クライアントをインストール（pg_isreadyが含まれる）
+# PostgreSQL クライアントをインストール（pg_isreadyを使用可能にする）
 RUN apt-get update && \
     apt-get install -y --no-install-recommends postgresql-client && \
     rm -rf /var/lib/apt/lists/*
 
-# UID, GIDをホストに合わせる（ビルド時に上書き可能）
+# UID/GIDをホストに合わせる（ビルド時に上書き可）
 ARG UID=1001
 ARG GID=1001
 
@@ -22,17 +22,16 @@ ARG GID=1001
 RUN groupadd -g $GID appuser && \
     useradd -m -u $UID -g $GID -s /bin/bash appuser
 
-COPY requirements/dev.txt requirements/dev.txt
+# Python依存関係を先にインストール（root権限で実行）
+COPY --chown=appuser:appuser requirements/dev.txt requirements/dev.txt
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir -r requirements/dev.txt
 
-# Install dependencies
-RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements/dev.txt
-
-# Copy project
-COPY . .
-
-# 権限修正
-RUN chown -R appuser:appuser /app && \
-    chmod +x /app/entrypoint.sh
-
-# 非rootユーザーに切り替え
+# ここでユーザーを切り替える（以降のCOPYやRUNはappuserで行われる）
 USER appuser
+
+# プロジェクト全体をコピー（所有者はappuser）
+COPY --chown=appuser:appuser . .
+
+# entrypointに実行権限を付与
+RUN chmod +x /app/entrypoint.sh

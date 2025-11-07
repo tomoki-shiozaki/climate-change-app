@@ -12,7 +12,7 @@ entity "ユーザーマスター" as User {
 entity "地域マスター" as Region {
   +地域ID <<PK>>
   +地域名
-  +ISOコード <<UNIQUE>> <<NULL可>>
+  +ISOコード <<UNIQUE>>
 }
 
 entity "指標マスター" as Indicator {
