@@ -1,5 +1,3 @@
-from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
 from apps.climate_data.models import ClimateData, Indicator, Region
@@ -27,11 +25,7 @@ class IndicatorSerializer(serializers.ModelSerializer):
 class ClimateDataSerializer(serializers.ModelSerializer):
     region = RegionSerializer(read_only=True)
     indicator = IndicatorSerializer(read_only=True)
-
-    # year フィールドの OpenAPI スキーマ型を int64 にする
-    @extend_schema_field(OpenApiTypes.INT64)
-    def year(self):
-        return self.instance.year if self.instance else None
+    year = serializers.IntegerField(min_value=1900, max_value=2100)
 
     class Meta:
         model = ClimateData
