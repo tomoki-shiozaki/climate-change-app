@@ -21,9 +21,7 @@ jobs:
 
       # --- Backend schema check ---
       - name: Install Python dependencies
-        run: |
-          apt-get update && apt-get install -y gcc libpq-dev
-          cd backend && pip install -r requirements/dev.txt
+        run: cd backend && pip install -r requirements/dev.txt
 
       - name: Generate OpenAPI schema (JSON)
         run: cd backend && python manage.py spectacular --format openapi-json --file schema.json
