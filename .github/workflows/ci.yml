@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  check-openapi:
+    runs-on: ubuntu-latest
+    env:
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      DEBUG: "False"
+      GENERATE_SCHEMA: "True"
+    strategy:
+      matrix:
+        python-version: [3.12, 3.13]
+
+    steps:
+      - uses: actions/checkout@v5
+
+      # --- Backend schema check ---
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Python dependencies
+        run: cd backend && pip install -r requirements/dev.txt
+
+      - name: Generate OpenAPI schema (JSON)
+        run: cd backend && python manage.py spectacular --format openapi-json --file schema.json
+
+      - name: Verify schema.json is up-to-date
+        run: git diff --exit-code backend/schema.json || (echo "❌ schema.json is not up-to-date. Run 'make generate-schema-json' and commit the result." && exit 1)
+
+      # --- Frontend API client check ---
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+
+      - name: Install Node.js dependencies
+        run: cd frontend && npm ci
+
+      - name: Generate API client
+        run: cd frontend && npm run generate:api
+
+      - name: Verify API client is up-to-date
+        run: git diff --exit-code frontend/src/types/api.d.ts || (echo "❌ API client is not up-to-date. Run 'make generate-api' and commit the result." && exit 1)
