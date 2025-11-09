@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     "dj_rest_auth.registration",
     # Local
     "apps.accounts.apps.AccountsConfig",
+    "apps.api.apps.ApiConfig",
     "apps.climate_data.apps.ClimateDataConfig",
 ]
 
