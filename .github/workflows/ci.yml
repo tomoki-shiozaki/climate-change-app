@@ -13,18 +13,21 @@ jobs:
       SECRET_KEY: ${{ secrets.SECRET_KEY }}
       DEBUG: "False"
       GENERATE_SCHEMA: "True"
-
-    container: python:3.13-slim-trixie # ✅ Dockerfileと統一
+    strategy:
+      matrix:
+        python-version: [3.12, 3.13]
 
     steps:
       - uses: actions/checkout@v5
 
       # --- Backend schema check ---
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+
       - name: Install Python dependencies
-        run: |
-          apt-get update
-          apt-get install -y git
-          cd backend && pip install -r requirements/dev.txt
+        run: cd backend && pip install -r requirements/dev.txt
 
       - name: Generate OpenAPI schema (JSON)
         run: cd backend && python manage.py spectacular --format openapi-json --file schema.json

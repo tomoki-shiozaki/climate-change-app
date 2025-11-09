@@ -75,6 +75,9 @@ if GENERATE_SCHEMA:
         "TITLE": "Climate Change App (Django REST Framework + React)",
         "DESCRIPTION": "A climate change app for learning about climate change with data visualization.",
         "VERSION": "1.0.0",
+        "TYPE_MAPPING": {
+            "IntegerField": {"type": "integer", "format": "int32"},
+        },
     }
 
 REST_FRAMEWORK = {
