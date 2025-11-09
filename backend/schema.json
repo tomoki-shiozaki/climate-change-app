@@ -725,8 +725,8 @@
                     },
                     "year": {
                         "type": "integer",
-                        "maximum": 2100,
-                        "minimum": 1900
+                        "maximum": 2200,
+                        "minimum": 1800
                     },
                     "value": {
                         "type": "number",

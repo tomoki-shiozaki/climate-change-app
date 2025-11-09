@@ -1,3 +1,4 @@
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 
@@ -38,7 +39,12 @@ class ClimateData(models.Model):
     indicator = models.ForeignKey(
         Indicator, on_delete=models.CASCADE, related_name="climate_data"
     )
-    year = models.IntegerField()
+    year = models.IntegerField(
+        validators=[
+            MinValueValidator(1800),
+            MaxValueValidator(2200),
+        ]
+    )
     value = models.FloatField()
     fetched_at = models.DateTimeField(auto_now=True)  # データを取得した日
 

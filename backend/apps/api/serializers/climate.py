@@ -25,7 +25,6 @@ class IndicatorSerializer(serializers.ModelSerializer):
 class ClimateDataSerializer(serializers.ModelSerializer):
     region = RegionSerializer(read_only=True)
     indicator = IndicatorSerializer(read_only=True)
-    year = serializers.IntegerField(min_value=1900, max_value=2100)
 
     class Meta:
         model = ClimateData
