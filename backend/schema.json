@@ -6,12 +6,88 @@
         "description": "A climate change app for learning about climate change with data visualization."
     },
     "paths": {
+        "/api/v1/climate-data/": {
+            "get": {
+                "operationId": "climate_data_list",
+                "tags": [
+                    "climate-data"
+                ],
+                "security": [
+                    {
+                        "jwtAuth": []
+                    },
+                    {
+                        "jwtHeaderAuth": []
+                    },
+                    {
+                        "jwtCookieAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ClimateData"
+                                    }
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/climate-data/{id}/": {
+            "get": {
+                "operationId": "climate_data_retrieve",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this 気候データ.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "climate-data"
+                ],
+                "security": [
+                    {
+                        "jwtAuth": []
+                    },
+                    {
+                        "jwtHeaderAuth": []
+                    },
+                    {
+                        "jwtCookieAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClimateData"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/api/v1/dj-rest-auth/login/": {
             "post": {
-                "operationId": "login_create",
+                "operationId": "dj_rest_auth_login_create",
                 "description": "Check the credentials and return the REST Token\nif the credentials are valid and authenticated.\nCalls Django Auth login method to register User ID\nin Django session framework\n\nAccept the following POST parameters: username, password\nReturn the REST Framework Token Object's key.",
                 "tags": [
-                    "login"
+                    "dj-rest-auth"
                 ],
                 "requestBody": {
                     "content": {
@@ -61,10 +137,10 @@
         },
         "/api/v1/dj-rest-auth/logout/": {
             "post": {
-                "operationId": "logout_create",
+                "operationId": "dj_rest_auth_logout_create",
                 "description": "Calls Django logout method and delete the Token object\nassigned to the current User object.\n\nAccepts/Returns nothing.",
                 "tags": [
-                    "logout"
+                    "dj-rest-auth"
                 ],
                 "security": [
                     {
@@ -94,10 +170,10 @@
         },
         "/api/v1/dj-rest-auth/password/change/": {
             "post": {
-                "operationId": "password_change_create",
+                "operationId": "dj_rest_auth_password_change_create",
                 "description": "Calls Django Auth SetPasswordForm save method.\n\nAccepts the following POST parameters: new_password1, new_password2\nReturns the success/fail message.",
                 "tags": [
-                    "password"
+                    "dj-rest-auth"
                 ],
                 "requestBody": {
                     "content": {
@@ -146,10 +222,10 @@
         },
         "/api/v1/dj-rest-auth/password/reset/": {
             "post": {
-                "operationId": "password_reset_create",
+                "operationId": "dj_rest_auth_password_reset_create",
                 "description": "Calls Django Auth PasswordResetForm save method.\n\nAccepts the following POST parameters: email\nReturns the success/fail message.",
                 "tags": [
-                    "password"
+                    "dj-rest-auth"
                 ],
                 "requestBody": {
                     "content": {
@@ -199,10 +275,10 @@
         },
         "/api/v1/dj-rest-auth/password/reset/confirm/": {
             "post": {
-                "operationId": "password_reset_confirm_create",
+                "operationId": "dj_rest_auth_password_reset_confirm_create",
                 "description": "Password reset e-mail link is confirmed, therefore\nthis resets the user's password.\n\nAccepts the following POST parameters: token, uid,\n    new_password1, new_password2\nReturns the success/fail message.",
                 "tags": [
-                    "password"
+                    "dj-rest-auth"
                 ],
                 "requestBody": {
                     "content": {
@@ -252,10 +328,10 @@
         },
         "/api/v1/dj-rest-auth/registration/": {
             "post": {
-                "operationId": "registration_create",
+                "operationId": "dj_rest_auth_registration_create",
                 "description": "Registers a new user.\n\nAccepts the following POST parameters: username, email, password1, password2.",
                 "tags": [
-                    "registration"
+                    "dj-rest-auth"
                 ],
                 "requestBody": {
                     "content": {
@@ -305,10 +381,10 @@
         },
         "/api/v1/dj-rest-auth/registration/resend-email/": {
             "post": {
-                "operationId": "registration_resend_email_create",
+                "operationId": "dj_rest_auth_registration_resend_email_create",
                 "description": "Resends another email to an unverified email.\n\nAccepts the following POST parameter: email.",
                 "tags": [
-                    "registration"
+                    "dj-rest-auth"
                 ],
                 "requestBody": {
                     "content": {
@@ -357,10 +433,10 @@
         },
         "/api/v1/dj-rest-auth/registration/verify-email/": {
             "post": {
-                "operationId": "registration_verify_email_create",
+                "operationId": "dj_rest_auth_registration_verify_email_create",
                 "description": "Verifies the email associated with the provided key.\n\nAccepts the following POST parameter: key.",
                 "tags": [
-                    "registration"
+                    "dj-rest-auth"
                 ],
                 "requestBody": {
                     "content": {
@@ -410,10 +486,10 @@
         },
         "/api/v1/dj-rest-auth/token/refresh/": {
             "post": {
-                "operationId": "token_refresh_create",
+                "operationId": "dj_rest_auth_token_refresh_create",
                 "description": "Takes a refresh type JSON web token and returns an access type JSON web\ntoken if the refresh token is valid.",
                 "tags": [
-                    "token"
+                    "dj-rest-auth"
                 ],
                 "requestBody": {
                     "content": {
@@ -451,10 +527,10 @@
         },
         "/api/v1/dj-rest-auth/token/verify/": {
             "post": {
-                "operationId": "token_verify_create",
+                "operationId": "dj_rest_auth_token_verify_create",
                 "description": "Takes a token and indicates if it is valid.  This view provides no\ninformation about a token's fitness for a particular use.",
                 "tags": [
-                    "token"
+                    "dj-rest-auth"
                 ],
                 "requestBody": {
                     "content": {
@@ -492,10 +568,10 @@
         },
         "/api/v1/dj-rest-auth/user/": {
             "get": {
-                "operationId": "user_retrieve",
+                "operationId": "dj_rest_auth_user_retrieve",
                 "description": "Reads and updates UserModel fields\nAccepts GET, PUT, PATCH methods.\n\nDefault accepted fields: username, first_name, last_name\nDefault display fields: pk, username, email, first_name, last_name\nRead-only fields: pk, email\n\nReturns UserModel fields.",
                 "tags": [
-                    "user"
+                    "dj-rest-auth"
                 ],
                 "security": [
                     {
@@ -522,10 +598,10 @@
                 }
             },
             "put": {
-                "operationId": "user_update",
+                "operationId": "dj_rest_auth_user_update",
                 "description": "Reads and updates UserModel fields\nAccepts GET, PUT, PATCH methods.\n\nDefault accepted fields: username, first_name, last_name\nDefault display fields: pk, username, email, first_name, last_name\nRead-only fields: pk, email\n\nReturns UserModel fields.",
                 "tags": [
-                    "user"
+                    "dj-rest-auth"
                 ],
                 "requestBody": {
                     "content": {
@@ -572,10 +648,10 @@
                 }
             },
             "patch": {
-                "operationId": "user_partial_update",
+                "operationId": "dj_rest_auth_user_partial_update",
                 "description": "Reads and updates UserModel fields\nAccepts GET, PUT, PATCH methods.\n\nDefault accepted fields: username, first_name, last_name\nDefault display fields: pk, username, email, first_name, last_name\nRead-only fields: pk, email\n\nReturns UserModel fields.",
                 "tags": [
-                    "user"
+                    "dj-rest-auth"
                 ],
                 "requestBody": {
                     "content": {
@@ -624,6 +700,89 @@
     },
     "components": {
         "schemas": {
+            "ClimateData": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "region": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/Region"
+                            }
+                        ],
+                        "readOnly": true
+                    },
+                    "indicator": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/Indicator"
+                            }
+                        ],
+                        "readOnly": true
+                    },
+                    "year": {
+                        "type": "integer",
+                        "maximum": 2147483647,
+                        "minimum": -2147483648
+                    },
+                    "value": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "fetched_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    }
+                },
+                "required": [
+                    "fetched_at",
+                    "id",
+                    "indicator",
+                    "region",
+                    "value",
+                    "year"
+                ]
+            },
+            "Indicator": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "name": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "unit": {
+                        "type": "string",
+                        "maxLength": 50
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "data_source_name": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "data_source_url": {
+                        "type": "string",
+                        "format": "uri",
+                        "maxLength": 200
+                    }
+                },
+                "required": [
+                    "data_source_name",
+                    "data_source_url",
+                    "id",
+                    "name",
+                    "unit"
+                ]
+            },
             "JWT": {
                 "type": "object",
                 "description": "Serializer for JWT authentication.",
@@ -751,6 +910,27 @@
                         "maxLength": 150
                     }
                 }
+            },
+            "Region": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "name": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "iso_code": {
+                        "type": "string",
+                        "maxLength": 100
+                    }
+                },
+                "required": [
+                    "id",
+                    "name"
+                ]
             },
             "Register": {
                 "type": "object",
