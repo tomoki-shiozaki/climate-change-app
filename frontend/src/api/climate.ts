@@ -1,8 +1,5 @@
 import apiClient from "../api/apiClient";
-import type { paths } from "../types/api";
-
-type ClimateData =
-  paths["/api/v1/climate-data/"]["get"]["responses"]["200"]["content"]["application/json"];
+import type { ClimateData } from "../types/models/climate";
 
 export async function fetchClimateData(
   accessToken: string
