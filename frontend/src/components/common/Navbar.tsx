@@ -7,50 +7,66 @@ const AppNavbar = () => {
   const { currentUsername, logout } = useAuthContext();
 
   return (
-    <Navbar bg="primary" variant="dark">
+    <Navbar bg="primary" variant="dark" expand="md">
       <div className="container-fluid">
         <Navbar.Brand as={Link} to="/">
-          Todo管理アプリ
+          気候変動ダッシュボード
         </Navbar.Brand>
 
-        <Nav
-          className="me-auto align-items-center"
-          variant="pills"
-          activeKey={location.pathname}
-          style={{ display: "flex", gap: "10px" }}
-        >
-          <Nav.Item>
-            <Nav.Link as={Link} to="/todos" eventKey="/todos">
-              Todo一覧
-            </Nav.Link>
-          </Nav.Item>
-
-          {currentUsername ? (
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav
+            className="me-auto align-items-center"
+            variant="pills"
+            activeKey={location.pathname}
+            style={{ display: "flex", gap: "10px" }}
+          >
             <Nav.Item>
-              <Button
-                variant="outline-light"
-                size="sm"
-                className="align-middle"
-                onClick={logout}
-              >
-                ログアウト ({currentUsername})
-              </Button>
+              <Nav.Link as={Link} to="/" eventKey="/">
+                ホーム
+              </Nav.Link>
             </Nav.Item>
-          ) : (
-            <>
-              <Nav.Item>
+
+            <Nav.Item>
+              <Nav.Link as={Link} to="/dashboard" eventKey="/dashboard">
+                ダッシュボード
+              </Nav.Link>
+            </Nav.Item>
+
+            <Nav.Item>
+              <Nav.Link as={Link} to="/data" eventKey="/data">
+                データ
+              </Nav.Link>
+            </Nav.Item>
+
+            <Nav.Item>
+              <Nav.Link as={Link} to="/about" eventKey="/about">
+                概要
+              </Nav.Link>
+            </Nav.Item>
+          </Nav>
+
+          {/* 右側：ログイン関連 */}
+          <Nav className="ms-auto align-items-center" style={{ gap: "10px" }}>
+            {currentUsername ? (
+              <>
+                <span className="text-light small">{currentUsername} さん</span>
+                <Button variant="outline-light" size="sm" onClick={logout}>
+                  ログアウト
+                </Button>
+              </>
+            ) : (
+              <>
                 <Nav.Link as={Link} to="/login" eventKey="/login">
                   ログイン
                 </Nav.Link>
-              </Nav.Item>
-              <Nav.Item>
                 <Nav.Link as={Link} to="/signup" eventKey="/signup">
                   新規登録
                 </Nav.Link>
-              </Nav.Item>
-            </>
-          )}
-        </Nav>
+              </>
+            )}
+          </Nav>
+        </Navbar.Collapse>
       </div>
     </Navbar>
   );
