@@ -1,10 +1,11 @@
-import React from "react";
+import ClimateChart from "../../components/chart/ClimateChart";
 
-const Dashboard: React.FC = () => {
+const Dashboard = () => {
   return (
-    <div style={{ padding: "2rem", textAlign: "center" }}>
-      <h1>ダッシュボード（サンプル）</h1>
-      <p>ここは後で本格的なコンテンツに置き換えます。</p>
+    <div>
+      <h1>ダッシュボード</h1>
+      <p>地域ごとの気温推移グラフです。</p>
+      <ClimateChart />
     </div>
   );
 };
