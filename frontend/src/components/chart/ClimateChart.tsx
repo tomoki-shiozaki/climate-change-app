@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import { useAuthContext } from "../../context/AuthContext";
 import { fetchClimateData } from "../../api/climate";
 import type { ClimateData } from "../../types/models/climate";
+import { Loading } from "../common";
 
 const ClimateChart = () => {
   const { token } = useAuthContext();
@@ -28,7 +29,7 @@ const ClimateChart = () => {
       .finally(() => setLoading(false));
   }, [token]);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <Loading />;
   if (!data.length) return <p>No data available</p>;
 
   // Rechartsに合わせた形式へ変換
