@@ -1,8 +1,14 @@
 from rest_framework import serializers
 
-from apps.climate_data.models import ClimateData, Indicator
 
-
-class TemperatureDataSerializer(serializers.Serializer):
+class YearlyTemperatureSerializer(serializers.Serializer):
     year = serializers.IntegerField()
-    value = serializers.FloatField()
+    upper = serializers.FloatField(
+        source="Upper bound of the annual temperature anomaly (95% confidence interval)"
+    )
+    lower = serializers.FloatField(
+        source="Lower bound of the annual temperature anomaly (95% confidence interval)"
+    )
+    global_average = serializers.FloatField(
+        source="Global average temperature anomaly relative to 1861-1890"
+    )
