@@ -4,16 +4,26 @@ import requests
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
-from apps.climate_data.models import ClimateData, Indicator, Region
+from apps.climate_data.models import ClimateData, Indicator, IndicatorGroup, Region
 
 
 class Command(BaseCommand):
     help = "Fetch temperature anomaly data from Our World in Data"
 
     def handle(self, *args, **options):
+        # -----------------------------
         # データURLとメタデータURL
+        # -----------------------------
         csv_url = "https://ourworldindata.org/grapher/temperature-anomaly.csv?v=1&csvType=full&useColumnShortNames=true"
         meta_url = "https://ourworldindata.org/grapher/temperature-anomaly.metadata.json?v=1&csvType=full&useColumnShortNames=true"
+
+        # -----------------------------
+        # 指標グループを取得または作成
+        # -----------------------------
+        group, _ = IndicatorGroup.objects.get_or_create(
+            name="Temperature",
+            defaults={"description": "Temperature anomaly data from Our World in Data"},
+        )
 
         # -----------------------------
         # CSVデータ取得
@@ -41,12 +51,13 @@ class Command(BaseCommand):
             if info.get("type") == "Numeric"
         }
 
-        # Indicator キャッシュ
         indicator_cache = {}
-
         created_count = 0
         updated_count = 0
 
+        # -----------------------------
+        # トランザクション開始
+        # -----------------------------
         with transaction.atomic():
             for row in reader:
                 entity = row.get("Entity", "")
@@ -75,7 +86,7 @@ class Command(BaseCommand):
                     if (
                         value_raw is None
                         or value_raw == ""
-                        or value_raw.lower() == "nan"
+                        or str(value_raw).lower() == "nan"
                     ):
                         continue
 
@@ -94,15 +105,14 @@ class Command(BaseCommand):
                         indicator = indicator_cache[column_key]
                     else:
                         indicator, _ = Indicator.objects.get_or_create(
+                            group=group,
                             name=info.get("titleShort", column_key),
                             defaults={
                                 "unit": info.get("shortUnit", info.get("unit", "")),
                                 "description": info.get("descriptionShort", ""),
                                 "data_source_name": "Our World in Data",
-                                "data_source_url": csv_url,  # CSV の URL
-                                "metadata_url": info.get(
-                                    "fullMetadata", meta_url
-                                ),  # metadata URL
+                                "data_source_url": csv_url,
+                                "metadata_url": info.get("fullMetadata", meta_url),
                             },
                         )
                         indicator_cache[column_key] = indicator
