@@ -2,7 +2,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 
-# Create your models here.
+# 地域マスター
 class Region(models.Model):
     name = models.CharField(max_length=255)
     iso_code = models.CharField(max_length=100, unique=True, blank=True)
@@ -15,7 +15,27 @@ class Region(models.Model):
         return self.name
 
 
+# 指標グループ（例：Temperature, CO2, Precipitation など）
+class IndicatorGroup(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+
+    class Meta:
+        verbose_name = "指標グループ"
+        verbose_name_plural = "指標グループ"
+
+    def __str__(self):
+        return self.name
+
+
+# 指標マスター（例：Mean temperature, Max temperature, Min temperature など）
 class Indicator(models.Model):
+    group = models.ForeignKey(
+        IndicatorGroup,
+        on_delete=models.CASCADE,
+        related_name="indicators",
+        verbose_name="指標グループ",
+    )
     name = models.CharField(max_length=255)
     unit = models.CharField(max_length=50)
     description = models.TextField(blank=True)
@@ -29,9 +49,10 @@ class Indicator(models.Model):
         verbose_name_plural = "指標マスター"
 
     def __str__(self):
-        return self.name
+        return f"{self.group.name} - {self.name}"
 
 
+# 気候データ
 class ClimateData(models.Model):
     region = models.ForeignKey(
         Region, on_delete=models.CASCADE, related_name="climate_data"
@@ -49,11 +70,7 @@ class ClimateData(models.Model):
     fetched_at = models.DateTimeField(auto_now=True)  # データを取得した日
 
     class Meta:
-        unique_together = (
-            "region",
-            "indicator",
-            "year",
-        )  # 同じ年・地域・指標の重複防止
+        unique_together = ("region", "indicator", "year")  # 同一組み合わせの重複防止
         verbose_name = "気候データ"
         verbose_name_plural = "気候データ"
 
