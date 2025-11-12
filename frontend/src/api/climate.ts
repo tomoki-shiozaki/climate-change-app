@@ -1,10 +1,10 @@
 import apiClient from "../api/apiClient";
-import type { ClimateData } from "../types/models/climate";
+import type { TemperatureData } from "../types/models/climate";
 
-export async function fetchClimateData(
+export async function fetchTemperatureData(
   accessToken: string
-): Promise<ClimateData[]> {
-  const res = await apiClient.get<ClimateData[]>("/climate-data/", {
+): Promise<TemperatureData[]> {
+  const res = await apiClient.get<TemperatureData[]>("/temperature/", {
     headers: {
       Authorization: accessToken ? `Bearer ${accessToken}` : "",
     },

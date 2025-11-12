@@ -9,14 +9,14 @@ import {
 } from "recharts";
 import { useEffect, useState } from "react";
 import { useAuthContext } from "../../context/AuthContext";
-import { fetchClimateData } from "../../api/climate";
-import type { ClimateData } from "../../types/models/climate";
+import { fetchTemperatureData } from "../../api/climate";
+import type { TemperatureData } from "../../types/models/climate";
 import { Loading } from "../common";
 
 const ClimateChart = () => {
   const { token } = useAuthContext();
 
-  const [data, setData] = useState<ClimateData[]>([]);
+  const [data, setData] = useState<TemperatureData[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -24,7 +24,7 @@ const ClimateChart = () => {
       return; // ログインしていなければ何もしない
     }
 
-    fetchClimateData(token)
+    fetchTemperatureData(token)
       .then((res) => setData(res))
       .finally(() => setLoading(false));
   }, [token]);
