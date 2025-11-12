@@ -1,4 +1,5 @@
 from django.conf import settings
+from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -19,6 +20,10 @@ class TemperatureAPIView(APIView):
         "Global average temperature anomaly relative to 1861-1890": "global_average",
     }
 
+    @extend_schema(
+        responses=YearlyTemperatureSerializer(many=True),
+        description="年ごとの気温データを返します。upper, lower, global_average が含まれます。",
+    )
     def get(self, request):
         try:
             # Temperature グループの3つの指標を取得
