@@ -5,6 +5,7 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
+  Legend,
   ResponsiveContainer,
 } from "recharts";
 import { useEffect, useState } from "react";
@@ -20,9 +21,7 @@ const ClimateChart = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!token) {
-      return; // ログインしていなければ何もしない
-    }
+    if (!token) return;
 
     fetchTemperatureData(token)
       .then((res) => setData(res))
@@ -32,11 +31,12 @@ const ClimateChart = () => {
   if (loading) return <Loading />;
   if (!data.length) return <p>No data available</p>;
 
-  // Rechartsに合わせた形式へ変換
+  // Rechartsに合わせた形式にそのまま使用
   const chartData = data.map((item) => ({
     year: item.year,
-    value: item.value,
-    region: item.region.name,
+    upper: item.upper,
+    lower: item.lower,
+    global_average: item.global_average,
   }));
 
   return (
@@ -51,12 +51,15 @@ const ClimateChart = () => {
           label={{ value: "気温 (°C)", angle: -90, position: "insideLeft" }}
         />
         <Tooltip />
+        <Legend />
+        <Line type="monotone" dataKey="upper" stroke="#ff0000" name="Upper" />
         <Line
           type="monotone"
-          dataKey="value"
-          stroke="#007bff"
-          strokeWidth={2}
+          dataKey="global_average"
+          stroke="#0000ff"
+          name="Global Avg"
         />
+        <Line type="monotone" dataKey="lower" stroke="#00aa00" name="Lower" />
       </LineChart>
     </ResponsiveContainer>
   );
