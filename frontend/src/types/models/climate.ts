@@ -3,7 +3,3 @@ import type { paths } from "../api";
 // ClimateData型をわかりやすくエクスポート
 export type TemperatureData =
   paths["/api/v1/temperature/"]["get"]["responses"]["200"]["content"]["application/json"][number];
-
-// 1件分のレコード型（retrieve用）
-export type TemperatureDataDetail =
-  paths["/api/v1/temperature/"]["get"]["responses"]["200"]["content"]["application/json"];
