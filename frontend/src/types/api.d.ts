@@ -4,38 +4,6 @@
  */
 
 export interface paths {
-    "/api/v1/climate-data/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["climate_data_list"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/climate-data/{id}/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["climate_data_retrieve"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/v1/dj-rest-auth/login/": {
         parameters: {
             query?: never;
@@ -300,29 +268,27 @@ export interface paths {
         patch: operations["dj_rest_auth_user_partial_update"];
         trace?: never;
     };
+    "/api/v1/temperature/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description 年ごとの気温データを返します。upper, lower, global_average が含まれます。 */
+        get: operations["temperature_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        ClimateData: {
-            readonly id: number;
-            readonly region: components["schemas"]["Region"];
-            readonly indicator: components["schemas"]["Indicator"];
-            year: number;
-            /** Format: double */
-            value: number;
-            /** Format: date-time */
-            readonly fetched_at: string;
-        };
-        Indicator: {
-            readonly id: number;
-            name: string;
-            unit: string;
-            description?: string;
-            data_source_name: string;
-            /** Format: uri */
-            data_source_url: string;
-        };
         /** @description Serializer for JWT authentication. */
         JWT: {
             access: string;
@@ -370,11 +336,6 @@ export interface components {
             /** 姓 */
             last_name?: string;
         };
-        Region: {
-            readonly id: number;
-            name: string;
-            iso_code?: string;
-        };
         Register: {
             username: string;
             /** Format: email */
@@ -418,6 +379,15 @@ export interface components {
         VerifyEmail: {
             key: string;
         };
+        YearlyTemperature: {
+            year: number;
+            /** Format: double */
+            upper: number;
+            /** Format: double */
+            lower: number;
+            /** Format: double */
+            global_average: number;
+        };
     };
     responses: never;
     parameters: never;
@@ -427,47 +397,6 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    climate_data_list: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ClimateData"][];
-                };
-            };
-        };
-    };
-    climate_data_retrieve: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description A unique integer value identifying this 気候データ. */
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ClimateData"];
-                };
-            };
-        };
-    };
     dj_rest_auth_login_create: {
         parameters: {
             query?: never;
@@ -777,6 +706,25 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["UserDetails"];
+                };
+            };
+        };
+    };
+    temperature_list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["YearlyTemperature"][];
                 };
             };
         };
