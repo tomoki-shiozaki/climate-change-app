@@ -10,7 +10,7 @@ from apps.climate_data.models import ClimateData, Indicator
 
 class TemperatureAPIView(APIView):
     """
-    年ごとの気温データを返すAPI（Upper/Lower/Global average）
+    年ごとの気温データを地域ごとに返すAPI（Upper/Lower/Global average）
     """
 
     # Indicator名とSerializer用フィールド名の対応
@@ -22,7 +22,7 @@ class TemperatureAPIView(APIView):
 
     @extend_schema(
         responses=YearlyTemperatureSerializer(many=True),
-        description="年ごとの気温データを返します。upper, lower, global_average が含まれます。",
+        description="地域・年ごとの気温データを返します。upper, lower, global_average が含まれます。",
     )
     def get(self, request):
         try:
@@ -40,26 +40,36 @@ class TemperatureAPIView(APIView):
                     status=status.HTTP_404_NOT_FOUND,
                 )
 
-            # 年ごとにデータをまとめる辞書
-            data_by_year = {}
+            # 地域ごとのデータ格納用
+            result = {}
 
             for indicator in temperature_indicators:
-                qs = ClimateData.objects.filter(indicator=indicator).order_by("year")
-                # ここでは単純に年と値を取得
+                # 地域ごとにループ
+                qs = (
+                    ClimateData.objects.filter(indicator=indicator)
+                    .select_related("region")
+                    .order_by("year")
+                )
                 for item in qs:
+                    region_name = item.region.name
+                    if region_name not in result:
+                        result[region_name] = {}
+
                     year = item.year
-                    if year not in data_by_year:
-                        data_by_year[year] = {"year": year}
-                    # フィールド名を短くして格納
+                    if year not in result[region_name]:
+                        result[region_name][year] = {"year": year}
+
                     field_name = self.INDICATOR_FIELD_MAP[indicator.name]
-                    data_by_year[year][field_name] = item.value
+                    result[region_name][year][field_name] = item.value
 
-            # 辞書をリスト化してソート
-            sorted_data = [data_by_year[year] for year in sorted(data_by_year.keys())]
+            # 年ごとリストに整形
+            formatted_result = {
+                region: [data for _, data in sorted(year_dict.items())]
+                for region, year_dict in result.items()
+            }
 
-            # Serializerで整形して返す
-            serializer = YearlyTemperatureSerializer(sorted_data, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            # serializer必要か？
+            return Response(formatted_result, status=status.HTTP_200_OK)
 
         except Exception as e:
             return Response(
