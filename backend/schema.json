@@ -6,82 +6,6 @@
         "description": "A climate change app for learning about climate change with data visualization."
     },
     "paths": {
-        "/api/v1/climate-data/": {
-            "get": {
-                "operationId": "climate_data_list",
-                "tags": [
-                    "climate-data"
-                ],
-                "security": [
-                    {
-                        "jwtAuth": []
-                    },
-                    {
-                        "jwtHeaderAuth": []
-                    },
-                    {
-                        "jwtCookieAuth": []
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/ClimateData"
-                                    }
-                                }
-                            }
-                        },
-                        "description": ""
-                    }
-                }
-            }
-        },
-        "/api/v1/climate-data/{id}/": {
-            "get": {
-                "operationId": "climate_data_retrieve",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "id",
-                        "schema": {
-                            "type": "integer"
-                        },
-                        "description": "A unique integer value identifying this 気候データ.",
-                        "required": true
-                    }
-                ],
-                "tags": [
-                    "climate-data"
-                ],
-                "security": [
-                    {
-                        "jwtAuth": []
-                    },
-                    {
-                        "jwtHeaderAuth": []
-                    },
-                    {
-                        "jwtCookieAuth": []
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ClimateData"
-                                }
-                            }
-                        },
-                        "description": ""
-                    }
-                }
-            }
-        },
         "/api/v1/dj-rest-auth/login/": {
             "post": {
                 "operationId": "dj_rest_auth_login_create",
@@ -696,93 +620,45 @@
                     }
                 }
             }
+        },
+        "/api/v1/temperature/": {
+            "get": {
+                "operationId": "temperature_list",
+                "description": "年ごとの気温データを返します。upper, lower, global_average が含まれます。",
+                "tags": [
+                    "temperature"
+                ],
+                "security": [
+                    {
+                        "jwtAuth": []
+                    },
+                    {
+                        "jwtHeaderAuth": []
+                    },
+                    {
+                        "jwtCookieAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/YearlyTemperature"
+                                    }
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
         }
     },
     "components": {
         "schemas": {
-            "ClimateData": {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "readOnly": true
-                    },
-                    "region": {
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/Region"
-                            }
-                        ],
-                        "readOnly": true
-                    },
-                    "indicator": {
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/Indicator"
-                            }
-                        ],
-                        "readOnly": true
-                    },
-                    "year": {
-                        "type": "integer",
-                        "maximum": 2200,
-                        "minimum": 1800
-                    },
-                    "value": {
-                        "type": "number",
-                        "format": "double"
-                    },
-                    "fetched_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "readOnly": true
-                    }
-                },
-                "required": [
-                    "fetched_at",
-                    "id",
-                    "indicator",
-                    "region",
-                    "value",
-                    "year"
-                ]
-            },
-            "Indicator": {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "readOnly": true
-                    },
-                    "name": {
-                        "type": "string",
-                        "maxLength": 255
-                    },
-                    "unit": {
-                        "type": "string",
-                        "maxLength": 50
-                    },
-                    "description": {
-                        "type": "string"
-                    },
-                    "data_source_name": {
-                        "type": "string",
-                        "maxLength": 255
-                    },
-                    "data_source_url": {
-                        "type": "string",
-                        "format": "uri",
-                        "maxLength": 200
-                    }
-                },
-                "required": [
-                    "data_source_name",
-                    "data_source_url",
-                    "id",
-                    "name",
-                    "unit"
-                ]
-            },
             "JWT": {
                 "type": "object",
                 "description": "Serializer for JWT authentication.",
@@ -911,27 +787,6 @@
                     }
                 }
             },
-            "Region": {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "readOnly": true
-                    },
-                    "name": {
-                        "type": "string",
-                        "maxLength": 255
-                    },
-                    "iso_code": {
-                        "type": "string",
-                        "maxLength": 100
-                    }
-                },
-                "required": [
-                    "id",
-                    "name"
-                ]
-            },
             "Register": {
                 "type": "object",
                 "properties": {
@@ -1058,6 +913,32 @@
                 },
                 "required": [
                     "key"
+                ]
+            },
+            "YearlyTemperature": {
+                "type": "object",
+                "properties": {
+                    "year": {
+                        "type": "integer"
+                    },
+                    "upper": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "lower": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "global_average": {
+                        "type": "number",
+                        "format": "double"
+                    }
+                },
+                "required": [
+                    "global_average",
+                    "lower",
+                    "upper",
+                    "year"
                 ]
             }
         },
