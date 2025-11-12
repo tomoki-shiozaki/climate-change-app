@@ -6,7 +6,6 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.api.serializers.temperature import YearlyTemperatureSerializer
 from apps.climate_data.models import ClimateData, Indicator
 
 # ===============================
@@ -48,7 +47,7 @@ class TemperatureAPIView(APIView):
     }
 
     @extend_schema(
-        responses=YearlyTemperatureSerializer(many=True),
+        responses=TemperatureDataByRegion,
         description="地域・年ごとの気温データを返します。upper, lower, global_average を含みます。",
     )
     def get(self, request):

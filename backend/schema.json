@@ -623,8 +623,8 @@
         },
         "/api/v1/temperature/": {
             "get": {
-                "operationId": "temperature_list",
-                "description": "年ごとの気温データを返します。upper, lower, global_average が含まれます。",
+                "operationId": "temperature_retrieve",
+                "description": "地域・年ごとの気温データを返します。upper, lower, global_average を含みます。",
                 "tags": [
                     "temperature"
                 ],
@@ -644,9 +644,33 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/YearlyTemperature"
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "description": "1年分の気温データ構造",
+                                            "properties": {
+                                                "year": {
+                                                    "type": "integer"
+                                                },
+                                                "upper": {
+                                                    "type": "number",
+                                                    "format": "double",
+                                                    "nullable": true
+                                                },
+                                                "lower": {
+                                                    "type": "number",
+                                                    "format": "double",
+                                                    "nullable": true
+                                                },
+                                                "global_average": {
+                                                    "type": "number",
+                                                    "format": "double",
+                                                    "nullable": true
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -913,32 +937,6 @@
                 },
                 "required": [
                     "key"
-                ]
-            },
-            "YearlyTemperature": {
-                "type": "object",
-                "properties": {
-                    "year": {
-                        "type": "integer"
-                    },
-                    "upper": {
-                        "type": "number",
-                        "format": "double"
-                    },
-                    "lower": {
-                        "type": "number",
-                        "format": "double"
-                    },
-                    "global_average": {
-                        "type": "number",
-                        "format": "double"
-                    }
-                },
-                "required": [
-                    "global_average",
-                    "lower",
-                    "upper",
-                    "year"
                 ]
             }
         },
