@@ -1,3 +1,4 @@
+from django.conf import settings
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -21,8 +22,10 @@ class TemperatureAPIView(APIView):
     def get(self, request):
         try:
             # Temperature グループの3つの指標を取得
+            group_name = settings.CLIMATE_GROUPS["TEMPERATURE"]["name"]
+
             temperature_indicators = Indicator.objects.filter(
-                group__name="Temperature",
+                group__name=group_name,
                 name__in=list(self.INDICATOR_FIELD_MAP.keys()),
             )
 

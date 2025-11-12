@@ -1,6 +1,7 @@
 import csv
 
 import requests
+from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
@@ -20,9 +21,10 @@ class Command(BaseCommand):
         # -----------------------------
         # 指標グループを取得または作成
         # -----------------------------
+        group_info = settings.CLIMATE_GROUPS["TEMPERATURE"]
         group, _ = IndicatorGroup.objects.get_or_create(
-            name="Temperature",
-            defaults={"description": "Temperature anomaly data from Our World in Data"},
+            name=group_info["name"],
+            defaults={"description": group_info["description"]},
         )
 
         # -----------------------------
