@@ -275,8 +275,8 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** @description 年ごとの気温データを返します。upper, lower, global_average が含まれます。 */
-        get: operations["temperature_list"];
+        /** @description 地域・年ごとの気温データを返します。upper, lower, global_average を含みます。 */
+        get: operations["temperature_retrieve"];
         put?: never;
         post?: never;
         delete?: never;
@@ -378,15 +378,6 @@ export interface components {
         };
         VerifyEmail: {
             key: string;
-        };
-        YearlyTemperature: {
-            year: number;
-            /** Format: double */
-            upper: number;
-            /** Format: double */
-            lower: number;
-            /** Format: double */
-            global_average: number;
         };
     };
     responses: never;
@@ -710,7 +701,7 @@ export interface operations {
             };
         };
     };
-    temperature_list: {
+    temperature_retrieve: {
         parameters: {
             query?: never;
             header?: never;
@@ -724,7 +715,17 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["YearlyTemperature"][];
+                    "application/json": {
+                        [key: string]: {
+                            year?: number;
+                            /** Format: double */
+                            upper?: number | null;
+                            /** Format: double */
+                            lower?: number | null;
+                            /** Format: double */
+                            global_average?: number | null;
+                        }[];
+                    };
                 };
             };
         };
