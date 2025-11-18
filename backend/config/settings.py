@@ -15,7 +15,7 @@ from pathlib import Path
 from environs import Env
 
 env = Env()
-config_dir = Path(__file__).resolve().parent
+config_dir = Path(__file__).resolve().parent  # type: ignore
 backend_dir = config_dir.parent
 # ENV_FILE が指定されていればそれを使い、なければ backend/.env.venv を読む
 default_env_file = backend_dir / ".env.venv"
