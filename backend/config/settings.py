@@ -22,6 +22,12 @@ default_env_file = backend_dir / ".env.venv"
 env_file = env.str("ENV_FILE", default=str(default_env_file))
 env.read_env(env_file)
 
+# -------------------------------
+# ここで環境変数を読み込む
+IS_PRODUCTION = env.bool("DJANGO_PRODUCTION", default=False)
+COOKIE_SECURE = IS_PRODUCTION
+# -------------------------------
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
