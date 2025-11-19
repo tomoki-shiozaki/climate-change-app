@@ -18,9 +18,9 @@ const Login = () => {
   const navigate = useNavigate();
   const { token, login } = useAuthContext();
 
-  // すでにログイン済みなら /todos に自動リダイレクト
+  // すでにログイン済みなら / に自動リダイレクト
   useEffect(() => {
-    if (token) navigate("/todos");
+    if (token) navigate("/");
   }, [token, navigate]);
 
   const onChangeUsername = (e: ChangeEvent<HTMLInputElement>) =>
@@ -35,7 +35,7 @@ const Login = () => {
 
     try {
       await login({ username, password });
-      navigate("/todos"); // 成功時は遷移
+      navigate("/"); // 成功時は遷移
     } catch (err: any) {
       console.error(err);
       setError(err.message); // コンポーネント内で表示

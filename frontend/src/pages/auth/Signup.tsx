@@ -20,9 +20,9 @@ const Signup = () => {
   const navigate = useNavigate();
   const { token, signup } = useAuthContext();
 
-  // すでにログイン済みなら /todos にリダイレクト
+  // すでにログイン済みなら / にリダイレクト
   useEffect(() => {
-    if (token) navigate("/todos");
+    if (token) navigate("/");
   }, [token, navigate]);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -44,7 +44,7 @@ const Signup = () => {
       // 成功してトークンが保存されていれば遷移
       const storedToken = localStorage.getItem("token");
       if (storedToken) {
-        navigate("/todos");
+        navigate("/");
       }
     } catch (err: any) {
       console.error(err);
