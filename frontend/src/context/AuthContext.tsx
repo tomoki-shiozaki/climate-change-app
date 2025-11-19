@@ -3,13 +3,9 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
 import AuthService from "../services/auth";
+import { refreshToken } from "../services/refreshToken";
 import type { paths } from "../types/api";
 import { useErrorContext } from "./ErrorContext";
-import {
-  LOCALSTORAGE_TOKEN_KEY,
-  LOCALSTORAGE_REFRESH_TOKEN_KEY,
-  LOCALSTORAGE_USERNAME_KEY,
-} from "../constants/storage";
 
 // 型定義
 type LoginRequest =
@@ -24,6 +20,7 @@ interface AuthContextType {
   login: (user: LoginRequest) => Promise<void>;
   logout: () => Promise<void>;
   signup: (user: SignupRequest) => Promise<void>;
+  refreshAccessToken: () => Promise<void>;
 }
 
 interface AuthProviderProps {
@@ -38,16 +35,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [authLoading, setAuthLoading] = useState(true);
   const { setError } = useErrorContext();
 
-  // 認証情報の初期復元
+  // 認証情報の初期化（必要ならユーザー情報を取得）
   useEffect(() => {
-    const savedUsername = localStorage.getItem(LOCALSTORAGE_USERNAME_KEY);
-    const savedToken = localStorage.getItem(LOCALSTORAGE_TOKEN_KEY);
-
-    if (savedUsername && savedToken) {
-      setCurrentUsername(savedUsername);
-      setToken(savedToken);
-    }
-
     setAuthLoading(false);
   }, []);
 
@@ -58,38 +47,28 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     try {
       const data = await AuthService.login(user);
-      const { access, refresh } = data;
+      const { access } = data;
       if (!access)
-        throw new Error("サーバーからトークンが返されませんでした。");
+        throw new Error("サーバーから access token が返されませんでした。");
 
       setToken(access);
       setCurrentUsername(user.username);
-
-      localStorage.setItem(LOCALSTORAGE_TOKEN_KEY, access);
-      localStorage.setItem(LOCALSTORAGE_REFRESH_TOKEN_KEY, refresh);
-      localStorage.setItem(LOCALSTORAGE_USERNAME_KEY, user.username);
-
       setError(null); // 成功したのでグローバルエラーはクリア
     } catch (e: any) {
       console.error("login error:", e);
-
       if (
         !e.response ||
         (e.response.status >= 500 && e.response.status < 600)
       ) {
         setError(e.message);
       }
-
       throw e;
     }
   };
 
   const logout = async () => {
     try {
-      const access = localStorage.getItem(LOCALSTORAGE_TOKEN_KEY);
-      if (access) {
-        await AuthService.logout(access);
-      }
+      await AuthService.logout();
       setError(null);
     } catch (e: any) {
       console.error("logout error:", e);
@@ -103,9 +82,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     } finally {
       setToken(null);
       setCurrentUsername(null);
-      localStorage.removeItem(LOCALSTORAGE_TOKEN_KEY);
-      localStorage.removeItem(LOCALSTORAGE_REFRESH_TOKEN_KEY);
-      localStorage.removeItem(LOCALSTORAGE_USERNAME_KEY);
     }
   };
 
@@ -129,9 +105,31 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
+  /**
+   * Access token を refresh して更新
+   */
+  const refreshAccessToken = async () => {
+    try {
+      const data = await refreshToken(); // Cookie 内 refresh token を利用
+      if (!data.access) throw new Error("Access token の更新に失敗しました。");
+      setToken(data.access);
+    } catch (e: any) {
+      console.warn("Access token refresh failed. Logging out.", e);
+      await logout();
+    }
+  };
+
   return (
     <AuthContext.Provider
-      value={{ currentUsername, token, authLoading, login, logout, signup }}
+      value={{
+        currentUsername,
+        token,
+        authLoading,
+        login,
+        logout,
+        signup,
+        refreshAccessToken,
+      }}
     >
       {children}
     </AuthContext.Provider>

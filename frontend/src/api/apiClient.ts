@@ -4,7 +4,6 @@ import { extractErrorMessage } from "./errorHandler";
 import { refreshToken } from "../services/refreshToken";
 import {
   LOCALSTORAGE_TOKEN_KEY,
-  LOCALSTORAGE_REFRESH_TOKEN_KEY,
   LOCALSTORAGE_USERNAME_KEY,
 } from "../constants/storage";
 
@@ -19,6 +18,7 @@ const baseURL = import.meta.env.VITE_API_URL || "http://localhost:8000/api/v1";
 
 const apiClient: AxiosInstance = axios.create({
   baseURL,
+  withCredentials: true, // Cookie を送信
 });
 
 // 任意：全リクエストに access token を付与
@@ -38,21 +38,21 @@ apiClient.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
-      const refresh = localStorage.getItem(LOCALSTORAGE_REFRESH_TOKEN_KEY);
-      if (!refresh) return Promise.reject(error);
-
       try {
-        const { access } = await refreshToken({ refresh });
+        // Cookie に refresh token があるため body は不要
+        const { access } = await refreshToken();
+
         // access token を更新
         localStorage.setItem(LOCALSTORAGE_TOKEN_KEY, access);
         originalRequest.headers["Authorization"] = `Bearer ${access}`;
+
+        // 再リクエスト
         return apiClient(originalRequest);
       } catch (err) {
         console.warn(
           "トークンリフレッシュに失敗しました。ログアウト処理を実行します。"
         );
         localStorage.removeItem(LOCALSTORAGE_TOKEN_KEY);
-        localStorage.removeItem(LOCALSTORAGE_REFRESH_TOKEN_KEY);
         localStorage.removeItem(LOCALSTORAGE_USERNAME_KEY);
         return Promise.reject(err);
       }
