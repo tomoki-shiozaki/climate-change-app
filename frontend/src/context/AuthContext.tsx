@@ -6,6 +6,7 @@ import AuthService from "../services/auth";
 import { refreshToken } from "../services/refreshToken";
 import type { paths } from "../types/api";
 import { useErrorContext } from "./ErrorContext";
+import { LOCALSTORAGE_USERNAME_KEY } from "../constants/storage";
 
 // 型定義
 type LoginRequest =
@@ -35,9 +36,29 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [authLoading, setAuthLoading] = useState(true);
   const { setError } = useErrorContext();
 
-  // 認証情報の初期化（必要ならユーザー情報を取得）
+  // ページロード時に username を確認して refresh token で自動ログイン
   useEffect(() => {
-    setAuthLoading(false);
+    const initAuth = async () => {
+      const savedUsername = localStorage.getItem(LOCALSTORAGE_USERNAME_KEY);
+      if (savedUsername) {
+        try {
+          const data = await refreshToken(); // Cookie 内 refresh token で access token を再取得
+          if (data.access) {
+            setToken(data.access);
+            setCurrentUsername(savedUsername);
+          } else {
+            // refresh に失敗した場合は localStorage から username を削除
+            localStorage.removeItem(LOCALSTORAGE_USERNAME_KEY);
+          }
+        } catch (err) {
+          console.warn("自動ログインに失敗しました。", err);
+          localStorage.removeItem(LOCALSTORAGE_USERNAME_KEY);
+        }
+      }
+      setAuthLoading(false);
+    };
+
+    initAuth();
   }, []);
 
   const login = async (user: LoginRequest) => {
@@ -53,7 +74,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
       setToken(access);
       setCurrentUsername(user.username);
-      setError(null); // 成功したのでグローバルエラーはクリア
+      localStorage.setItem(LOCALSTORAGE_USERNAME_KEY, user.username);
+      setError(null);
     } catch (e: any) {
       console.error("login error:", e);
       if (
@@ -82,6 +104,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     } finally {
       setToken(null);
       setCurrentUsername(null);
+      localStorage.removeItem(LOCALSTORAGE_USERNAME_KEY);
     }
   };
 
@@ -105,12 +128,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
-  /**
-   * Access token を refresh して更新
-   */
   const refreshAccessToken = async () => {
     try {
-      const data = await refreshToken(); // Cookie 内 refresh token を利用
+      const data = await refreshToken();
       if (!data.access) throw new Error("Access token の更新に失敗しました。");
       setToken(data.access);
     } catch (e: any) {
