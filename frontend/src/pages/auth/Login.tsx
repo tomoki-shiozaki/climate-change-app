@@ -8,20 +8,30 @@ import Alert from "react-bootstrap/Alert";
 import Spinner from "react-bootstrap/Spinner";
 import { useAuthContext } from "../../context/AuthContext";
 import { Loading } from "../../components/common";
+import apiClient from "../../api/apiClient";
+import { AxiosError } from "axios";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false); // ローディング状態
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-  const { token, login } = useAuthContext();
+  const { login } = useAuthContext();
 
-  // すでにログイン済みなら / に自動リダイレクト
+  // 既にログイン済みならトップページへ
   useEffect(() => {
-    if (token) navigate("/");
-  }, [token, navigate]);
+    const checkLogin = async () => {
+      try {
+        await apiClient.get("/dj-rest-auth/user/"); // ログイン済みなら 200
+        navigate("/");
+      } catch {
+        // 未ログインなら何もしない
+      }
+    };
+    checkLogin();
+  }, [navigate]);
 
   const onChangeUsername = (e: ChangeEvent<HTMLInputElement>) =>
     setUsername(e.target.value);
@@ -35,10 +45,15 @@ const Login = () => {
 
     try {
       await login({ username, password });
-      navigate("/"); // 成功時は遷移
-    } catch (err: any) {
+      navigate("/"); // 成功したら遷移
+    } catch (err: unknown) {
       console.error(err);
-      setError(err.message); // コンポーネント内で表示
+
+      if (err instanceof AxiosError) {
+        setError(err.message);
+      } else {
+        setError("ログインに失敗しました。入力内容を確認してください。");
+      }
     } finally {
       setLoading(false);
     }
