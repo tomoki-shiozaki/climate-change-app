@@ -1,4 +1,7 @@
-import type { AxiosErrorWithResponse, ApiErrorResponse } from "../types/client";
+import type {
+  AxiosErrorWithResponse,
+  ApiErrorResponse,
+} from "../../types/client";
 
 export const extractErrorMessage = (error: AxiosErrorWithResponse): string => {
   const status = error.response?.status;
