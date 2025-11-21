@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import type { ChangeEvent, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import apiClient from "../../api/apiClient";
+import { AxiosError } from "axios";
 import Form from "react-bootstrap/Form";
 import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
@@ -51,11 +52,14 @@ const Signup = () => {
 
       // signup 成功後にトップページへ遷移
       navigate("/");
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
-      setError(
-        err.message || "登録に失敗しました。入力内容を確認してください。"
-      );
+
+      if (err instanceof AxiosError) {
+        setError(err.message);
+      } else {
+        setError("登録に失敗しました。入力内容を確認してください。");
+      }
     } finally {
       setLoading(false);
     }
