@@ -18,6 +18,21 @@ const apiClient: AxiosInstance = axios.create({
   withCredentials: true, // Cookie を送信
 });
 
+// リクエスト interceptor: CSRF トークンをヘッダに追加
+apiClient.interceptors.request.use((config) => {
+  // Cookie から csrftoken を取得
+  const csrfToken = document.cookie
+    .split("; ")
+    .find((row) => row.startsWith("csrftoken="))
+    ?.split("=")[1];
+
+  if (csrfToken && config.headers) {
+    config.headers["X-CSRFToken"] = csrfToken;
+  }
+
+  return config;
+});
+
 // response interceptor: 401 時に refresh token を使って再リクエスト
 apiClient.interceptors.response.use(
   (response) => response,
