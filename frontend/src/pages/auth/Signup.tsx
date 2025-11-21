@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import type { ChangeEvent, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
+import apiClient from "../../api/apiClient";
 import Form from "react-bootstrap/Form";
 import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
@@ -18,12 +19,19 @@ const Signup = () => {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-  const { token, signup } = useAuthContext();
+  const { signup } = useAuthContext();
 
-  // すでにログイン済みなら / にリダイレクト
   useEffect(() => {
-    if (token) navigate("/");
-  }, [token, navigate]);
+    const checkLogin = async () => {
+      try {
+        await apiClient.get("/dj-rest-auth/user/"); // ログイン済みなら 200
+        navigate("/");
+      } catch {
+        // 未ログインなら何もしない
+      }
+    };
+    checkLogin();
+  }, [navigate]);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -31,7 +39,7 @@ const Signup = () => {
     setError(null);
 
     try {
-      // バリデーション: 必須チェックとパスワード一致チェック
+      // バリデーション
       if (!username || !email || !password1 || !password2) {
         throw new Error("すべてのフィールドを入力してください。");
       }
@@ -41,11 +49,8 @@ const Signup = () => {
 
       await signup({ username, email, password1, password2 });
 
-      // 成功してトークンが保存されていれば遷移
-      const storedToken = localStorage.getItem("token");
-      if (storedToken) {
-        navigate("/");
-      }
+      // signup 成功後にトップページへ遷移
+      navigate("/");
     } catch (err: any) {
       console.error(err);
       setError(
