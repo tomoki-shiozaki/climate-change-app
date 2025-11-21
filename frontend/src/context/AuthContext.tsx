@@ -3,15 +3,11 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
 import AuthService from "../services/auth";
+import { refreshToken } from "../services/refreshToken";
 import type { paths } from "../types/api";
 import { useErrorContext } from "./ErrorContext";
-import {
-  LOCALSTORAGE_TOKEN_KEY,
-  LOCALSTORAGE_REFRESH_TOKEN_KEY,
-  LOCALSTORAGE_USERNAME_KEY,
-} from "../constants/storage";
+import { LOCALSTORAGE_USERNAME_KEY } from "../constants/storage";
 
-// 型定義
 type LoginRequest =
   paths["/api/v1/dj-rest-auth/login/"]["post"]["requestBody"]["content"]["application/json"];
 type SignupRequest =
@@ -19,11 +15,11 @@ type SignupRequest =
 
 interface AuthContextType {
   currentUsername: string | null;
-  token: string | null;
   authLoading: boolean;
   login: (user: LoginRequest) => Promise<void>;
   logout: () => Promise<void>;
   signup: (user: SignupRequest) => Promise<void>;
+  refreshAccessToken: () => Promise<void>;
 }
 
 interface AuthProviderProps {
@@ -34,21 +30,30 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [currentUsername, setCurrentUsername] = useState<string | null>(null);
-  const [token, setToken] = useState<string | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
   const { setError } = useErrorContext();
 
-  // 認証情報の初期復元
+  // ページロード時に username を確認して refresh token で自動ログイン
   useEffect(() => {
-    const savedUsername = localStorage.getItem(LOCALSTORAGE_USERNAME_KEY);
-    const savedToken = localStorage.getItem(LOCALSTORAGE_TOKEN_KEY);
+    const initAuth = async () => {
+      const savedUsername = localStorage.getItem(LOCALSTORAGE_USERNAME_KEY);
+      if (savedUsername) {
+        try {
+          const data = await refreshToken(); // Cookie 内 refresh token で access token を再取得
+          if (data.access) {
+            setCurrentUsername(savedUsername);
+          } else {
+            localStorage.removeItem(LOCALSTORAGE_USERNAME_KEY);
+          }
+        } catch (err) {
+          console.warn("自動ログインに失敗しました。", err);
+          localStorage.removeItem(LOCALSTORAGE_USERNAME_KEY);
+        }
+      }
+      setAuthLoading(false);
+    };
 
-    if (savedUsername && savedToken) {
-      setCurrentUsername(savedUsername);
-      setToken(savedToken);
-    }
-
-    setAuthLoading(false);
+    initAuth();
   }, []);
 
   const login = async (user: LoginRequest) => {
@@ -58,38 +63,27 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     try {
       const data = await AuthService.login(user);
-      const { access, refresh } = data;
-      if (!access)
-        throw new Error("サーバーからトークンが返されませんでした。");
+      if (!data.access)
+        throw new Error("サーバーから access token が返されませんでした。");
 
-      setToken(access);
       setCurrentUsername(user.username);
-
-      localStorage.setItem(LOCALSTORAGE_TOKEN_KEY, access);
-      localStorage.setItem(LOCALSTORAGE_REFRESH_TOKEN_KEY, refresh);
       localStorage.setItem(LOCALSTORAGE_USERNAME_KEY, user.username);
-
-      setError(null); // 成功したのでグローバルエラーはクリア
+      setError(null);
     } catch (e: any) {
       console.error("login error:", e);
-
       if (
         !e.response ||
         (e.response.status >= 500 && e.response.status < 600)
       ) {
         setError(e.message);
       }
-
       throw e;
     }
   };
 
   const logout = async () => {
     try {
-      const access = localStorage.getItem(LOCALSTORAGE_TOKEN_KEY);
-      if (access) {
-        await AuthService.logout(access);
-      }
+      await AuthService.logout();
       setError(null);
     } catch (e: any) {
       console.error("logout error:", e);
@@ -101,10 +95,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       }
       throw e;
     } finally {
-      setToken(null);
       setCurrentUsername(null);
-      localStorage.removeItem(LOCALSTORAGE_TOKEN_KEY);
-      localStorage.removeItem(LOCALSTORAGE_REFRESH_TOKEN_KEY);
       localStorage.removeItem(LOCALSTORAGE_USERNAME_KEY);
     }
   };
@@ -129,16 +120,33 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
+  const refreshAccessToken = async () => {
+    try {
+      const data = await refreshToken();
+      if (!data.access) throw new Error("Access token の更新に失敗しました。");
+      // メモリに token を持たないので何もセットしない
+    } catch (e: any) {
+      console.warn("Access token refresh failed. Logging out.", e);
+      await logout();
+    }
+  };
+
   return (
     <AuthContext.Provider
-      value={{ currentUsername, token, authLoading, login, logout, signup }}
+      value={{
+        currentUsername,
+        authLoading,
+        login,
+        logout,
+        signup,
+        refreshAccessToken,
+      }}
     >
       {children}
     </AuthContext.Provider>
   );
 };
 
-// カスタムフック
 export const useAuthContext = () => {
   const context = useContext(AuthContext);
   if (!context)

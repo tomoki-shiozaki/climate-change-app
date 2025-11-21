@@ -10,17 +10,24 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+from datetime import timedelta
 from pathlib import Path
 
 from environs import Env
 
 env = Env()
-config_dir = Path(__file__).resolve().parent
+config_dir = Path(__file__).resolve().parent  # type: ignore
 backend_dir = config_dir.parent
 # ENV_FILE が指定されていればそれを使い、なければ backend/.env.venv を読む
 default_env_file = backend_dir / ".env.venv"
 env_file = env.str("ENV_FILE", default=str(default_env_file))
 env.read_env(env_file)
+
+# -------------------------------
+# ここで環境変数を読み込む
+IS_PRODUCTION = env.bool("DJANGO_PRODUCTION", default=False)
+COOKIE_SECURE = IS_PRODUCTION
+# -------------------------------
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -36,6 +43,14 @@ SECRET_KEY = env.str("SECRET_KEY")
 DEBUG = env.bool("DEBUG", default=False)
 
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost", "127.0.0.1"])
+
+CSRF_TRUSTED_ORIGINS = env.list(
+    "CSRF_TRUSTED_ORIGINS",
+    default=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ],
+)
 
 
 # Application definition
@@ -93,6 +108,11 @@ REST_AUTH = {
     "JWT_AUTH_COOKIE": "my-app-auth",
     "JWT_AUTH_REFRESH_COOKIE": "my-refresh-token",
 }
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ROTATE_REFRESH_TOKENS": False,
+}
 
 if DEBUG:
     REST_FRAMEWORK["DEFAULT_AUTHENTICATION_CLASSES"].append(
@@ -119,6 +139,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_WHITELIST = env.list(
     "CORS_ORIGIN_WHITELIST", default=["http://localhost:5173"]
 )

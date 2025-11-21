@@ -9,32 +9,35 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { useEffect, useState } from "react";
-import { useAuthContext } from "../../context/AuthContext";
 import { fetchTemperatureData } from "../../api/climate";
 import type { TemperatureData } from "../../types/models/climate";
 import { Loading } from "../common";
 
 const ClimateChart = () => {
-  const { token } = useAuthContext();
-
   const [data, setData] = useState<TemperatureData | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedRegion, setSelectedRegion] = useState<string>("");
 
-  // データ取得
+  // データ取得（token なし）
   useEffect(() => {
-    if (!token) return;
-
-    setLoading(true);
-    fetchTemperatureData(token)
-      .then((res) => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const res = await fetchTemperatureData(); // token を渡さない
         setData(res);
+
         // 初期選択地域を最初の地域に設定
         const regions = Object.keys(res);
         if (regions.length > 0) setSelectedRegion(regions[0]);
-      })
-      .finally(() => setLoading(false));
-  }, [token]);
+      } catch (err) {
+        console.error("Failed to fetch temperature data", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   if (loading) return <Loading />;
   if (!data) return <p>No data available</p>;
