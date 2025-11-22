@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
@@ -8,7 +8,6 @@ import Alert from "react-bootstrap/Alert";
 import Spinner from "react-bootstrap/Spinner";
 import { useAuthContext } from "../../context/AuthContext";
 import { Loading } from "../../components/common";
-import apiClient from "../../api/apiClient";
 import { AxiosError } from "axios";
 
 const Login = () => {
@@ -18,21 +17,17 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-  const { login } = useAuthContext();
+  const { login, authLoading, currentUsername } = useAuthContext();
 
-  // 既にログイン済みならトップページへ
-  useEffect(() => {
-    const checkLogin = async () => {
-      try {
-        await apiClient.get("/dj-rest-auth/user/"); // ログイン済みなら 200
-        navigate("/");
-      } catch {
-        // 未ログインなら何もしない
-      }
-    };
-    checkLogin();
-  }, [navigate]);
+  // 認証情報チェック中は Loading を表示
+  if (authLoading) {
+    return <Loading message="認証情報を確認中..." />;
+  }
 
+  // すでにログイン済みならトップページへリダイレクト
+  if (currentUsername) {
+    return <Navigate to="/" replace />;
+  }
   const onChangeUsername = (e: ChangeEvent<HTMLInputElement>) =>
     setUsername(e.target.value);
   const onChangePassword = (e: ChangeEvent<HTMLInputElement>) =>
@@ -45,7 +40,7 @@ const Login = () => {
 
     try {
       await login({ username, password });
-      navigate("/"); // 成功したら遷移
+      navigate("/"); // ログイン成功でトップへ
     } catch (err: unknown) {
       console.error(err);
 
@@ -58,10 +53,6 @@ const Login = () => {
       setLoading(false);
     }
   };
-
-  if (loading) {
-    return <Loading message="ログイン処理中..." />;
-  }
 
   return (
     <Container className="mt-5" style={{ maxWidth: "500px" }}>
