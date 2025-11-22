@@ -1,8 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
-import apiClient from "../../api/apiClient";
-import { AxiosError } from "axios";
+import { useNavigate, Navigate } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
@@ -10,6 +8,7 @@ import Alert from "react-bootstrap/Alert";
 import Spinner from "react-bootstrap/Spinner";
 import { useAuthContext } from "../../context/AuthContext";
 import { Loading } from "../../components/common";
+import { AxiosError } from "axios";
 
 const Signup = () => {
   const [username, setUsername] = useState("");
@@ -20,19 +19,17 @@ const Signup = () => {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-  const { signup } = useAuthContext();
+  const { signup, authLoading, currentUsername } = useAuthContext();
 
-  useEffect(() => {
-    const checkLogin = async () => {
-      try {
-        await apiClient.get("/dj-rest-auth/user/"); // ログイン済みなら 200
-        navigate("/");
-      } catch {
-        // 未ログインなら何もしない
-      }
-    };
-    checkLogin();
-  }, [navigate]);
+  // 認証情報チェック中は Loading を表示
+  if (authLoading) {
+    return <Loading message="認証情報を確認中..." />;
+  }
+
+  // すでにログイン済みならトップページへリダイレクト
+  if (currentUsername) {
+    return <Navigate to="/" replace />;
+  }
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -57,6 +54,8 @@ const Signup = () => {
 
       if (err instanceof AxiosError) {
         setError(err.message);
+      } else if (err instanceof Error) {
+        setError(err.message);
       } else {
         setError("登録に失敗しました。入力内容を確認してください。");
       }
@@ -64,10 +63,6 @@ const Signup = () => {
       setLoading(false);
     }
   };
-
-  if (loading) {
-    return <Loading message="登録処理中..." />;
-  }
 
   return (
     <Container className="mt-5" style={{ maxWidth: "500px" }}>
