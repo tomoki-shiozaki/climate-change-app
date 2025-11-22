@@ -5,6 +5,7 @@ import AppRoutes from "../../AppRoutes";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { useErrorContext } from "../../context/ErrorContext";
+// import { ClimateChartTest } from "../chart/ClimateChartTest";
 
 const AppContent = () => {
   const { authLoading } = useAuthContext();
@@ -26,6 +27,8 @@ const AppContent = () => {
       <Container className="mt-4 flex-grow-1">
         <AppRoutes />
       </Container>
+      {/* 開発・テスト用：グローバルエラー挙動確認用のコンポーネント */}
+      {/* <ClimateChartTest /> */}
       <ErrorToast />
       <Footer />
     </>
