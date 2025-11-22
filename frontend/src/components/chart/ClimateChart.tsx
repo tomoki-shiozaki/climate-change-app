@@ -17,13 +17,14 @@ import { Loading } from "../common";
 const ClimateChart = () => {
   const [selectedRegion, setSelectedRegion] = useState<string>("");
 
-  // 🔥 TanStack Query を使ったデータ取得
+  // 🔥 TanStack Query v5
   const { data, isLoading, isError } = useQuery<TemperatureData>({
     queryKey: ["temperatureData"],
     queryFn: fetchTemperatureData,
+    retry: false, // 必要に応じて設定
   });
 
-  // データが取得できたら「初期地域」を自動セット
+  // データ取得後、初期地域をセット
   useEffect(() => {
     if (!data) return;
     if (!selectedRegion) {
@@ -32,10 +33,10 @@ const ClimateChart = () => {
     }
   }, [data, selectedRegion]);
 
-  // ローディング
+  // ローディング表示
   if (isLoading) return <Loading />;
 
-  // エラー
+  // エラー表示（グローバルErrorContextで通知済みなら個別表示不要でもOK）
   if (isError) return <p>Failed to load data</p>;
 
   if (!data) return <p>No data available</p>;
