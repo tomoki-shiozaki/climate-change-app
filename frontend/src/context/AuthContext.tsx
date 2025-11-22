@@ -33,6 +33,16 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [authLoading, setAuthLoading] = useState(true);
   const { setError } = useErrorContext();
 
+  // 共通のグローバルエラー処理
+  const handleGlobalError = (error: any) => {
+    if (
+      !error.response ||
+      (error.response.status >= 500 && error.response.status < 600)
+    ) {
+      setError(error.message);
+    }
+  };
+
   // ページロード時に username を確認して refresh token で自動ログイン
   useEffect(() => {
     const initAuth = async () => {
@@ -71,12 +81,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setError(null);
     } catch (e: any) {
       console.error("login error:", e);
-      if (
-        !e.response ||
-        (e.response.status >= 500 && e.response.status < 600)
-      ) {
-        setError(e.message);
-      }
+      handleGlobalError(e);
       throw e;
     }
   };
@@ -87,12 +92,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setError(null);
     } catch (e: any) {
       console.error("logout error:", e);
-      if (
-        !e.response ||
-        (e.response.status >= 500 && e.response.status < 600)
-      ) {
-        setError(e.message);
-      }
+      handleGlobalError(e);
       throw e;
     } finally {
       setCurrentUsername(null);
@@ -110,12 +110,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       await login({ username: user.username, password: user.password1 });
     } catch (e: any) {
       console.error("signup error:", e);
-      if (
-        !e.response ||
-        (e.response.status >= 500 && e.response.status < 600)
-      ) {
-        setError(e.message);
-      }
+      handleGlobalError(e);
       throw e;
     }
   };
