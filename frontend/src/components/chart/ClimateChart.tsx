@@ -9,37 +9,35 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { fetchTemperatureData } from "../../api/climate";
 import type { TemperatureData } from "../../types/models/climate";
 import { Loading } from "../common";
 
 const ClimateChart = () => {
-  const [data, setData] = useState<TemperatureData | null>(null);
-  const [loading, setLoading] = useState(true);
   const [selectedRegion, setSelectedRegion] = useState<string>("");
 
-  // データ取得（token なし）
+  // 🔥 TanStack Query を使ったデータ取得
+  const { data, isLoading, isError } = useQuery<TemperatureData>({
+    queryKey: ["temperatureData"],
+    queryFn: fetchTemperatureData,
+  });
+
+  // データが取得できたら「初期地域」を自動セット
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const res = await fetchTemperatureData(); // token を渡さない
-        setData(res);
+    if (!data) return;
+    if (!selectedRegion) {
+      const regions = Object.keys(data);
+      if (regions.length > 0) setSelectedRegion(regions[0]);
+    }
+  }, [data, selectedRegion]);
 
-        // 初期選択地域を最初の地域に設定
-        const regions = Object.keys(res);
-        if (regions.length > 0) setSelectedRegion(regions[0]);
-      } catch (err) {
-        console.error("Failed to fetch temperature data", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // ローディング
+  if (isLoading) return <Loading />;
 
-    fetchData();
-  }, []);
+  // エラー
+  if (isError) return <p>Failed to load data</p>;
 
-  if (loading) return <Loading />;
   if (!data) return <p>No data available</p>;
 
   const regions = Object.keys(data);
