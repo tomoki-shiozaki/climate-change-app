@@ -275,7 +275,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** @description 地域・年ごとの気温データを返します。upper, lower, global_average を含みます。 */
+        /**
+         * 気温データ取得
+         * @description 地域・年ごとの気温データを返します。upper, lower, global_average を含みます。
+         */
         get: operations["temperature_retrieve"];
         put?: never;
         post?: never;

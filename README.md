@@ -11,3 +11,14 @@ Django REST Framework（API）と React（UI）を使った、気候変動デー
 ## 機能
 
 - 気温データのグラフ表示
+- JWT による認証・ログイン/ログアウト
+
+## デプロイ URL
+
+- [https://climate-change-app.onrender.com](https://climate-change-app.onrender.com)
+
+## テスト用アカウント
+
+| ユーザー名 | メールアドレス    | パスワード    |
+| ---------- | ----------------- | ------------- |
+| user1      | user1@example.com | dev_user1_123 |
