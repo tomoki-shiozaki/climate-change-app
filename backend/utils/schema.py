@@ -1,22 +1,30 @@
-# utils/schema.py
+from typing import Any, Callable, TypeVar
+
+F = TypeVar("F", bound=Callable[..., Any])
+
 try:
     from drf_spectacular.utils import extend_schema
 except ModuleNotFoundError:
-    # ダミーの extend_schema を定義
-    def extend_schema(*args, **kwargs):
-        def decorator(func):
+    # 本番環境では drf-spectacular がなくても安全にする
+    def extend_schema(*args, **kwargs) -> Callable[[F], F]:
+        def decorator(func: F) -> F:
             return func
 
         return decorator
 
 
-def schema(summary: str, description: str = "", tags: list[str] | None = None):
+def schema(
+    summary: str,
+    description: str = "",
+    tags: list[str] | None = None,
+    responses: Any = None,
+):
     """
     extend_schema を簡略化するための共通ヘルパー
-    Spectacular が無い場合はただの no-op decorator になる
     """
     return extend_schema(
         summary=summary,
         description=description,
         tags=tags,
+        responses=responses,
     )

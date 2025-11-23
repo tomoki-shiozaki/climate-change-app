@@ -1,12 +1,13 @@
 from typing import Dict, List, Optional, TypedDict
 
 from django.conf import settings
-from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.climate_data.models import ClimateData, Indicator
+from utils.constants import APITag
+from utils.schema import schema
 
 # ===============================
 # 🔹 型定義（返却データ構造）
@@ -46,9 +47,11 @@ class TemperatureAPIView(APIView):
         "Global average temperature anomaly relative to 1861-1890": "global_average",
     }
 
-    @extend_schema(
-        responses=TemperatureDataByRegion,
+    @schema(
+        summary="気温データ取得",
         description="地域・年ごとの気温データを返します。upper, lower, global_average を含みます。",
+        tags=[APITag.TEMPERATURE.value],
+        responses=TemperatureDataByRegion,
     )
     def get(self, request):
         """
