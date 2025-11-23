@@ -120,9 +120,20 @@ const ClimateChart = () => {
           </span>{" "}
           です。
         </p>
-        <p className="mb-0">
+        <p className="mb-2">
           値が正の場合は基準期間より高く、負の場合は低いことを表します。
           上限値、平均値、下限値の3本の線で、年ごとの変動幅がわかります。
+        </p>
+        <p className="text-sm text-gray-500">
+          データ出典:{" "}
+          <a
+            href="https://ourworldindata.org/co2-and-greenhouse-gas-emissions"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:text-blue-600"
+          >
+            Our World in Data – CO₂ and Greenhouse Gas Emissions
+          </a>
         </p>
       </div>
     </div>
