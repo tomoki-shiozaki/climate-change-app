@@ -22,3 +22,7 @@ Django REST Framework（API）と React（UI）を使った、気候変動デー
 | ユーザー名 | メールアドレス    | パスワード    |
 | ---------- | ----------------- | ------------- |
 | user1      | user1@example.com | dev_user1_123 |
+
+## 気温変化グラフ
+
+![Climate Chart](docs/screenshots/climate-chart.png)
