@@ -14,6 +14,12 @@ import { fetchTemperatureData } from "../../api/climate";
 import type { TemperatureData } from "../../types/models/climate";
 import { Loading } from "../common";
 
+const regionLabels: Record<string, string> = {
+  "Northern Hemisphere": "北半球",
+  "Southern hemisphere": "南半球",
+  World: "世界",
+};
+
 const ClimateChart = () => {
   const [selectedRegion, setSelectedRegion] = useState<string>("");
 
@@ -21,28 +27,28 @@ const ClimateChart = () => {
   const { data, isLoading, isError } = useQuery<TemperatureData>({
     queryKey: ["temperatureData"],
     queryFn: fetchTemperatureData,
-    retry: false, // 必要に応じて設定
+    retry: false,
   });
 
-  // データ取得後、初期地域をセット
+  // データ取得後、初期地域を Northern Hemisphere にセット
   useEffect(() => {
     if (!data) return;
     if (!selectedRegion) {
-      const regions = Object.keys(data);
-      if (regions.length > 0) setSelectedRegion(regions[0]);
+      if (data["World"]) {
+        setSelectedRegion("World");
+      } else {
+        const regions = Object.keys(data);
+        if (regions.length > 0) setSelectedRegion(regions[0]);
+      }
     }
   }, [data, selectedRegion]);
 
-  // ローディング表示
   if (isLoading) return <Loading />;
-
-  // エラー表示（グローバルErrorContextで通知済みなら個別表示不要でもOK）
-  if (isError) return <p>Failed to load data</p>;
-
-  if (!data) return <p>No data available</p>;
+  if (isError) return <p>データの取得に失敗しました</p>;
+  if (!data) return <p>データがありません</p>;
 
   const regions = Object.keys(data);
-  if (regions.length === 0) return <p>No region data</p>;
+  if (regions.length === 0) return <p>地域データがありません</p>;
 
   const chartData = selectedRegion ? data[selectedRegion] ?? [] : [];
 
@@ -51,7 +57,7 @@ const ClimateChart = () => {
       {/* 地域選択 */}
       <div style={{ marginBottom: "1rem" }}>
         <label htmlFor="region-select" style={{ marginRight: "0.5rem" }}>
-          Select Region:
+          地域選択:
         </label>
         <select
           id="region-select"
@@ -60,7 +66,7 @@ const ClimateChart = () => {
         >
           {regions.map((region) => (
             <option key={region} value={region}>
-              {region}
+              {regionLabels[region] || region}
             </option>
           ))}
         </select>
