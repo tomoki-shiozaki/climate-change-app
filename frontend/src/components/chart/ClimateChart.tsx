@@ -81,7 +81,11 @@ const ClimateChart = () => {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="year" />
           <YAxis
-            label={{ value: "気温 (°C)", angle: -90, position: "insideLeft" }}
+            label={{
+              value: "基準平均からの変化 (°C)",
+              angle: -90,
+              position: "insideLeft",
+            }}
           />
           <Tooltip />
           <Legend />
