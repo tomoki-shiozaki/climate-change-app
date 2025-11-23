@@ -86,22 +86,22 @@ const ClimateChart = () => {
           <Tooltip />
           <Legend />
           <Line
-            type="monotone"
             dataKey="upper"
-            stroke="#ff0000"
+            stroke="#ff4d4f"
             name="上限値"
+            type="monotone"
           />
           <Line
-            type="monotone"
             dataKey="global_average"
-            stroke="#0000ff"
+            stroke="#faad14"
             name="平均値"
+            type="monotone"
           />
           <Line
-            type="monotone"
             dataKey="lower"
-            stroke="#00aa00"
+            stroke="#1890ff"
             name="下限値"
+            type="monotone"
           />
         </LineChart>
       </ResponsiveContainer>
