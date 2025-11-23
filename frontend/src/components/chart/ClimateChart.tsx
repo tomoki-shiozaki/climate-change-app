@@ -55,14 +55,15 @@ const ClimateChart = () => {
   return (
     <div>
       {/* 地域選択 */}
-      <div style={{ marginBottom: "1rem" }}>
-        <label htmlFor="region-select" style={{ marginRight: "0.5rem" }}>
+      <div className="mb-4 flex items-center">
+        <label htmlFor="region-select" className="mr-2 font-medium">
           地域選択:
         </label>
         <select
           id="region-select"
           value={selectedRegion}
           onChange={(e) => setSelectedRegion(e.target.value)}
+          className="border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
         >
           {regions.map((region) => (
             <option key={region} value={region}>
@@ -109,6 +110,21 @@ const ClimateChart = () => {
           />
         </LineChart>
       </ResponsiveContainer>
+
+      {/* 説明文 */}
+      <div className="mt-4 p-4 bg-gray-50 border-l-4 border-blue-400 text-gray-700 rounded">
+        <p className="mb-2">
+          このグラフは各地域の気温変化を示しています。Y軸の値は
+          <span className="font-medium">
+            1861–1890年の平均気温を基準とした変化量 (°C)
+          </span>{" "}
+          です。
+        </p>
+        <p className="mb-0">
+          値が正の場合は基準期間より高く、負の場合は低いことを表します。
+          上限値、平均値、下限値の3本の線で、年ごとの変動幅がわかります。
+        </p>
+      </div>
     </div>
   );
 };
