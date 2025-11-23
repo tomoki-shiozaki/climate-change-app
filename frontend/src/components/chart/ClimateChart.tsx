@@ -14,6 +14,12 @@ import { fetchTemperatureData } from "../../api/climate";
 import type { TemperatureData } from "../../types/models/climate";
 import { Loading } from "../common";
 
+const regionLabels: Record<string, string> = {
+  "Northern Hemisphere": "北半球",
+  "Southern hemisphere": "南半球",
+  World: "世界",
+};
+
 const ClimateChart = () => {
   const [selectedRegion, setSelectedRegion] = useState<string>("");
 
@@ -21,46 +27,47 @@ const ClimateChart = () => {
   const { data, isLoading, isError } = useQuery<TemperatureData>({
     queryKey: ["temperatureData"],
     queryFn: fetchTemperatureData,
-    retry: false, // 必要に応じて設定
+    retry: false,
   });
 
-  // データ取得後、初期地域をセット
+  // データ取得後、初期地域を Northern Hemisphere にセット
   useEffect(() => {
     if (!data) return;
     if (!selectedRegion) {
-      const regions = Object.keys(data);
-      if (regions.length > 0) setSelectedRegion(regions[0]);
+      if (data["World"]) {
+        setSelectedRegion("World");
+      } else {
+        const regions = Object.keys(data);
+        if (regions.length > 0) setSelectedRegion(regions[0]);
+      }
     }
   }, [data, selectedRegion]);
 
-  // ローディング表示
   if (isLoading) return <Loading />;
-
-  // エラー表示（グローバルErrorContextで通知済みなら個別表示不要でもOK）
-  if (isError) return <p>Failed to load data</p>;
-
-  if (!data) return <p>No data available</p>;
+  if (isError) return <p>データの取得に失敗しました</p>;
+  if (!data) return <p>データがありません</p>;
 
   const regions = Object.keys(data);
-  if (regions.length === 0) return <p>No region data</p>;
+  if (regions.length === 0) return <p>地域データがありません</p>;
 
   const chartData = selectedRegion ? data[selectedRegion] ?? [] : [];
 
   return (
     <div>
       {/* 地域選択 */}
-      <div style={{ marginBottom: "1rem" }}>
-        <label htmlFor="region-select" style={{ marginRight: "0.5rem" }}>
-          Select Region:
+      <div className="mb-4 flex items-center">
+        <label htmlFor="region-select" className="mr-2 font-medium">
+          地域選択:
         </label>
         <select
           id="region-select"
           value={selectedRegion}
           onChange={(e) => setSelectedRegion(e.target.value)}
+          className="border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
         >
           {regions.map((region) => (
             <option key={region} value={region}>
-              {region}
+              {regionLabels[region] || region}
             </option>
           ))}
         </select>
@@ -75,20 +82,60 @@ const ClimateChart = () => {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="year" />
           <YAxis
-            label={{ value: "気温 (°C)", angle: -90, position: "insideLeft" }}
+            label={{
+              value: "基準平均からの変化 (°C)",
+              angle: -90,
+              position: "insideLeft",
+            }}
           />
           <Tooltip />
           <Legend />
-          <Line type="monotone" dataKey="upper" stroke="#ff0000" name="Upper" />
           <Line
+            dataKey="upper"
+            stroke="#ff4d4f"
+            name="上限値"
             type="monotone"
-            dataKey="global_average"
-            stroke="#0000ff"
-            name="Global Avg"
           />
-          <Line type="monotone" dataKey="lower" stroke="#00aa00" name="Lower" />
+          <Line
+            dataKey="global_average"
+            stroke="#faad14"
+            name="平均値"
+            type="monotone"
+          />
+          <Line
+            dataKey="lower"
+            stroke="#1890ff"
+            name="下限値"
+            type="monotone"
+          />
         </LineChart>
       </ResponsiveContainer>
+
+      {/* 説明文 */}
+      <div className="mt-4 p-4 bg-gray-50 border-l-4 border-blue-400 text-gray-700 rounded">
+        <p className="mb-2">
+          このグラフは各地域の気温変化を示しています。Y軸の値は
+          <span className="font-medium">
+            1861–1890年の平均気温を基準とした変化量 (°C)
+          </span>{" "}
+          です。
+        </p>
+        <p className="mb-2">
+          値が正の場合は基準期間より高く、負の場合は低いことを表します。
+          上限値、平均値、下限値の3本の線で、年ごとの変動幅がわかります。
+        </p>
+        <p className="text-sm text-gray-500">
+          データ出典:{" "}
+          <a
+            href="https://ourworldindata.org/co2-and-greenhouse-gas-emissions"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:text-blue-600"
+          >
+            Our World in Data – CO₂ and Greenhouse Gas Emissions
+          </a>
+        </p>
+      </div>
     </div>
   );
 };
