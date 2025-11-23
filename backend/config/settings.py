@@ -108,6 +108,13 @@ REST_AUTH = {
     "JWT_AUTH_COOKIE": "my-app-auth",
     "JWT_AUTH_REFRESH_COOKIE": "my-refresh-token",
 }
+if not DEBUG:  # 本番向け設定
+    REST_AUTH.update(
+        {
+            "JWT_AUTH_SAMESITE": "None",  # クロスオリジン対応
+            "JWT_AUTH_SECURE": True,  # HTTPS 必須
+        }
+    )
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=1),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),

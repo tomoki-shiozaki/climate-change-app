@@ -625,8 +625,9 @@
             "get": {
                 "operationId": "temperature_retrieve",
                 "description": "地域・年ごとの気温データを返します。upper, lower, global_average を含みます。",
+                "summary": "気温データ取得",
                 "tags": [
-                    "temperature"
+                    "Temperature"
                 ],
                 "security": [
                     {
