@@ -2,7 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { Login, Signup } from "./pages/auth";
 import { Home } from "./pages/Home";
 import { Dashboard } from "./pages/Dashboard";
-import { DataExplorer } from "./pages/Data";
+import { DataPage } from "./pages/Data";
 import { About } from "./pages/About";
 import { PrivateRoute } from "./components/auth";
 
@@ -15,10 +15,7 @@ function AppRoutes() {
         path="/dashboard"
         element={<PrivateRoute element={<Dashboard />} />}
       />
-      <Route
-        path="/data"
-        element={<PrivateRoute element={<DataExplorer />} />}
-      />
+      <Route path="/data" element={<PrivateRoute element={<DataPage />} />} />
       <Route path="/about" element={<PrivateRoute element={<About />} />} />
 
       {/* 認証ページ */}
