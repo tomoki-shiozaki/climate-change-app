@@ -37,8 +37,9 @@ const DataPage = () => {
       <section className="mb-8">
         <h2 className="text-xl font-semibold mb-2">更新について</h2>
         <p className="text-gray-600 leading-relaxed">
-          現在は取得済みデータ（ローカル保存）を使用していますが、 将来的に OWID
-          の更新に合わせて自動更新できる仕組みを検討しています。
+          本アプリの気温データは、Our World in Data の API から定期的に取得し、
+          自動的にデータベースを更新しています。
+          これにより、常に最新のデータに基づいてグラフや比較を表示できます。
         </p>
       </section>
 
