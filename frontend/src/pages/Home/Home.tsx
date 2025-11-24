@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const Home: React.FC = () => {
   return (
@@ -12,12 +13,15 @@ const Home: React.FC = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
         {/* 気温データ */}
-        <div className="p-6 rounded-2xl shadow-md bg-white">
+        <Link
+          to="/dashboard"
+          className="p-6 rounded-2xl shadow-md bg-white hover:shadow-lg transition cursor-pointer block"
+        >
           <h2 className="text-xl font-semibold mb-2">気温データ</h2>
           <p className="text-gray-500 text-sm">
             年度ごとの気温変化をグラフで確認できます。
           </p>
-        </div>
+        </Link>
 
         {/* CO₂排出量 */}
         <div className="p-6 rounded-2xl shadow-md bg-white opacity-70">
