@@ -16,8 +16,8 @@ const DataPage = () => {
           >
             Our World in Data (OWID)
           </a>{" "}
-          が公開しているデータセットを基にしています。 元データは Berkeley Earth
-          によって提供されています。
+          が公開しているデータセット（HadCRUT5、Met Office Hadley Centre
+          提供）を基にしています。
         </p>
         <p className="text-gray-500 text-sm mt-2">
           ※ OWID のデータは CC BY 4.0 ライセンスのもと提供されています。
