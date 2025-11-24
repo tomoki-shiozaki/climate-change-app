@@ -9,14 +9,14 @@ const DataPage = () => {
         <p className="text-gray-600 leading-relaxed">
           本アプリの気温データは、{" "}
           <a
-            href="https://ourworldindata.org/"
+            href="https://ourworldindata.org/co2-and-greenhouse-gas-emissions"
             target="_blank"
             rel="noopener noreferrer"
             className="text-blue-600 underline"
           >
-            Our World in Data (OWID)
+            Our World in Data – CO₂ and Greenhouse Gas Emissions
           </a>{" "}
-          が公開しているデータセット（HadCRUT5、Met Office Hadley Centre
+          ページから取得したデータセット（HadCRUT5、Met Office Hadley Centre
           提供）を基にしています。
         </p>
         <p className="text-gray-500 text-sm mt-2">
