@@ -1,13 +1,14 @@
+// src/components/WorldMap.tsx
 import React from "react";
 import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
-import countries from "../data/countries.geojson";
+import countries from "../data/countries.json"; // GeoJSONをJSONとして取り込む
 import co2Data from "../data/co2.json";
 
 interface CO2Data {
   [countryCode: string]: number;
 }
 
-// CO2排出量に応じて色を返す関数
+// CO2排出量に応じた色を返す関数
 const getColor = (value: number) => {
   return value > 10000
     ? "#800026"
@@ -36,14 +37,17 @@ const style = (feature: any) => {
 
 const WorldMap: React.FC = () => {
   return (
-    <MapContainer
-      center={[20, 0]}
-      zoom={2}
-      style={{ height: "100%", width: "100%" }}
-    >
-      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-      <GeoJSON data={countries as any} style={style} />
-    </MapContainer>
+    <div style={{ height: "100vh", width: "100%" }}>
+      <MapContainer
+        center={[20, 0]}
+        zoom={2}
+        style={{ height: "100%", width: "100%" }}
+        key="world-map" // HMRなどで再レンダリングされても一枚だけ表示
+      >
+        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+        <GeoJSON data={countries} style={style} />
+      </MapContainer>
+    </div>
   );
 };
 
