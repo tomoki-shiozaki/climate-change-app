@@ -1,4 +1,4 @@
-import { Navbar, Nav, Button } from "react-bootstrap";
+import { Navbar, Nav, NavDropdown, Button } from "react-bootstrap";
 import { Link, useLocation } from "react-router-dom";
 import { useAuthContext } from "../../context/AuthContext";
 
@@ -19,7 +19,6 @@ const AppNavbar = () => {
             className="me-auto align-items-center"
             variant="pills"
             activeKey={location.pathname}
-            style={{ display: "flex", gap: "10px" }}
           >
             <Nav.Item>
               <Nav.Link as={Link} to="/" eventKey="/">
@@ -33,17 +32,15 @@ const AppNavbar = () => {
               </Nav.Link>
             </Nav.Item>
 
-            <Nav.Item>
-              <Nav.Link as={Link} to="/data" eventKey="/data">
+            {/* Data と About を折りたたむ */}
+            <NavDropdown title="データ・概要" id="nav-dropdown">
+              <NavDropdown.Item as={Link} to="/data" eventKey="/data">
                 データ
-              </Nav.Link>
-            </Nav.Item>
-
-            <Nav.Item>
-              <Nav.Link as={Link} to="/about" eventKey="/about">
+              </NavDropdown.Item>
+              <NavDropdown.Item as={Link} to="/about" eventKey="/about">
                 概要
-              </Nav.Link>
-            </Nav.Item>
+              </NavDropdown.Item>
+            </NavDropdown>
           </Nav>
 
           {/* 右側：ログイン関連 */}
