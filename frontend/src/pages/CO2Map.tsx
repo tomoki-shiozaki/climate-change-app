@@ -1,0 +1,13 @@
+import React from "react";
+import WorldMap from "@/components/WorldMap";
+
+export const CO2Map: React.FC = () => {
+  return (
+    <div style={{ height: "100vh", width: "100%" }}>
+      <h1 style={{ textAlign: "center", margin: "1rem 0" }}>
+        世界のCO₂排出量マップ
+      </h1>
+      <WorldMap />
+    </div>
+  );
+};
