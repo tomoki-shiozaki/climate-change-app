@@ -3,7 +3,7 @@ import "leaflet/dist/leaflet.css"; // まずCSSを読み込む
 import React from "react";
 import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
 import type { GeoJsonObject } from "geojson";
-import countries from "../data/countries.json"; // GeoJSONをJSONとして取り込む
+import countries from "../data/ne_50m_admin_0_countries.json"; // GeoJSONをJSONとして取り込む
 import co2Data from "../data/co2.json";
 
 interface CO2Data {
