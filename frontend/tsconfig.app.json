@@ -39,9 +39,8 @@
       "@/*": ["./src/*"]
     },
 
-    /* ここに追加 */
-    "resolveJsonModule": true,
-    "esModuleInterop": true
+    "resolveJsonModule": true, // JSON ファイルを import できるようにする設定
+    "esModuleInterop": true // CommonJS モジュールを default import 形式で扱えるようにする設定
   },
   "include": ["src"]
 }

@@ -26,6 +26,7 @@ const getColor = (value: number) => {
 };
 
 // GeoJSON各国のスタイル
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const style = (feature: any) => {
   const countryCode = feature.properties.ISO_A3 as string;
   const co2 = (co2Data as CO2Data)[countryCode] || 0;
