@@ -1,8 +1,9 @@
 // src/components/WorldMap.tsx
 import React from "react";
 import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
-import countries from "../data/countries.json"; // GeoJSONをJSONとして取り込む
+import countries from "../data/countries.geojson"; // GeoJSONをJSONとして取り込む
 import co2Data from "../data/co2.json";
+import type { GeoJsonObject } from "geojson";
 
 interface CO2Data {
   [countryCode: string]: number;
@@ -45,7 +46,7 @@ const WorldMap: React.FC = () => {
         key="world-map" // HMRなどで再レンダリングされても一枚だけ表示
       >
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-        <GeoJSON data={countries} style={style} />
+        <GeoJSON data={countries as GeoJsonObject} style={style} />
       </MapContainer>
     </div>
   );
