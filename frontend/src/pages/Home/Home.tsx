@@ -24,12 +24,15 @@ const Home: React.FC = () => {
         </Link>
 
         {/* CO₂排出量 */}
-        <div className="p-6 rounded-2xl shadow-md bg-white opacity-70">
+        <Link
+          to="/co2-map"
+          className="p-6 rounded-2xl shadow-md bg-white hover:shadow-lg transition cursor-pointer block"
+        >
           <h2 className="text-xl font-semibold mb-2">CO₂排出量（予定）</h2>
           <p className="text-gray-500 text-sm">
             国・地域ごとの排出量推移を可視化（今後追加予定）
           </p>
-        </div>
+        </Link>
 
         {/* 再エネ利用 */}
         <div className="p-6 rounded-2xl shadow-md bg-white opacity-70">
