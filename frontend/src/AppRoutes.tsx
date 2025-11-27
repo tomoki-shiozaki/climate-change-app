@@ -5,6 +5,7 @@ import { Dashboard } from "./pages/Dashboard";
 import { CO2Map } from "./pages/CO2Map";
 import { DataPage } from "./pages/Data";
 import { About } from "./pages/About";
+import { Example } from "./pages/Example";
 import { PrivateRoute } from "./components/auth";
 
 function AppRoutes() {
@@ -18,6 +19,7 @@ function AppRoutes() {
       />
       {/* CO2地図専用ページ */}
       <Route path="/co2-map" element={<PrivateRoute element={<CO2Map />} />} />
+      <Route path="/example" element={<PrivateRoute element={<Example />} />} />
       <Route path="/data" element={<PrivateRoute element={<DataPage />} />} />
       <Route path="/about" element={<PrivateRoute element={<About />} />} />
 

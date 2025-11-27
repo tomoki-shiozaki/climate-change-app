@@ -4,6 +4,7 @@ import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
 import countries from "../data/countries.geojson"; // GeoJSONをJSONとして取り込む
 import co2Data from "../data/co2.json";
 import type { GeoJsonObject } from "geojson";
+import "leaflet/dist/leaflet.css";
 
 interface CO2Data {
   [countryCode: string]: number;
