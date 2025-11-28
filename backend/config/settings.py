@@ -231,6 +231,8 @@ CLIMATE_GROUPS = {
         "name": "Temperature",
         "description": "Temperature anomaly data from Our World in Data",
     },
-    # 将来的に追加できる：
-    # "CO2": {"name": "CO₂ Emissions", "description": "..."},
+    "CO2": {
+        "name": "CO₂ Emissions",
+        "description": "Annual total emissions of carbon dioxide (CO₂), excluding land-use change, measured in tonnes.",
+    },
 }
