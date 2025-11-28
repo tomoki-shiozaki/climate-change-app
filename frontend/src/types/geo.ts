@@ -1,14 +1,22 @@
-// GeoJSON の各国 Feature の必要最低限のプロパティ
+// ---- GeoJSON 基本型 ----
+
+// 経度・緯度（高度は省略）
+export type Position = [number, number];
+
+// Polygon: 輪（外輪 + 内輪）= Position の配列の配列
+export type PolygonCoordinates = Position[][];
+
+// MultiPolygon: Polygon の配列
+export type MultiPolygonCoordinates = Position[][][];
+
+// ---- 国プロパティ ----
 export interface CountryProperties {
-  ISO_A3: string; // 国コード
-  NAME: string; // 国名
+  ISO_A3: string;
+  NAME: string;
+  [key: string]: unknown;
 }
 
-// Polygon と MultiPolygon の座標型
-export type PolygonCoordinates = number[][][]; // 3次元配列
-export type MultiPolygonCoordinates = number[][][][]; // 4次元配列
-
-// Feature（Polygon / MultiPolygon に対応）
+// ---- Feature ----
 export interface CountryFeature {
   type: "Feature";
   properties: CountryProperties;
@@ -23,13 +31,13 @@ export interface CountryFeature {
       };
 }
 
-// FeatureCollection 全体
+// ---- FeatureCollection ----
 export interface CountryFeatureCollection {
   type: "FeatureCollection";
   features: CountryFeature[];
 }
 
-// CO2 データの型
+// ---- CO2 データ ----
 export interface CO2Data {
-  [countryCode: string]: number;
+  [isoA3: string]: number;
 }

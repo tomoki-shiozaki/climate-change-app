@@ -1,16 +1,11 @@
-// src/components/WorldMap.tsx
-import "leaflet/dist/leaflet.css"; // まずCSSを読み込む
+import "leaflet/dist/leaflet.css";
 import React from "react";
 import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
-import type { GeoJsonObject } from "geojson";
-import countries from "../data/ne_50m_admin_0_countries.json"; // GeoJSONをJSONとして取り込む
+import type { CountryFeatureCollection, CO2Data } from "../types/geo";
+import countries from "../data/ne_50m_admin_0_countries.json";
 import co2Data from "../data/co2.json";
 
-interface CO2Data {
-  [countryCode: string]: number;
-}
-
-// CO2排出量に応じた色を返す関数
+// CO2に応じた色
 const getColor = (value: number) => {
   return value > 10000
     ? "#800026"
@@ -25,7 +20,7 @@ const getColor = (value: number) => {
     : "#FEB24C";
 };
 
-// GeoJSON各国のスタイル
+// 各国のスタイル
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const style = (feature: any) => {
   const countryCode = feature.properties.ISO_A3 as string;
@@ -39,19 +34,20 @@ const style = (feature: any) => {
 };
 
 const WorldMap: React.FC = () => {
+  const geoData = countries as unknown as CountryFeatureCollection;
+
   return (
     <div style={{ height: "100vh", width: "100%" }}>
       <MapContainer
         center={[20, 0]}
         zoom={2}
         style={{ height: "100%", width: "100%" }}
-        key="world-map"
       >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
-        <GeoJSON data={countries as GeoJsonObject} style={style} />
+        <GeoJSON data={geoData} style={style} />
       </MapContainer>
     </div>
   );
