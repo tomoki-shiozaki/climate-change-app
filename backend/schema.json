@@ -6,6 +6,31 @@
         "description": "A climate change app for learning about climate change with data visualization."
     },
     "paths": {
+        "/api/v1/co2-data/": {
+            "get": {
+                "operationId": "co2_data_retrieve",
+                "description": "フロント用 API\n/api/co2-data/",
+                "tags": [
+                    "co2-data"
+                ],
+                "security": [
+                    {
+                        "jwtAuth": []
+                    },
+                    {
+                        "jwtHeaderAuth": []
+                    },
+                    {
+                        "jwtCookieAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "No response body"
+                    }
+                }
+            }
+        },
         "/api/v1/dj-rest-auth/login/": {
             "post": {
                 "operationId": "dj_rest_auth_login_create",

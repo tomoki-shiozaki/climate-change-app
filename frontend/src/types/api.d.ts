@@ -4,6 +4,26 @@
  */
 
 export interface paths {
+    "/api/v1/co2-data/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description フロント用 API
+         *     /api/co2-data/
+         */
+        get: operations["co2_data_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/dj-rest-auth/login/": {
         parameters: {
             query?: never;
@@ -391,6 +411,24 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    co2_data_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     dj_rest_auth_login_create: {
         parameters: {
             query?: never;
