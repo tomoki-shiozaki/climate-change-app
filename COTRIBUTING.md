@@ -81,3 +81,13 @@ OWID 独自コードには厳密な仕様はありませんが、以下が推奨
 
 このルールにより、GeoJSON の国境データと OWID の統計データを  
 安全かつ一貫した方法で結合できます。
+
+### 🔷 5. データ取得・変換手順
+
+- 使用データ：Natural Earth – Admin 0 – Countries, 258 countries, 781.78 KB, version 5.1.1
+- ダウンロード先：[Natural Earth – Admin 0 – Countries](https://www.naturalearthdata.com/downloads/50m-cultural-vectors/)
+- SHP 形式から GeoJSON 形式に変換：[mygeodata.cloud](https://mygeodata.cloud/converter/shp-to-geojson) を使用
+- アプリでは、生成した GeoJSON を `src/data` に配置し、import で JSON として扱う
+- 注意点：
+  - グリーンランドはデンマークと分離
+  - 境界は de facto を基準
