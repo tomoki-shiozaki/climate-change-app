@@ -1,9 +1,15 @@
 import "leaflet/dist/leaflet.css";
 import React, { useState } from "react";
 import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
-import type { CountryFeatureCollection, CO2DataByYear } from "../types/geo";
+import type { Feature, Geometry } from "geojson";
+import type {
+  CountryFeatureCollection,
+  CO2DataByYear,
+  CountryProperties,
+} from "../types/geo";
 import countries from "../data/ne_50m_admin_0_countries.json";
 import co2DataJson from "../data/co2.json";
+import type { PathOptions } from "leaflet";
 
 const getColor = (value: number) =>
   value > 10000
@@ -24,10 +30,15 @@ const WorldMap: React.FC = () => {
 
   const [year, setYear] = useState(2020);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const style = (feature: any) => {
-    const code = feature.properties.ISO_A3 as string;
+  // ここを正しく型定義
+  const style = (
+    feature: Feature<Geometry, CountryProperties> | undefined
+  ): PathOptions => {
+    if (!feature) return {};
+
+    const code = feature.properties?.ISO_A3;
     const value = co2Data[year]?.[code] ?? 0;
+
     return {
       fillColor: getColor(value),
       weight: 1,
@@ -72,6 +83,7 @@ const WorldMap: React.FC = () => {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
+        {/* ✨ 完全に型安全 */}
         <GeoJSON data={geoData} style={style} />
       </MapContainer>
     </div>
