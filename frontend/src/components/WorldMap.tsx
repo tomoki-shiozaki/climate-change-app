@@ -1,13 +1,12 @@
 import "leaflet/dist/leaflet.css";
-import React from "react";
+import React, { useState } from "react";
 import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
-import type { CountryFeatureCollection, CO2Data } from "../types/geo";
+import type { CountryFeatureCollection, CO2DataByYear } from "../types/geo";
 import countries from "../data/ne_50m_admin_0_countries.json";
-import co2Data from "../data/co2.json";
+import co2DataJson from "../data/co2.json";
 
-// CO2に応じた色
-const getColor = (value: number) => {
-  return value > 10000
+const getColor = (value: number) =>
+  value > 10000
     ? "#800026"
     : value > 5000
     ? "#BD0026"
@@ -18,26 +17,36 @@ const getColor = (value: number) => {
     : value > 100
     ? "#FD8D3C"
     : "#FEB24C";
-};
-
-// 各国のスタイル
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const style = (feature: any) => {
-  const countryCode = feature.properties.ISO_A3 as string;
-  const co2 = (co2Data as CO2Data)[countryCode] || 0;
-  return {
-    fillColor: getColor(co2),
-    weight: 1,
-    color: "white",
-    fillOpacity: 0.7,
-  };
-};
 
 const WorldMap: React.FC = () => {
   const geoData = countries as unknown as CountryFeatureCollection;
+  const co2Data = co2DataJson as CO2DataByYear;
+
+  const [year, setYear] = useState(2020);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const style = (feature: any) => {
+    const code = feature.properties.ISO_A3 as string;
+    const value = co2Data[year]?.[code] ?? 0;
+    return {
+      fillColor: getColor(value),
+      weight: 1,
+      color: "white",
+      fillOpacity: 0.7,
+    };
+  };
 
   return (
     <div style={{ height: "100vh", width: "100%" }}>
+      <div style={{ position: "absolute", zIndex: 1000, padding: 10 }}>
+        <input
+          type="range"
+          min={2020}
+          max={2022}
+          value={year}
+          onChange={(e) => setYear(Number(e.target.value))}
+        />
+        <span style={{ marginLeft: 10 }}>{year}</span>
+      </div>
       <MapContainer
         center={[20, 0]}
         zoom={2}
