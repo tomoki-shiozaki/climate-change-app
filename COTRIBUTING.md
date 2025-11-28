@@ -11,3 +11,73 @@
 echo "UID=$(id -u)" > .env
 echo "GID=$(id -g)" >> .env
 ```
+
+## 📦 データ仕様：ISO A3（ISO 3166-1 alpha-3）と OWID 独自コード
+
+本プロジェクトでは、国別データ（CO₂ 排出量など）を扱うために、  
+以下のデータソースを利用しています：
+
+- Natural Earth の国境 GeoJSON（`ISO_A3`）
+- Our World in Data（OWID）の CO₂ データ（`Code` / `iso_code`）
+
+これらを正しくマージするために、国コードの扱いを以下のように統一しています。
+
+---
+
+### 🔷 1. ISO A3 とは？
+
+ISO が定める **3 文字の国コード**です。  
+例：`JPN`, `USA`, `FRA`, `AFG`
+
+Natural Earth の GeoJSON に含まれる `ISO_A3` プロパティは  
+**ISO 3166-1 alpha-3（ISO A3）** に準拠しています。
+
+---
+
+### 🔷 2. OWID の `Code` の取り扱い
+
+OWID の CO₂ データにおける `Code`（または `iso_code`）列は、
+
+- **基本的に ISO A3 と一致する**
+- ただし、国ではない地域には **ISO が存在しないため OWID 独自コード** が使われる
+
+例：
+
+- `OWID_WRL`（World）
+- `OWID_EUR`（Europe）
+- `OWID_ASI`（Asia）
+- `OWID_NAM`（North America）
+- など
+
+これらは GeoJSON に存在しないため、  
+**国境データとのマージ対象には含めないでください。**
+
+> 注: OWID の Code の定義・ルールの詳細は公式 ETL ドキュメントで確認できます：
+> [OWID Regions Documentation](https://docs.owid.io/projects/etl/data/regions/)
+
+---
+
+### 🔷 3. OWID 独自コードのルール（OWID ガイドラインより）
+
+OWID 独自コードには厳密な仕様はありませんが、以下が推奨されています：
+
+1. `OWID_` の後につくコードは、既存の ISO A3 と重複させない
+
+   - （例外：`OWID_NAM` は Namibia の `NAM` と衝突している）
+
+2. 国の下位地域を表す場合は、  
+   `OWID_<国コード>_<地域コード>` の形式を用いることがある
+   - 例：`OWID_ESP_MAD`（Spain / Madrid）
+
+---
+
+### 🔷 4. 実装上の注意
+
+- 国ごとの可視化では **ISO A3 のみを対象とする**
+- `OWID_XXX` の行は **非国データとして除外** する
+- データマージ時は `country.properties.ISO_A3 === co2Data[code]` を基本とする
+
+---
+
+このルールにより、GeoJSON の国境データと OWID の統計データを  
+安全かつ一貫した方法で結合できます。
