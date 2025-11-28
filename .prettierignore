@@ -1,5 +1,5 @@
 # 自動生成 API ファイルを除外
 frontend/src/types/api.d.ts
 
-src/data/*.json
-public/data/*.json
+frontend/src/data/*.json
+frontend/public/data/*.json
