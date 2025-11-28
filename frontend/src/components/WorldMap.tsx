@@ -23,6 +23,7 @@ const WorldMap: React.FC = () => {
   const co2Data = co2DataJson as CO2DataByYear;
 
   const [year, setYear] = useState(2020);
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const style = (feature: any) => {
     const code = feature.properties.ISO_A3 as string;
@@ -36,17 +37,32 @@ const WorldMap: React.FC = () => {
   };
 
   return (
-    <div style={{ height: "100vh", width: "100%" }}>
-      <div style={{ position: "absolute", zIndex: 1000, padding: 10 }}>
+    <div style={{ height: "100vh", width: "100%", position: "relative" }}>
+      {/* スライダーを下部中央に配置 */}
+      <div
+        style={{
+          position: "absolute",
+          bottom: 20,
+          left: "50%",
+          transform: "translateX(-50%)",
+          zIndex: 1000,
+          background: "rgba(255, 255, 255, 0.9)",
+          padding: "10px 15px",
+          borderRadius: 8,
+          boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
+        }}
+      >
         <input
           type="range"
           min={2020}
           max={2022}
           value={year}
           onChange={(e) => setYear(Number(e.target.value))}
+          style={{ width: 200 }}
         />
-        <span style={{ marginLeft: 10 }}>{year}</span>
+        <span style={{ marginLeft: 10, fontWeight: "bold" }}>{year}</span>
       </div>
+
       <MapContainer
         center={[20, 0]}
         zoom={2}
