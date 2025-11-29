@@ -118,7 +118,12 @@ const WorldMap: React.FC = () => {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
-        <GeoJSON data={geoData} style={style} onEachFeature={onEachFeature} />
+        <GeoJSON
+          key={year} // ← ここで再レンダリング
+          data={geoData}
+          style={style}
+          onEachFeature={onEachFeature}
+        />
       </MapContainer>
     </div>
   );
