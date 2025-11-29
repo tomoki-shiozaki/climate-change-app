@@ -1,8 +1,8 @@
 import "leaflet/dist/leaflet.css";
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
 import type { Feature, Geometry } from "geojson";
-import type { PathOptions } from "leaflet";
+import type { PathOptions, Layer } from "leaflet";
 import { useQuery } from "@tanstack/react-query";
 import apiClient from "@/api/apiClient";
 import type {
@@ -14,6 +14,7 @@ import type {
 // 静的国境データ（GeoJSON）
 import countries from "../data/ne_50m_admin_0_countries.json";
 
+// CO2値に応じた色を返す関数
 const getColor = (value: number) =>
   value > 10000
     ? "#800026"
@@ -27,6 +28,7 @@ const getColor = (value: number) =>
     ? "#FD8D3C"
     : "#FEB24C";
 
+// CO2データ取得関数
 const fetchCO2Data = async (): Promise<CO2DataByYear> => {
   const response = await apiClient.get("/co2-data/"); // DRF エンドポイント
   return response.data.data; // Serializer の data フィールド
@@ -34,10 +36,9 @@ const fetchCO2Data = async (): Promise<CO2DataByYear> => {
 
 const WorldMap: React.FC = () => {
   const geoData = countries as unknown as CountryFeatureCollection;
-
   const [year, setYear] = useState(2020);
 
-  // TanStack Query で CO2 データ取得
+  // CO2データ取得
   const {
     data: co2Data = {},
     isLoading,
@@ -48,6 +49,11 @@ const WorldMap: React.FC = () => {
     staleTime: 1000 * 60 * 5, // 5分キャッシュ
   });
 
+  // GeoJSONレイヤーのref
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const geoJsonRef = useRef<L.GeoJSON<any>>(null);
+
+  // ポリゴンのスタイル
   const style = (
     feature: Feature<Geometry, CountryProperties> | undefined
   ): PathOptions => {
@@ -61,6 +67,47 @@ const WorldMap: React.FC = () => {
       fillOpacity: 0.7,
     };
   };
+
+  // 初回ツールチップ設定
+  const onEachFeature = (
+    feature: Feature<Geometry, CountryProperties>,
+    layer: Layer
+  ) => {
+    const code = feature.properties?.ISO_A3;
+    const value = co2Data[year]?.[code] ?? 0;
+    const countryName =
+      feature.properties?.NAME_JA || feature.properties?.ADMIN || "不明";
+
+    layer.bindTooltip(`${countryName}: ${value.toLocaleString()} CO2`, {
+      sticky: true, // マウスに追従
+    });
+  };
+
+  // year または co2Data が変わったら、色とツールチップを更新
+  useEffect(() => {
+    if (!geoJsonRef.current) return;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    geoJsonRef.current.eachLayer((layer: any) => {
+      const feature = layer.feature;
+      if (!feature) return;
+
+      const code = feature.properties?.ISO_A3;
+      const value = co2Data[year]?.[code] ?? 0;
+      const countryName =
+        feature.properties?.NAME_JA || feature.properties?.ADMIN || "不明";
+
+      // 色を更新
+      layer.setStyle({
+        fillColor: getColor(value),
+        fillOpacity: 0.7,
+        weight: 1,
+        color: "white",
+      });
+
+      // ツールチップ内容を更新
+      layer.setTooltipContent(`${countryName}: ${value.toLocaleString()} CO2`);
+    });
+  }, [year, co2Data]);
 
   if (isLoading) return <div>CO2データを読み込み中...</div>;
   if (error) return <div>CO2データの取得に失敗しました</div>;
@@ -101,7 +148,12 @@ const WorldMap: React.FC = () => {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
-        <GeoJSON data={geoData} style={style} />
+        <GeoJSON
+          ref={geoJsonRef}
+          data={geoData}
+          style={style}
+          onEachFeature={onEachFeature}
+        />
       </MapContainer>
     </div>
   );
