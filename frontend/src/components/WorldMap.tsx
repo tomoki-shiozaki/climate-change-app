@@ -2,7 +2,7 @@ import "leaflet/dist/leaflet.css";
 import React, { useState, useRef, useEffect } from "react";
 import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
 import type { Feature, Geometry } from "geojson";
-import type { PathOptions } from "leaflet";
+import type { PathOptions, Layer } from "leaflet";
 import { useQuery } from "@tanstack/react-query";
 import apiClient from "@/api/apiClient";
 import type {
@@ -71,8 +71,7 @@ const WorldMap: React.FC = () => {
   // 初回ツールチップ設定
   const onEachFeature = (
     feature: Feature<Geometry, CountryProperties>,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    layer: any
+    layer: Layer
   ) => {
     const code = feature.properties?.ISO_A3;
     const value = co2Data[year]?.[code] ?? 0;
@@ -84,7 +83,7 @@ const WorldMap: React.FC = () => {
     });
   };
 
-  // year または co2Data が変わったらツールチップだけ更新
+  // year または co2Data が変わったら、色とツールチップを更新
   useEffect(() => {
     if (!geoJsonRef.current) return;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -97,6 +96,15 @@ const WorldMap: React.FC = () => {
       const countryName =
         feature.properties?.NAME_JA || feature.properties?.ADMIN || "不明";
 
+      // 色を更新
+      layer.setStyle({
+        fillColor: getColor(value),
+        fillOpacity: 0.7,
+        weight: 1,
+        color: "white",
+      });
+
+      // ツールチップ内容を更新
       layer.setTooltipContent(`${countryName}: ${value.toLocaleString()} CO2`);
     });
   }, [year, co2Data]);
