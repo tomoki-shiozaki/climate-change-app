@@ -1,5 +1,5 @@
 import "leaflet/dist/leaflet.css";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
 import type { Feature, Geometry } from "geojson";
 import type {
@@ -7,9 +7,10 @@ import type {
   CO2DataByYear,
   CountryProperties,
 } from "../types/geo";
-import countries from "../data/ne_50m_admin_0_countries.json";
-import co2DataJson from "../data/co2.json";
 import type { PathOptions } from "leaflet";
+
+// 静的国境データ（GeoJSON）
+import countries from "../data/ne_50m_admin_0_countries.json";
 
 const getColor = (value: number) =>
   value > 10000
@@ -26,19 +27,24 @@ const getColor = (value: number) =>
 
 const WorldMap: React.FC = () => {
   const geoData = countries as unknown as CountryFeatureCollection;
-  const co2Data = co2DataJson as CO2DataByYear;
 
   const [year, setYear] = useState(2020);
+  const [co2Data, setCo2Data] = useState<CO2DataByYear>({});
 
-  // ここを正しく型定義
+  // API から CO2 データ取得
+  useEffect(() => {
+    fetch("/api/co2-data/") // DRF 側のエンドポイント
+      .then((res) => res.json())
+      .then((data) => setCo2Data(data.data)) // Serializer の data フィールド
+      .catch((err) => console.error("CO2データ取得エラー:", err));
+  }, []);
+
   const style = (
     feature: Feature<Geometry, CountryProperties> | undefined
   ): PathOptions => {
     if (!feature) return {};
-
     const code = feature.properties?.ISO_A3;
     const value = co2Data[year]?.[code] ?? 0;
-
     return {
       fillColor: getColor(value),
       weight: 1,
@@ -49,7 +55,7 @@ const WorldMap: React.FC = () => {
 
   return (
     <div style={{ height: "100vh", width: "100%", position: "relative" }}>
-      {/* スライダーを下部中央に配置 */}
+      {/* 年スライダーを下部中央に配置 */}
       <div
         style={{
           position: "absolute",
@@ -83,7 +89,6 @@ const WorldMap: React.FC = () => {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
-        {/* ✨ 完全に型安全 */}
         <GeoJSON data={geoData} style={style} />
       </MapContainer>
     </div>
