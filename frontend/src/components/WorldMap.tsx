@@ -34,7 +34,6 @@ const fetchCO2Data = async (): Promise<CO2DataByYear> => {
 
 const WorldMap: React.FC = () => {
   const geoData = countries as unknown as CountryFeatureCollection;
-
   const [year, setYear] = useState(2020);
 
   // TanStack Query で CO2 データ取得
@@ -48,6 +47,7 @@ const WorldMap: React.FC = () => {
     staleTime: 1000 * 60 * 5, // 5分キャッシュ
   });
 
+  // ポリゴンのスタイル
   const style = (
     feature: Feature<Geometry, CountryProperties> | undefined
   ): PathOptions => {
@@ -60,6 +60,22 @@ const WorldMap: React.FC = () => {
       color: "white",
       fillOpacity: 0.7,
     };
+  };
+
+  // ツールチップ設定
+
+  const onEachFeature = (
+    feature: Feature<Geometry, CountryProperties>,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    layer: any
+  ) => {
+    const code = feature.properties?.ISO_A3;
+    const value = co2Data[year]?.[code] ?? 0;
+    const countryName = feature.properties?.ADMIN || "Unknown";
+
+    layer.bindTooltip(`${countryName}: ${value.toLocaleString()} CO2`, {
+      sticky: true, // マウスに追従
+    });
   };
 
   if (isLoading) return <div>CO2データを読み込み中...</div>;
@@ -101,7 +117,7 @@ const WorldMap: React.FC = () => {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
-        <GeoJSON data={geoData} style={style} />
+        <GeoJSON data={geoData} style={style} onEachFeature={onEachFeature} />
       </MapContainer>
     </div>
   );
