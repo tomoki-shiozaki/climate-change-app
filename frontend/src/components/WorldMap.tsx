@@ -1,13 +1,15 @@
 import "leaflet/dist/leaflet.css";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
 import type { Feature, Geometry } from "geojson";
+import type { PathOptions } from "leaflet";
+import { useQuery } from "@tanstack/react-query";
+import apiClient from "@/api/apiClient";
 import type {
   CountryFeatureCollection,
   CO2DataByYear,
   CountryProperties,
 } from "../types/geo";
-import type { PathOptions } from "leaflet";
 
 // 静的国境データ（GeoJSON）
 import countries from "../data/ne_50m_admin_0_countries.json";
@@ -25,19 +27,26 @@ const getColor = (value: number) =>
     ? "#FD8D3C"
     : "#FEB24C";
 
+const fetchCO2Data = async (): Promise<CO2DataByYear> => {
+  const response = await apiClient.get("/co2-data/"); // DRF エンドポイント
+  return response.data.data; // Serializer の data フィールド
+};
+
 const WorldMap: React.FC = () => {
   const geoData = countries as unknown as CountryFeatureCollection;
 
   const [year, setYear] = useState(2020);
-  const [co2Data, setCo2Data] = useState<CO2DataByYear>({});
 
-  // API から CO2 データ取得
-  useEffect(() => {
-    fetch("/api/co2-data/") // DRF 側のエンドポイント
-      .then((res) => res.json())
-      .then((data) => setCo2Data(data.data)) // Serializer の data フィールド
-      .catch((err) => console.error("CO2データ取得エラー:", err));
-  }, []);
+  // TanStack Query で CO2 データ取得
+  const {
+    data: co2Data = {},
+    isLoading,
+    error,
+  } = useQuery<CO2DataByYear>({
+    queryKey: ["co2Data"],
+    queryFn: fetchCO2Data,
+    staleTime: 1000 * 60 * 5, // 5分キャッシュ
+  });
 
   const style = (
     feature: Feature<Geometry, CountryProperties> | undefined
@@ -52,6 +61,9 @@ const WorldMap: React.FC = () => {
       fillOpacity: 0.7,
     };
   };
+
+  if (isLoading) return <div>CO2データを読み込み中...</div>;
+  if (error) return <div>CO2データの取得に失敗しました</div>;
 
   return (
     <div style={{ height: "100vh", width: "100%", position: "relative" }}>
