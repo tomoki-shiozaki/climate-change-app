@@ -10,6 +10,7 @@ import type {
   CO2DataByYear,
   CountryProperties,
 } from "../types/geo";
+import { Loading } from "@/components/common";
 
 // 静的国境データ（GeoJSON）
 import countries from "../data/ne_50m_admin_0_countries.json";
@@ -109,8 +110,9 @@ const WorldMap: React.FC = () => {
     });
   }, [year, co2Data]);
 
-  if (isLoading) return <div>CO2データを読み込み中...</div>;
-  if (error) return <div>CO2データの取得に失敗しました</div>;
+  if (isLoading) return <Loading />;
+  if (error) return <p>CO2データの取得に失敗しました</p>;
+  if (!co2Data) return <p>データがありません</p>;
 
   return (
     <div style={{ height: "100vh", width: "100%", position: "relative" }}>
