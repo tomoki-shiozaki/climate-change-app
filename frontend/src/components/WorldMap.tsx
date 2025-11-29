@@ -71,7 +71,8 @@ const WorldMap: React.FC = () => {
   ) => {
     const code = feature.properties?.ISO_A3;
     const value = co2Data[year]?.[code] ?? 0;
-    const countryName = feature.properties?.ADMIN || "Unknown";
+    const countryName =
+      feature.properties?.NAME_JA || feature.properties?.ADMIN || "不明";
 
     layer.bindTooltip(`${countryName}: ${value.toLocaleString()} CO2`, {
       sticky: true, // マウスに追従
