@@ -1,0 +1,46 @@
+steps:
+  # ステップ 1: Dockerイメージのビルド
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      [
+        "build",
+        "-t",
+        "asia-northeast1-docker.pkg.dev/$PROJECT_ID/climate-change-app/climate-change-app-image",
+        "-f",
+        "docker/Dockerfile.prod",
+        ".",
+      ]
+
+  # ステップ 2: Docker イメージを Artifact Registry にプッシュ
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      [
+        "push",
+        "asia-northeast1-docker.pkg.dev/$PROJECT_ID/climate-change-app/climate-change-app-image",
+      ]
+
+  # ステップ 3: Cloud Runにデプロイ
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    args:
+      [
+        "gcloud",
+        "run",
+        "deploy",
+        "climate-change-app",
+        "--image",
+        "asia-northeast1-docker.pkg.dev/$PROJECT_ID/climate-change-app/climate-change-app-image",
+        "--platform",
+        "managed",
+        "--region",
+        "asia-northeast1",
+        "--allow-unauthenticated",
+        "--set-secrets",
+        "SECRET_KEY=SECRET_KEY_CLIMATE:latest,DATABASE_URL=DATABASE_URL_CLIMATE:latest,ALLOWED_HOSTS=ALLOWED_HOSTS_CLIMATE:latest,CSRF_TRUSTED_ORIGINS=CSRF_TRUSTED_ORIGINS_CLIMATE:latest,CORS_ORIGIN_WHITELIST=CORS_ORIGIN_WHITELIST_CLIMATE:latest",
+      ]
+
+# オプション: ロギング設定
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+# タイムアウト設定（600秒 = 10分）
+timeout: 600s
