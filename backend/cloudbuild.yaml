@@ -5,7 +5,7 @@ steps:
       [
         "build",
         "-t",
-        "asia-northeast1-docker.pkg.dev/$PROJECT_ID/distributed-library-repo/distributed-library-image",
+        "asia-northeast1-docker.pkg.dev/$PROJECT_ID/climate-change-app/climate-change-app-image",
         "-f",
         "docker/Dockerfile.prod",
         ".",
@@ -16,7 +16,7 @@ steps:
     args:
       [
         "push",
-        "asia-northeast1-docker.pkg.dev/$PROJECT_ID/distributed-library-repo/distributed-library-image",
+        "asia-northeast1-docker.pkg.dev/$PROJECT_ID/climate-change-app/climate-change-app-image",
       ]
 
   # ステップ 3: Cloud Runにデプロイ
@@ -26,21 +26,21 @@ steps:
         "gcloud",
         "run",
         "deploy",
-        "distributed-library",
+        "climate-change-app",
         "--image",
-        "asia-northeast1-docker.pkg.dev/$PROJECT_ID/distributed-library-repo/distributed-library-image",
+        "asia-northeast1-docker.pkg.dev/$PROJECT_ID/climate-change-app/climate-change-app-image",
         "--platform",
         "managed",
         "--region",
         "asia-northeast1",
         "--allow-unauthenticated",
         "--set-secrets",
-        "SECRET_KEY=SECRET_KEY_DISTRIBUTED_LIBRARY:latest,ALLOWED_HOSTS=ALLOWED_HOSTS_DISTRIBUTED_LIBRARY:latest,DATABASE_URL=DATABASE_URL_DISTRIBUTED_LIBRARY:latest,CSRF_TRUSTED_ORIGINS=CSRF_TRUSTED_ORIGINS_DISTRIBUTED_LIBRARY:latest",
+        "SECRET_KEY=SECRET_KEY_CLIMATE:latest,DATABASE_URL=DATABASE_URL_CLIMATE:latest,ALLOWED_HOSTS=ALLOWED_HOSTS_CLIMATE:latest,CSRF_TRUSTED_ORIGINS=CSRF_TRUSTED_ORIGINS_CLIMATE:latest,CORS_ORIGIN_WHITELIST=CORS_ORIGIN_WHITELIST_CLIMATE:latest",
       ]
 
 # オプション: ロギング設定
 options:
   logging: CLOUD_LOGGING_ONLY
 
-# タイムアウト設定
+# タイムアウト設定（600秒 = 10分）
 timeout: 600s
