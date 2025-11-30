@@ -7,8 +7,8 @@ steps:
         "-t",
         "asia-northeast1-docker.pkg.dev/$PROJECT_ID/climate-change-app/climate-change-app-image",
         "-f",
-        "docker/Dockerfile.prod",
-        ".",
+        "backend/docker/Dockerfile.prod",
+        "backend",
       ]
 
   # ステップ 2: Docker イメージを Artifact Registry にプッシュ
