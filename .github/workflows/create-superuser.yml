@@ -1,0 +1,38 @@
+name: Create Django Superuser on Neon
+
+on:
+  workflow_dispatch: # 手動トリガー
+
+jobs:
+  create_superuser:
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      DEBUG: "False"
+      DJANGO_SUPERUSER_USERNAME: ${{ secrets.SUPERUSER_USERNAME }}
+      DJANGO_SUPERUSER_EMAIL: ${{ secrets.SUPERUSER_EMAIL }}
+      DJANGO_SUPERUSER_PASSWORD: ${{ secrets.SUPERUSER_PASSWORD }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: 3.13
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          cd backend && pip install -r requirements/prod.txt
+
+      - name: Apply migrations
+        run: |
+          cd backend
+          python manage.py migrate --noinput
+
+      - name: Create superuser
+        run: |
+          cd backend
+          python manage.py createsuperuser --noinput
