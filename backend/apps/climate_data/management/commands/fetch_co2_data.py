@@ -60,8 +60,11 @@ class Command(BaseCommand):
             indicator_cache[column_key] = Indicator.objects.create(
                 group=group,
                 name=column_key,
-                metadata=meta,
-                source_url=csv_url,
+                unit="tonnes",  # CO2排出量の単位
+                data_source_name="Our World in Data",
+                data_source_url=csv_url,
+                metadata_url=meta_url,
+                description="",  # 必要に応じて説明
             )
         indicator = indicator_cache[column_key]
 
