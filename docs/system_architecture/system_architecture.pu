@@ -5,10 +5,6 @@ left to right direction
 actor User
 actor Developer
 
-package "GitHub" {
-  component "GitHub Repository" as GitHubRepo
-}
-
 package "Render" {
   component "React Frontend" as Frontend
 }
@@ -26,26 +22,34 @@ package "Neon" {
 }
 
 package "External APIs" {
-  component "Climate Data API" as ClimateAPI
+  component "OWID Climate Data API" as OWIDAPI
+}
+
+package "GitHub" {
+  component "GitHub Repository" as GitHubRepo
+  component "GitHub Actions (定期バッチ)" as GitHubActions
 }
 
 ' 開発からデプロイ
 Developer --> GitHubRepo : Push Code
-GitHubRepo --> CloudBuild : Trigger CI/CD (Backend)
+GitHubRepo --> CloudBuild : Trigger CI/CD
 CloudBuild --> ArtifactRegistry : Push Container Image
 CloudBuild --> CloudRun : Deploy Image
 ArtifactRegistry --> CloudRun : Pull Image
 
-GitHubRepo --> Frontend : Trigger Deploy (Render)
+GitHubRepo --> Frontend : Deploy React (Render)
 
 ' シークレット管理
 CloudRun --> SecretManager : Fetch Secrets
+
+' 定期バッチ（GitHub Actions）
+GitHubActions --> OWIDAPI : Fetch Climate Data
+GitHubActions --> NeonPostgreSQL : Save Data
 
 ' アプリ実行
 User --> Frontend : HTTP Request
 Frontend --> CloudRun : API Request
 CloudRun --> NeonPostgreSQL : DB Access
-CloudRun --> ClimateAPI : Fetch Climate Data
 CloudRun ..> Logging : Send Logs
 
 @enduml
