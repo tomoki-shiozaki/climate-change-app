@@ -15,6 +15,23 @@ import { Loading } from "@/components/common";
 // 静的国境データ（GeoJSON）
 import countries from "../data/ne_50m_admin_0_countries.json";
 
+// GeoJSONを前処理して ISO_A3 が "-99" の場合に ISO_A3_EH で置き換え
+const geoData: CountryFeatureCollection = {
+  ...(countries as unknown as CountryFeatureCollection),
+  features: (countries as unknown as CountryFeatureCollection).features.map(
+    (feature) => {
+      if (
+        feature.properties?.ISO_A3 === "-99" &&
+        feature.properties?.ISO_A3_EH
+      ) {
+        // unknown を string にキャスト
+        feature.properties.ISO_A3 = feature.properties.ISO_A3_EH as string;
+      }
+      return feature;
+    }
+  ),
+};
+
 // CO2値に応じた色を返す関数
 const getColor = (value: number) =>
   value > 10000
@@ -36,7 +53,6 @@ const fetchCO2Data = async (): Promise<CO2DataByYear> => {
 };
 
 const WorldMap: React.FC = () => {
-  const geoData = countries as unknown as CountryFeatureCollection;
   const [year, setYear] = useState(2020);
 
   // CO2データ取得
