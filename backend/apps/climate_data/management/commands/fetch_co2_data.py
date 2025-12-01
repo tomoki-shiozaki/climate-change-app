@@ -37,6 +37,9 @@ class Command(BaseCommand):
             defaults={"description": group_info["description"]},
         )
 
+        # CSV列名も設定から取得
+        column_key = group_info.get("column_key", "emissions_total")
+
         # -----------------------------
         # CSVデータ取得
         # -----------------------------
@@ -78,7 +81,6 @@ class Command(BaseCommand):
                 region = get_or_create_region(entity, code)
 
                 # emissions_total 列だけ処理
-                column_key = "emissions_total"
                 value_raw = row.get(column_key)
                 if (
                     value_raw is None
