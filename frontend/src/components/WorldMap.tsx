@@ -34,17 +34,17 @@ const geoData: CountryFeatureCollection = {
 
 // CO2値に応じた色を返す関数
 const getColor = (value: number) =>
-  value > 10000
+  value > 10000000000 // 100億トン以上（中国クラス）
     ? "#800026"
-    : value > 5000
+    : value > 5000000000 // 50億トン以上（アメリカクラス）
     ? "#BD0026"
-    : value > 1000
+    : value > 1000000000 // 10億トン以上
     ? "#E31A1C"
-    : value > 500
+    : value > 500000000 // 5億トン以上
     ? "#FC4E2A"
-    : value > 100
+    : value > 100000000 // 1億トン以上
     ? "#FD8D3C"
-    : "#FEB24C";
+    : "#FEB24C"; // それ以下
 
 // CO2データ取得関数
 const fetchCO2Data = async (): Promise<CO2DataByYear> => {
