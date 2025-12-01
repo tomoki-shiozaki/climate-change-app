@@ -26,7 +26,9 @@ class CO2DataByYearView(APIView):
         )
 
         # 指標に紐づく ClimateData を取得
-        queryset = ClimateData.objects.filter(indicator=co2_indicator)
+        queryset = ClimateData.objects.filter(indicator=co2_indicator).select_related(
+            "region"
+        )
 
         # 年・国コードごとにまとめる
         result = {}
