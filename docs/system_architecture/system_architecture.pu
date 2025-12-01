@@ -1,0 +1,55 @@
+@startuml system_architecture
+skinparam defaultFontName "Noto Sans CJK JP"
+left to right direction
+
+actor User
+actor Developer
+
+package "Render" {
+  component "React Frontend" as Frontend
+}
+
+package "Google Cloud" {
+  component "Cloud Build" as CloudBuild
+  component "Artifact Registry" as ArtifactRegistry
+  component "Cloud Run (DRF Backend)" as CloudRun
+  component "Cloud Logging" as Logging
+  component "Secret Manager" as SecretManager
+}
+
+package "Neon" {
+  component "Neon PostgreSQL" as NeonPostgreSQL
+}
+
+package "External APIs" {
+  component "OWID Climate Data API" as OWIDAPI
+}
+
+package "GitHub" {
+  component "GitHub Repository" as GitHubRepo
+  component "GitHub Actions (定期バッチ)" as GitHubActions
+}
+
+' 開発からデプロイ
+Developer --> GitHubRepo : Push Code
+GitHubRepo --> CloudBuild : Trigger CI/CD
+CloudBuild --> ArtifactRegistry : Push Container Image
+CloudBuild --> CloudRun : Deploy Image
+ArtifactRegistry --> CloudRun : Pull Image
+
+GitHubRepo --> Frontend : Deploy React (Render)
+
+' シークレット管理
+CloudRun --> SecretManager : Fetch Secrets
+
+' 定期バッチ（GitHub Actions）
+GitHubActions --> OWIDAPI : Fetch Climate Data
+GitHubActions --> NeonPostgreSQL : Save Data
+
+' アプリ実行
+User --> Frontend : HTTP Request
+Frontend --> CloudRun : API Request
+CloudRun --> NeonPostgreSQL : DB Access
+CloudRun ..> Logging : Send Logs
+
+@enduml

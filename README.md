@@ -4,27 +4,25 @@ Django REST Framework（API）と React（UI）を使った、気候変動デー
 
 ## 使用技術
 
-- Django REST Framework（JWT 認証）
-- React
-- PostgreSQL
+- Django REST Framework, React, PostgreSQL
+- Cloud Run / Render（デプロイ環境）
+- GitHub Actions（定期バッチ処理）
 
 ## 機能
 
-- 気温データのグラフ表示
+- 気温データの時系列グラフ表示
 - JWT による認証・ログイン/ログアウト
+- OWID 気候データの定期バッチ取得
 
 ## デプロイ URL
 
 1. **推奨環境（高速・安定）**  
    https://climate-change-app-2.onrender.com/  
-   → フロントエンドは Render、バックエンドは Cloud Run にデプロイしています。  
-   **基本的にはこの環境をご利用ください。**
+   フロントは Render、バックエンドは Cloud Run にデプロイ済み。
 
-2. **代替環境（すべて Render 上で動作）**  
+2. **代替環境（Render 上で動作）**  
    https://climate-change-app.onrender.com  
-   → フロントエンド・バックエンドともに Render でデプロイしています。  
-   Cloud Run 版が利用できない場合の **バックアップ環境** としてご利用ください。  
-   ※ バックエンドの起動が遅いため、通常は (1) の利用を推奨します。
+   Cloud Run 版が使えない場合に利用。
 
 ## テスト用アカウント
 
@@ -35,3 +33,9 @@ Django REST Framework（API）と React（UI）を使った、気候変動デー
 ## 気温変化グラフ
 
 ![Climate Chart](docs/screenshots/climate-chart.png)
+
+## ドキュメント
+
+- 詳細なシステム構成、開発構想や設計案などは
+  [docs/README.md](docs/README.md) をご覧ください。
+- ※本ドキュメントには開発構想や設計案も含むため、実装と完全には一致しない場合があります。
