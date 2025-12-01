@@ -1,13 +1,13 @@
-name: Fetch Temperature Data
+name: Fetch CO2 Data
 
 # 毎月1日の午前2時に実行（UTC）
 on:
   schedule:
-    - cron: "0 2 1 * *"
+    - cron: "0 2 1 12 *"
   workflow_dispatch: # 手動実行も可能
 
 jobs:
-  fetch_data:
+  fetch_co2_data:
     runs-on: ubuntu-latest
     env:
       SECRET_KEY: ${{ secrets.SECRET_KEY }}
@@ -32,7 +32,7 @@ jobs:
           cd backend
           python manage.py migrate --noinput
 
-      - name: Run climate data import
+      - name: Run CO2 data import
         run: |
           cd backend
-          python manage.py fetch_temperature_data
+          python manage.py fetch_co2_data
