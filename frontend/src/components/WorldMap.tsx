@@ -76,9 +76,10 @@ const WorldMap: React.FC = () => {
   ): PathOptions => {
     if (!feature) return {};
     const code = feature.properties?.ISO_A3;
-    const value = co2Data[year]?.[code] ?? 0;
+    const value = co2Data[year]?.[code];
+
     return {
-      fillColor: getColor(value),
+      fillColor: value === undefined ? "#d3d3d3" : getColor(value), // データなしは薄いグレー
       weight: 1,
       color: "white",
       fillOpacity: 0.7,
@@ -91,13 +92,16 @@ const WorldMap: React.FC = () => {
     layer: Layer
   ) => {
     const code = feature.properties?.ISO_A3;
-    const value = co2Data[year]?.[code] ?? 0;
+    const value = co2Data[year]?.[code];
     const countryName =
       feature.properties?.NAME_JA || feature.properties?.ADMIN || "不明";
 
-    layer.bindTooltip(`${countryName}: ${value.toLocaleString()} CO2`, {
-      sticky: true, // マウスに追従
-    });
+    const tooltipText =
+      value === undefined
+        ? `${countryName}: データなし`
+        : `${countryName}: ${value.toLocaleString()} CO2`;
+
+    layer.bindTooltip(tooltipText, { sticky: true });
   };
 
   // year または co2Data が変わったら、色とツールチップを更新
