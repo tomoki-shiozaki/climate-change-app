@@ -150,20 +150,24 @@ const WorldMap: React.FC = () => {
       if (!feature) return;
 
       const code = feature.properties?.ISO_A3;
-      const value = co2Data[year]?.[code] ?? 0;
+      const value = co2Data[year]?.[code]; // undefined のままにする
       const countryName =
         feature.properties?.NAME_JA || feature.properties?.ADMIN || "不明";
 
       // 色を更新
       layer.setStyle({
-        fillColor: getColor(value),
+        fillColor: value === undefined ? "#d3d3d3" : getColor(value),
         fillOpacity: 0.7,
         weight: 1,
         color: "white",
       });
 
       // ツールチップ内容を更新
-      layer.setTooltipContent(`${countryName}: ${value.toLocaleString()} CO2`);
+      layer.setTooltipContent(
+        value === undefined
+          ? `${countryName}: データなし`
+          : `${countryName}: ${value.toLocaleString()} CO2`
+      );
     });
   }, [year, co2Data]);
 
