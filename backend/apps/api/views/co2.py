@@ -3,7 +3,6 @@ from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.api.serializers.co2 import CO2DataByYearSerializer
 from apps.climate_data.models import ClimateData, Indicator
 
 
@@ -29,6 +28,13 @@ class CO2DataByYearView(APIView):
         # 指標に紐づく ClimateData を取得
         queryset = ClimateData.objects.filter(indicator=co2_indicator)
 
-        # シリアライザで整形して返す
-        serializer = CO2DataByYearSerializer(queryset, many=True)
-        return Response(serializer.data)
+        # 年・国コードごとにまとめる
+        result = {}
+        for cd in queryset:
+            year = cd.year
+            iso = cd.region.iso_code
+            if year not in result:
+                result[year] = {}
+            result[year][iso] = cd.value
+
+        return Response({"data": result})
