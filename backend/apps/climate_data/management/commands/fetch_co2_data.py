@@ -1,11 +1,15 @@
-import csv
-
 import requests
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
-from apps.climate_data.models import ClimateData, Indicator, IndicatorGroup, Region
+from apps.climate_data.models import IndicatorGroup
+from apps.climate_data.utils.fetch_helpers import (
+    fetch_csv,
+    get_or_create_indicator,
+    get_or_create_region,
+    update_climate_data,
+)
 
 
 class Command(BaseCommand):
@@ -15,8 +19,14 @@ class Command(BaseCommand):
         # -----------------------------
         # データURLとメタデータURL
         # -----------------------------
-        csv_url = "https://ourworldindata.org/grapher/temperature-anomaly.csv?v=1&csvType=full&useColumnShortNames=true"
-        meta_url = "https://ourworldindata.org/grapher/temperature-anomaly.metadata.json?v=1&csvType=full&useColumnShortNames=true"
+        csv_url = (
+            "https://ourworldindata.org/grapher/temperature-anomaly.csv"
+            "?v=1&csvType=full&useColumnShortNames=true"
+        )
+        meta_url = (
+            "https://ourworldindata.org/grapher/temperature-anomaly.metadata.json"
+            "?v=1&csvType=full&useColumnShortNames=true"
+        )
 
         # -----------------------------
         # 指標グループを取得または作成
@@ -31,10 +41,7 @@ class Command(BaseCommand):
         # CSVデータ取得
         # -----------------------------
         self.stdout.write(self.style.NOTICE("Downloading CSV data..."))
-        response = requests.get(csv_url)
-        response.encoding = "utf-8"
-        lines = response.text.splitlines()
-        reader = csv.DictReader(lines)
+        reader = fetch_csv(csv_url)
 
         # -----------------------------
         # メタデータ取得
@@ -77,10 +84,7 @@ class Command(BaseCommand):
                     continue
 
                 # 地域取得または作成
-                region, _ = Region.objects.get_or_create(
-                    name=entity,
-                    defaults={"iso_code": code if code else f"NO_CODE_{entity}"},
-                )
+                region = get_or_create_region(entity, code)
 
                 # 各数値列を処理
                 for column_key, info in numeric_columns.items():
@@ -106,27 +110,13 @@ class Command(BaseCommand):
                     if column_key in indicator_cache:
                         indicator = indicator_cache[column_key]
                     else:
-                        indicator, _ = Indicator.objects.get_or_create(
-                            group=group,
-                            name=info.get("titleShort", column_key),
-                            defaults={
-                                "unit": info.get("shortUnit", info.get("unit", "")),
-                                "description": info.get("descriptionShort", ""),
-                                "data_source_name": "Our World in Data",
-                                "data_source_url": csv_url,
-                                "metadata_url": info.get("fullMetadata", meta_url),
-                            },
+                        indicator = get_or_create_indicator(
+                            group, column_key, info, csv_url, meta_url
                         )
                         indicator_cache[column_key] = indicator
 
                     # ClimateData更新または作成
-                    obj, created = ClimateData.objects.update_or_create(
-                        region=region,
-                        indicator=indicator,
-                        year=year,
-                        defaults={"value": value},
-                    )
-
+                    created = update_climate_data(region, indicator, year, value)
                     if created:
                         created_count += 1
                     else:
