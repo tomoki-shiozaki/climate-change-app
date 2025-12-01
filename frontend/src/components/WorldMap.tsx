@@ -152,11 +152,11 @@ const WorldMap: React.FC = () => {
       >
         <input
           type="range"
-          min={2020}
-          max={2022}
+          min={1750} // 最古データ
+          max={2024} // 最新データ
           value={year}
           onChange={(e) => setYear(Number(e.target.value))}
-          style={{ width: 200 }}
+          style={{ width: 400 }} // 長くしてスライダー操作しやすく
         />
         <span style={{ marginLeft: 10, fontWeight: "bold" }}>{year}</span>
       </div>
