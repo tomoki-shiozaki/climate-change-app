@@ -56,6 +56,7 @@ const WorldMap: React.FC = () => {
   const [year, setYear] = useState(2020);
   const [minYear, setMinYear] = useState(2020);
   const [maxYear, setMaxYear] = useState(2024);
+  const [isPlaying, setIsPlaying] = useState(false); // 自動再生状態
 
   // CO2データ取得
   const {
@@ -84,6 +85,23 @@ const WorldMap: React.FC = () => {
     // 初期年を最新年に設定
     setYear(Math.max(...years));
   }, [co2Data]);
+
+  // 自動再生用の useEffect
+  useEffect(() => {
+    if (!isPlaying) return;
+
+    const interval = setInterval(() => {
+      setYear((prevYear) => {
+        if (prevYear >= maxYear) {
+          clearInterval(interval); // 最後まで来たら停止
+          return maxYear;
+        }
+        return prevYear + 1;
+      });
+    }, 500); // 500ms ごとに1年進める
+
+    return () => clearInterval(interval); // クリーンアップ
+  }, [isPlaying, maxYear]);
 
   // GeoJSONレイヤーのref
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -159,7 +177,7 @@ const WorldMap: React.FC = () => {
       <div
         style={{
           position: "absolute",
-          bottom: 20,
+          bottom: 60,
           left: "50%",
           transform: "translateX(-50%)",
           zIndex: 1000,
@@ -167,17 +185,23 @@ const WorldMap: React.FC = () => {
           padding: "10px 15px",
           borderRadius: 8,
           boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
+          display: "flex",
+          alignItems: "center",
+          gap: "10px",
         }}
       >
+        <button onClick={() => setIsPlaying(!isPlaying)}>
+          {isPlaying ? "停止" : "再生"}
+        </button>
         <input
           type="range"
-          min={minYear} // 動的に設定
-          max={maxYear} // 動的に設定
+          min={minYear}
+          max={maxYear}
           value={year}
           onChange={(e) => setYear(Number(e.target.value))}
           style={{ width: 400 }} // スライダー長め
         />
-        <span style={{ marginLeft: 10, fontWeight: "bold" }}>{year}</span>
+        <span style={{ fontWeight: "bold" }}>{year}</span>
       </div>
 
       <MapContainer
