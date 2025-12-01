@@ -54,6 +54,8 @@ const fetchCO2Data = async (): Promise<CO2DataByYear> => {
 
 const WorldMap: React.FC = () => {
   const [year, setYear] = useState(2020);
+  const [minYear, setMinYear] = useState(2020);
+  const [maxYear, setMaxYear] = useState(2024);
 
   // CO2データ取得
   const {
@@ -65,6 +67,23 @@ const WorldMap: React.FC = () => {
     queryFn: fetchCO2Data,
     staleTime: 1000 * 60 * 5, // 5分キャッシュ
   });
+
+  // CO2データが取得できたら minYear / maxYear を更新
+  useEffect(() => {
+    if (!co2Data) return;
+
+    const years = Object.keys(co2Data)
+      .map((y) => parseInt(y))
+      .filter((y) => !isNaN(y));
+
+    if (years.length === 0) return;
+
+    setMinYear(Math.min(...years));
+    setMaxYear(Math.max(...years));
+
+    // 初期年を最新年に設定
+    setYear(Math.max(...years));
+  }, [co2Data]);
 
   // GeoJSONレイヤーのref
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -152,11 +171,11 @@ const WorldMap: React.FC = () => {
       >
         <input
           type="range"
-          min={1750} // 最古データ
-          max={2024} // 最新データ
+          min={minYear} // 動的に設定
+          max={maxYear} // 動的に設定
           value={year}
           onChange={(e) => setYear(Number(e.target.value))}
-          style={{ width: 400 }} // 長くしてスライダー操作しやすく
+          style={{ width: 400 }} // スライダー長め
         />
         <span style={{ marginLeft: 10, fontWeight: "bold" }}>{year}</span>
       </div>
