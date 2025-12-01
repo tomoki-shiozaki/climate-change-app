@@ -13,25 +13,25 @@ from apps.climate_data.utils.fetch_helpers import (
 
 
 class Command(BaseCommand):
-    help = "Fetch temperature anomaly data from Our World in Data"
+    help = "Fetch annual CO2 emissions by world region from Our World in Data"
 
     def handle(self, *args, **options):
         # -----------------------------
         # データURLとメタデータURL
         # -----------------------------
         csv_url = (
-            "https://ourworldindata.org/grapher/temperature-anomaly.csv"
+            "https://ourworldindata.org/grapher/co2-emissions-by-region.csv"
             "?v=1&csvType=full&useColumnShortNames=true"
         )
         meta_url = (
-            "https://ourworldindata.org/grapher/temperature-anomaly.metadata.json"
+            "https://ourworldindata.org/grapher/co2-emissions-by-region.metadata.json"
             "?v=1&csvType=full&useColumnShortNames=true"
         )
 
         # -----------------------------
         # 指標グループを取得または作成
         # -----------------------------
-        group_info = settings.CLIMATE_GROUPS["TEMPERATURE"]
+        group_info = settings.CLIMATE_GROUPS["CO2"]
         group, _ = IndicatorGroup.objects.get_or_create(
             name=group_info["name"],
             defaults={"description": group_info["description"]},
