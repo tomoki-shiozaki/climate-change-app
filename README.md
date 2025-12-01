@@ -15,7 +15,16 @@ Django REST Framework（API）と React（UI）を使った、気候変動デー
 
 ## デプロイ URL
 
-- [https://climate-change-app.onrender.com](https://climate-change-app.onrender.com)
+1. **推奨環境（高速・安定）**  
+   https://climate-change-app-2.onrender.com/  
+   → フロントエンドは Render、バックエンドは Cloud Run にデプロイしています。  
+   **基本的にはこの環境をご利用ください。**
+
+2. **代替環境（すべて Render 上で動作）**  
+   https://climate-change-app.onrender.com  
+   → フロントエンド・バックエンドともに Render でデプロイしています。  
+   Cloud Run 版が利用できない場合の **バックアップ環境** としてご利用ください。  
+   ※ バックエンドの起動が遅いため、通常は (1) の利用を推奨します。
 
 ## テスト用アカウント
 
