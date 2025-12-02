@@ -78,7 +78,7 @@ class Command(BaseCommand):
             region__in=region_cache.values(),  # Regionオブジェクトを直接指定
         )
         # Regionオブジェクトをキーにして map 作成
-        existing_map = {(cd.region, cd.year): cd for cd in existing_data}
+        existing_map = {(cd.region.pk, cd.year): cd for cd in existing_data}
 
         to_create = []
         to_update = []
@@ -117,7 +117,7 @@ class Command(BaseCommand):
                 )
                 continue
 
-            key = (region, year)
+            key = (region.pk, year)
             if key in existing_map:
                 # 既存は更新
                 cd = existing_map[key]
