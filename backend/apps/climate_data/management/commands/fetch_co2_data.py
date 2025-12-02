@@ -52,20 +52,26 @@ class Command(BaseCommand):
         # ---------------------------
         # キャッシュを作る
         # ---------------------------
+        # Region と Indicator をDBから読み込んでキャッシュ
         region_cache = {r.iso_code: r for r in Region.objects.all()}
         indicator_cache = {i.name: i for i in Indicator.objects.filter(group=group)}
 
-        # 必要な Indicator がなければ作成
+        # この column のメタ情報を取得
+        col_meta = meta["columns"].get(column_key, {})
+
+        # 必要な Indicator がなければ作成してキャッシュに追加
         if column_key not in indicator_cache:
             indicator_cache[column_key] = Indicator.objects.create(
                 group=group,
                 name=column_key,
-                unit="tonnes",  # CO2排出量の単位
+                unit=col_meta.get("unit", ""),
+                description=col_meta.get("descriptionShort", ""),
                 data_source_name="Our World in Data",
                 data_source_url=csv_url,
                 metadata_url=meta_url,
-                description="",  # 必要に応じて説明
             )
+
+        # 以降で使う indicator を取り出す
         indicator = indicator_cache[column_key]
 
         climate_data_list = []
