@@ -10,7 +10,7 @@ const AppNavbar = () => {
     <Navbar bg="primary" variant="dark" expand="md">
       <div className="container-fluid">
         <Navbar.Brand as={Link} to="/">
-          気候変動ダッシュボード
+          気候変動データアプリ
         </Navbar.Brand>
 
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -20,6 +20,7 @@ const AppNavbar = () => {
             variant="pills"
             activeKey={location.pathname}
           >
+            {/* 単独リンク：主要機能 */}
             <Nav.Item>
               <Nav.Link as={Link} to="/" eventKey="/">
                 ホーム
@@ -28,17 +29,32 @@ const AppNavbar = () => {
 
             <Nav.Item>
               <Nav.Link as={Link} to="/dashboard" eventKey="/dashboard">
-                ダッシュボード
+                気温データ
               </Nav.Link>
             </Nav.Item>
 
-            {/* Data と About を折りたたむ */}
+            <Nav.Item>
+              <Nav.Link as={Link} to="/co2-map" eventKey="/co2-map">
+                CO₂排出量
+              </Nav.Link>
+            </Nav.Item>
+
+            <Nav.Item>
+              <Nav.Link as={Link} to="/renewable" eventKey="/renewable">
+                再エネ利用
+              </Nav.Link>
+            </Nav.Item>
+
+            {/* 補助情報は折りたたみメニュー */}
             <NavDropdown title="データ・概要" id="nav-dropdown">
               <NavDropdown.Item as={Link} to="/data" eventKey="/data">
                 データ
               </NavDropdown.Item>
               <NavDropdown.Item as={Link} to="/about" eventKey="/about">
                 概要
+              </NavDropdown.Item>
+              <NavDropdown.Item as={Link} to="/faq" eventKey="/faq">
+                FAQ
               </NavDropdown.Item>
             </NavDropdown>
           </Nav>
