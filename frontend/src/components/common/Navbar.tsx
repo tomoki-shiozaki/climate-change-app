@@ -10,7 +10,7 @@ const AppNavbar = () => {
     <Navbar bg="primary" variant="dark" expand="md">
       <div className="container-fluid">
         <Navbar.Brand as={Link} to="/">
-          気候変動ダッシュボード
+          気候変動データアプリ
         </Navbar.Brand>
 
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -29,7 +29,7 @@ const AppNavbar = () => {
 
             <Nav.Item>
               <Nav.Link as={Link} to="/dashboard" eventKey="/dashboard">
-                ダッシュボード（気温グラフ）
+                気温データ
               </Nav.Link>
             </Nav.Item>
 
