@@ -49,7 +49,7 @@ const getColor = (value: number) =>
 // CO2データ取得関数
 const fetchCO2Data = async (): Promise<CO2DataByYear> => {
   const response = await apiClient.get("/co2-data/"); // DRF エンドポイント
-  return response.data.data; // Serializer の data フィールド
+  return response.data.co2_data; // Serializer の co2_data フィールド
 };
 
 const WorldMap: React.FC = () => {

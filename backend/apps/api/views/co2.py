@@ -42,5 +42,5 @@ class CO2DataByYearView(GenericAPIView):
                 result[year] = {}
             result[year][iso] = cd.value
 
-        serializer = self.get_serializer({"data": result})
+        serializer = self.get_serializer({"co2_data": result})
         return Response(serializer.data)
