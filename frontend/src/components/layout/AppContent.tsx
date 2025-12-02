@@ -1,6 +1,6 @@
 import { Container } from "react-bootstrap";
 import { useAuthContext } from "../../context/AuthContext";
-import { Loading, AppNavbar, Footer, ErrorToast } from "../common";
+import { FullScreenLoading, AppNavbar, Footer, ErrorToast } from "../common";
 import AppRoutes from "../../AppRoutes";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
@@ -18,7 +18,7 @@ const AppContent = () => {
 
   if (authLoading) {
     // アプリ全体の初期ロード中は全画面で読み込み表示
-    return <Loading message="読み込み中..." />;
+    return <FullScreenLoading message="読み込み中..." />;
   }
 
   return (
