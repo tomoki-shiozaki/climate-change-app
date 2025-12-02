@@ -86,6 +86,8 @@ class Command(BaseCommand):
         for row in reader:
             entity = row.get("Entity", "")
             code = row.get("Code", "")
+            if not code:
+                code = f"NO_CODE_{entity.replace(' ', '_')}"
             year_raw = row.get("Year", "")
             if not year_raw:
                 continue
