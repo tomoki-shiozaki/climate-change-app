@@ -9,7 +9,7 @@
         "/api/v1/co2-data/": {
             "get": {
                 "operationId": "co2_data_retrieve",
-                "description": "フロント用 API\n/api/co2-data/",
+                "description": "フロント用 API\n/co2-data/",
                 "tags": [
                     "co2-data"
                 ],
@@ -26,7 +26,14 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "No response body"
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CO2DataByYear"
+                                }
+                            }
+                        },
+                        "description": ""
                     }
                 }
             }
@@ -709,6 +716,24 @@
     },
     "components": {
         "schemas": {
+            "CO2DataByYear": {
+                "type": "object",
+                "properties": {
+                    "co2_data": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "number",
+                                "format": "double"
+                            }
+                        }
+                    }
+                },
+                "required": [
+                    "co2_data"
+                ]
+            },
             "JWT": {
                 "type": "object",
                 "description": "Serializer for JWT authentication.",

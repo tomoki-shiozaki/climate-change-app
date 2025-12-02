@@ -13,7 +13,7 @@ export interface paths {
         };
         /**
          * @description フロント用 API
-         *     /api/co2-data/
+         *     /co2-data/
          */
         get: operations["co2_data_retrieve"];
         put?: never;
@@ -312,6 +312,13 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        CO2DataByYear: {
+            co2_data: {
+                [key: string]: {
+                    [key: string]: number;
+                };
+            };
+        };
         /** @description Serializer for JWT authentication. */
         JWT: {
             access: string;
@@ -420,12 +427,13 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description No response body */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["CO2DataByYear"];
+                };
             };
         };
     };
