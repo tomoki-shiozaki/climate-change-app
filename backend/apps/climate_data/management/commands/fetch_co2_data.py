@@ -8,7 +8,7 @@ from apps.climate_data.utils.fetch_helpers import fetch_csv
 
 
 class Command(BaseCommand):
-    help = "Fetch annual CO2 emissions by world region from Our World in Data (bulk insert)"
+    help = "Fetch annual CO2 emissions by world region from Our World in Data (bulk insert/update)"
 
     def handle(self, *args, **options):
         # -----------------------------
@@ -39,7 +39,7 @@ class Command(BaseCommand):
         # CSVデータ取得
         # -----------------------------
         self.stdout.write(self.style.NOTICE("Downloading CSV data..."))
-        reader = fetch_csv(csv_url)
+        reader = list(fetch_csv(csv_url))  # list化して複数回アクセス可能に
 
         # -----------------------------
         # メタデータ取得
@@ -48,17 +48,13 @@ class Command(BaseCommand):
         meta_response = requests.get(meta_url)
         meta_response.raise_for_status()
         meta = meta_response.json()
-
-        # ---------------------------
-        # キャッシュを作る
-        # ---------------------------
-        # Region と Indicator をDBから読み込んでキャッシュ
-        region_cache = {r.iso_code: r for r in Region.objects.all()}
-        indicator_cache = {i.name: i for i in Indicator.objects.filter(group=group)}
-
-        # この column のメタ情報を取得
         col_meta = meta["columns"].get(column_key, {})
 
+        # -----------------------------
+        # キャッシュ作成
+        # -----------------------------
+        region_cache = {r.iso_code: r for r in Region.objects.all()}
+        indicator_cache = {i.name: i for i in Indicator.objects.filter(group=group)}
         # 必要な Indicator がなければ作成してキャッシュに追加
         if column_key not in indicator_cache:
             indicator_cache[column_key] = Indicator.objects.create(
@@ -70,11 +66,23 @@ class Command(BaseCommand):
                 data_source_url=csv_url,
                 metadata_url=meta_url,
             )
-
-        # 以降で使う indicator を取り出す
         indicator = indicator_cache[column_key]
 
-        climate_data_list = []
+        # -----------------------------
+        # 既存データ取得
+        # -----------------------------
+        years = [int(row["Year"]) for row in reader if row.get("Year")]
+        existing_data = ClimateData.objects.filter(
+            indicator=indicator,
+            year__in=years,
+            region__in=region_cache.values(),  # Regionオブジェクトを直接指定
+        )
+        # Regionオブジェクトをキーにして map 作成
+        existing_map = {(cd.region, cd.year): cd for cd in existing_data}
+
+        to_create = []
+        to_update = []
+
         for row in reader:
             entity = row.get("Entity", "")
             code = row.get("Code", "")
@@ -109,17 +117,34 @@ class Command(BaseCommand):
                 )
                 continue
 
-            climate_data_list.append(
-                ClimateData(region=region, indicator=indicator, year=year, value=value)
-            )
+            key = (region, year)
+            if key in existing_map:
+                # 既存は更新
+                cd = existing_map[key]
+                cd.value = value
+                to_update.append(cd)
+            else:
+                # 新規は作成
+                to_create.append(
+                    ClimateData(
+                        region=region, indicator=indicator, year=year, value=value
+                    )
+                )
 
-        # ---------------------------
-        # バルク挿入
-        # ---------------------------
+        # -----------------------------
+        # バルク挿入 & 更新
+        # -----------------------------
         self.stdout.write(
-            self.style.NOTICE(f"Inserting {len(climate_data_list)} records...")
+            self.style.NOTICE(f"Inserting {len(to_create)} new records...")
         )
+        self.stdout.write(
+            self.style.NOTICE(f"Updating {len(to_update)} existing records...")
+        )
+
         with transaction.atomic():
-            ClimateData.objects.bulk_create(climate_data_list, ignore_conflicts=True)
+            if to_create:
+                ClimateData.objects.bulk_create(to_create)
+            if to_update:
+                ClimateData.objects.bulk_update(to_update, ["value"])
 
         self.stdout.write(self.style.SUCCESS("Import completed!"))
