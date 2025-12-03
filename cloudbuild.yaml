@@ -21,9 +21,9 @@ steps:
 
   # ステップ 3: Cloud Runにデプロイ
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
-    entrypoint: gcloud
     args:
       [
+        "gcloud",
         "run",
         "deploy",
         "climate-change-app",
@@ -34,19 +34,12 @@ steps:
         "--region",
         "asia-northeast1",
         "--allow-unauthenticated",
-        "--set-env-vars",
-        "SECRET_KEY=${_SECRET_KEY}",
-        "--set-env-vars",
-        "DATABASE_URL=${_DATABASE_URL}",
-        "--set-env-vars",
-        "ALLOWED_HOSTS=${_ALLOWED_HOSTS}",
-        "--set-env-vars",
-        "CSRF_TRUSTED_ORIGINS=${_CSRF_TRUSTED_ORIGINS}",
-        "--set-env-vars",
-        "CORS_ORIGIN_WHITELIST=${_CORS_ORIGIN_WHITELIST}",
+        "--set-env-vars=SECRET_KEY=${_SECRET_KEY},DATABASE_URL=${_DATABASE_URL},ALLOWED_HOSTS=${_ALLOWED_HOSTS},CSRF_TRUSTED_ORIGINS=${_CSRF_TRUSTED_ORIGINS},CORS_ORIGIN_WHITELIST=${_CORS_ORIGIN_WHITELIST}",
       ]
 
+# オプション: ロギング設定
 options:
   logging: CLOUD_LOGGING_ONLY
 
+# タイムアウト設定（600秒 = 10分）
 timeout: 600s
