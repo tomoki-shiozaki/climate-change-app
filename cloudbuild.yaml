@@ -19,7 +19,23 @@ steps:
         "asia-northeast1-docker.pkg.dev/$PROJECT_ID/climate-change-app/climate-change-app-image",
       ]
 
-  # ステップ 3: Cloud Runにデプロイ
+  # ステップ 3: DB migrate と collectstatic をビルドステップで実行
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        docker run --rm \
+          -e DJANGO_SETTINGS_MODULE=config.settings \
+          -e SECRET_KEY=$_SECRET_KEY \
+          -e DATABASE_URL=$_DATABASE_URL \
+          -e ALLOWED_HOSTS=$_ALLOWED_HOSTS \
+          -e CSRF_TRUSTED_ORIGINS=$_CSRF_TRUSTED_ORIGINS \
+          -e CORS_ORIGIN_WHITELIST=$_CORS_ORIGIN_WHITELIST \
+          asia-northeast1-docker.pkg.dev/$PROJECT_ID/climate-change-app/climate-change-app-image \
+          sh -c "python manage.py migrate --noinput && python manage.py collectstatic --noinput"
+
+  # ステップ 4: Cloud Run にデプロイ（substitutions から環境変数を渡す）
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
     args:
       [
