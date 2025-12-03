@@ -1,6 +1,6 @@
 import { Navigate } from "react-router-dom";
 import { useAuthContext } from "../../context/AuthContext";
-import { Loading } from "../common";
+import { FullScreenLoading } from "../common";
 
 interface PrivateRouteProps {
   element: React.ReactNode;
@@ -9,17 +9,17 @@ interface PrivateRouteProps {
 const PrivateRoute: React.FC<PrivateRouteProps> = ({ element }) => {
   const { currentUsername, authLoading } = useAuthContext();
 
-  // ① 認証状態チェック中は何もリダイレクトしない（←これが重要）
+  // 認証チェック中は読み込み表示
   if (authLoading) {
-    return <Loading message="認証状態を確認しています..." />;
+    return <FullScreenLoading message="読み込み中..." />;
   }
 
-  // ② 認証済みならそのまま表示
+  // 認証済みならページ表示
   if (currentUsername) {
     return <>{element}</>;
   }
 
-  // ③ 認証されていない場合のみリダイレクト
+  // 認証されていなければログインへリダイレクト
   return <Navigate to="/login" replace />;
 };
 

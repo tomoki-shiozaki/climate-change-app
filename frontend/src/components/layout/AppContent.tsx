@@ -1,11 +1,10 @@
 import { Container } from "react-bootstrap";
 import { useAuthContext } from "../../context/AuthContext";
-import { Loading, AppNavbar, Footer, ErrorToast } from "../common";
+import { FullScreenLoading, AppNavbar, Footer, ErrorToast } from "../common";
 import AppRoutes from "../../AppRoutes";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { useErrorContext } from "../../context/ErrorContext";
-// import { ClimateChartTest } from "../chart/ClimateChartTest";
 
 const AppContent = () => {
   const { authLoading } = useAuthContext();
@@ -18,7 +17,8 @@ const AppContent = () => {
   }, [location.pathname, clearError]);
 
   if (authLoading) {
-    return <Loading message="認証情報を確認中..." />;
+    // アプリ全体の初期ロード中は全画面で読み込み表示
+    return <FullScreenLoading message="読み込み中..." />;
   }
 
   return (
@@ -27,8 +27,6 @@ const AppContent = () => {
       <Container className="mt-4 flex-grow-1">
         <AppRoutes />
       </Container>
-      {/* 開発・テスト用：グローバルエラー挙動確認用のコンポーネント */}
-      {/* <ClimateChartTest /> */}
       <ErrorToast />
       <Footer />
     </>
