@@ -11,18 +11,21 @@ Django REST Framework（API）と React（UI）を使った、気候変動デー
 ## 機能
 
 - 気温データの時系列グラフ表示
+- 国別 CO₂ 排出量の色分けマップ表示（年度スライダー対応）
 - JWT による認証・ログイン/ログアウト
 - OWID 気候データの定期バッチ取得
 
 ## デプロイ URL
 
-1. **推奨環境（高速・安定）**  
+1. **推奨環境**  
    https://climate-change-app-2.onrender.com/  
    フロントは Render、バックエンドは Cloud Run にデプロイ済み。
+   ※Cloud Run はコールドスタート時に起動時間がかかる場合があります（目安：約 20〜25 秒）。
 
 2. **代替環境（Render 上で動作）**  
    https://climate-change-app.onrender.com  
    Cloud Run 版が使えない場合に利用。
+   ※Render（無料プラン）はスリープ復帰に時間がかかる場合があります（目安：約 50〜60 秒）。
 
 ## テスト用アカウント
 
@@ -33,6 +36,12 @@ Django REST Framework（API）と React（UI）を使った、気候変動デー
 ## 気温変化グラフ
 
 ![Climate Chart](docs/screenshots/climate-chart.png)
+
+## CO₂ 排出量マップ（年度スライダー）
+
+年度スライダーを動かすことで、各国の色分けが変化します。（自動再生機能あり）
+
+![co2-map-demo](./docs/images/co2-map-demo.gif)
 
 ## ドキュメント
 
