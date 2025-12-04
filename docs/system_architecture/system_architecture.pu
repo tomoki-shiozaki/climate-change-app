@@ -14,7 +14,6 @@ package "Google Cloud" {
   component "Artifact Registry" as ArtifactRegistry
   component "Cloud Run (DRF Backend)" as CloudRun
   component "Cloud Logging" as Logging
-  component "Secret Manager" as SecretManager
 }
 
 package "Neon" {
@@ -38,9 +37,6 @@ CloudBuild --> CloudRun : Deploy Image
 ArtifactRegistry --> CloudRun : Pull Image
 
 GitHubRepo --> Frontend : Deploy React (Render)
-
-' シークレット管理
-CloudRun --> SecretManager : Fetch Secrets
 
 ' 定期バッチ（GitHub Actions）
 GitHubActions --> OWIDAPI : Fetch Climate Data
