@@ -16,23 +16,32 @@ from pathlib import Path
 from environs import Env
 
 env = Env()
-config_dir = Path(__file__).resolve().parent  # type: ignore
+
+# ================================
+# 基本設定
+# ================================
+config_dir = Path(__file__).resolve().parent
 backend_dir = config_dir.parent
 # ENV_FILE が指定されていればそれを使い、なければ backend/.env.venv を読む
 default_env_file = backend_dir / ".env.venv"
 env_file = env.str("ENV_FILE", default=str(default_env_file))
 env.read_env(env_file)
 
-# -------------------------------
-# ここで環境変数を読み込む
-IS_PRODUCTION = env.bool("DJANGO_PRODUCTION", default=False)
-COOKIE_SECURE = IS_PRODUCTION
-# -------------------------------
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# -------------------------------
+# DJANGO_ENV による環境切り替え
+# -------------------------------
+DJANGO_ENV = env.str("DJANGO_ENV", default="development").lower()
 
+IS_PRODUCTION = DJANGO_ENV == "production"
+IS_DEVELOPMENT = DJANGO_ENV == "development"
+
+
+# -------------------------------
+# セキュリティ設定
+# -------------------------------
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
@@ -79,19 +88,14 @@ INSTALLED_APPS = [
     "apps.climate_data.apps.ClimateDataConfig",
 ]
 
-GENERATE_SCHEMA = env.bool("GENERATE_SCHEMA", default=False)
+# ================================
+# SITE
+# ================================
+SITE_ID = 1
 
-if GENERATE_SCHEMA:
-    INSTALLED_APPS += [
-        "drf_spectacular",
-    ]
-
-    SPECTACULAR_SETTINGS = {
-        "TITLE": "Climate Change App (Django REST Framework + React)",
-        "DESCRIPTION": "A climate change app for learning about climate change with data visualization.",
-        "VERSION": "1.0.0",
-    }
-
+# ================================
+# DRF / 認証
+# ================================
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
     "DEFAULT_AUTHENTICATION_CLASSES": [
@@ -103,35 +107,70 @@ REST_FRAMEWORK = {
     ],
 }
 
+# 開発環境のみ Browsable API と SessionAuth を追加
+if IS_DEVELOPMENT:
+    REST_FRAMEWORK["DEFAULT_AUTHENTICATION_CLASSES"].append(
+        "rest_framework.authentication.SessionAuthentication"
+    )
+    REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"].append(
+        "rest_framework.renderers.BrowsableAPIRenderer"
+    )
+
+# ================================
+# dj-rest-auth / Cookie 設定
+# ================================
 REST_AUTH = {
     "USE_JWT": True,
     "JWT_AUTH_COOKIE": "my-app-auth",
     "JWT_AUTH_REFRESH_COOKIE": "my-refresh-token",
 }
-if not DEBUG:  # 本番向け設定
+
+# 本番だけ Secure + SameSite=None
+if IS_PRODUCTION:
     REST_AUTH.update(
         {
-            "JWT_AUTH_SAMESITE": "None",  # クロスオリジン対応
             "JWT_AUTH_SECURE": True,  # HTTPS 必須
+            "JWT_AUTH_SAMESITE": "None",  # クロスオリジン対応
         }
     )
+
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=1),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "ROTATE_REFRESH_TOKENS": False,
 }
 
-if DEBUG:
-    REST_FRAMEWORK["DEFAULT_AUTHENTICATION_CLASSES"].append(
-        "rest_framework.authentication.SessionAuthentication"  # type: ignore
-    )
-    REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"].append(
-        "rest_framework.renderers.BrowsableAPIRenderer"  # type: ignore
-    )
+# ================================
+# drf-spectacular (OpenAPI/Swagger)
+# ================================
+GENERATE_SCHEMA = env.bool("GENERATE_SCHEMA", default=False)
 
 if GENERATE_SCHEMA:
+    INSTALLED_APPS += [
+        "drf_spectacular",
+    ]
+
     REST_FRAMEWORK["DEFAULT_SCHEMA_CLASS"] = "drf_spectacular.openapi.AutoSchema"  # type: ignore
 
+    SPECTACULAR_SETTINGS = {
+        "TITLE": "Climate Change App (Django REST Framework + React)",
+        "DESCRIPTION": "A climate change app for learning about climate change with data visualization.",
+        "VERSION": "1.0.0",
+    }
+
+# ================================
+# CORS
+# ================================
+CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ORIGIN_WHITELIST = env.list(
+    "CORS_ORIGIN_WHITELIST", default=["http://localhost:5173"]
+)
+
+# ================================
+# Middleware
+# ================================
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -145,12 +184,9 @@ MIDDLEWARE = [
     "allauth.account.middleware.AccountMiddleware",
 ]
 
-CORS_ALLOW_ALL_ORIGINS = False
-CORS_ALLOW_CREDENTIALS = True
-CORS_ORIGIN_WHITELIST = env.list(
-    "CORS_ORIGIN_WHITELIST", default=["http://localhost:5173"]
-)
-
+# ================================
+# Templates / Static
+# ================================
 ROOT_URLCONF = "config.urls"
 
 TEMPLATES = [
@@ -168,22 +204,25 @@ TEMPLATES = [
     },
 ]
 
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-
-SITE_ID = 1
-
 WSGI_APPLICATION = "config.wsgi.application"
 
-
+# ================================
+# DB
+# ================================
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-
 DATABASES = {"default": env.dj_db_url("DATABASE_URL", default="sqlite:///db.sqlite3")}
 
+# ================================
+# 認証ユーザモデル
+# ================================
+AUTH_USER_MODEL = "accounts.CustomUser"
 
+# ================================
+# パスワードバリデーション
+# ================================
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
@@ -200,32 +239,37 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+# ================================
+# Email
+# ================================
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+# ================================
+# その他
+# ================================
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
-
 LANGUAGE_CODE = "ja"
-
 TIME_ZONE = "UTC"
-
 USE_I18N = True
-
 USE_TZ = True
 
-
+# ================================
+# Static files
+# ================================
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
-
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-AUTH_USER_MODEL = "accounts.CustomUser"
 
+# ================================
+# App-specific settings
+# ================================
 CLIMATE_GROUPS = {
     "TEMPERATURE": {
         "name": "Temperature",
