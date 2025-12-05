@@ -45,6 +45,6 @@ export const extractErrorMessage = (error: AxiosErrorWithResponse): string => {
     }
   }
 
-  // 最終的に error.message またはデフォルト
+  // どれにも当てはまらなかった場合の保険
   return error.message || "エラーが発生しました。";
 };
