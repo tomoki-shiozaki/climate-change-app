@@ -29,7 +29,7 @@ urlpatterns = [
 ]
 
 # 開発環境のみ：Swagger UI / Redoc / browsable API ログイン
-if settings.DEBUG:
+if settings.IS_DEVELOPMENT:
     from drf_spectacular.views import (
         SpectacularAPIView,
         SpectacularRedocView,
