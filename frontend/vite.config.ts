@@ -11,7 +11,6 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  assetsInclude: ["**/*.geojson"], // GeoJSON ファイルを Vite のアセットとして扱えるようにする設定。
   test: {
     globals: true,
     environment: "jsdom",

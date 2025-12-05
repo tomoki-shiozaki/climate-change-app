@@ -13,6 +13,7 @@ export const extractErrorMessage = (error: AxiosErrorWithResponse): string => {
     if (status && status >= 500 && status < 600) {
       return "サーバーで問題が発生しました。時間を置いて再度お試しください。";
     }
+    // 想定外のケースに備えた保険として
     return error.message || "不明なエラーが発生しました。";
   }
 
@@ -44,6 +45,6 @@ export const extractErrorMessage = (error: AxiosErrorWithResponse): string => {
     }
   }
 
-  // 最終的に error.message またはデフォルト
+  // どれにも当てはまらなかった場合の保険
   return error.message || "エラーが発生しました。";
 };
