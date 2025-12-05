@@ -10,7 +10,7 @@ describe("extractErrorMessage", () => {
 
   it("サーバーエラー（500系）の場合", () => {
     const error = {
-      response: { status: 503, data: undefined }, // ← null → undefined に変更
+      response: { status: 503, data: undefined },
       message: "Service Unavailable",
     } as AxiosErrorWithResponse;
     expect(extractErrorMessage(error)).toBe(
