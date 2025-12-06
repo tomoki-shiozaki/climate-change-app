@@ -85,10 +85,16 @@ jobs:
         run: cd frontend && npx vitest run --coverage
 
       # --- Upload to Codecov ---
-      - name: Upload coverage reports to Codecov
+      - name: Upload backend coverage
         uses: codecov/codecov-action@v5
         with:
-          files: |
-            backend/coverage.xml
-            frontend/coverage/lcov.info
+          files: backend/coverage.xml
+          flags: backend
+          fail_ci_if_error: true
+
+      - name: Upload frontend coverage
+        uses: codecov/codecov-action@v5
+        with:
+          files: frontend/coverage/lcov.info
+          flags: frontend
           fail_ci_if_error: true
