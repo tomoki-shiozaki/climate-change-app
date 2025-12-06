@@ -49,3 +49,40 @@ jobs:
 
       - name: Verify API client is up-to-date
         run: git diff --exit-code frontend/src/types/api.d.ts || (echo "❌ API client is not up-to-date. Run 'make generate-api' and commit the result." && exit 1)
+
+  test-and-coverage:
+    runs-on: ubuntu-latest
+    env:
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      DEBUG: "False"
+      GENERATE_SCHEMA: "True"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # --- Backend coverage ---
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - run: cd backend && pip install -r requirements/dev.txt
+      - run: cd backend && pytest --cov=apps --cov-report=xml:coverage.xml
+
+      # --- Frontend coverage ---
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - run: cd frontend && npm ci
+      - run: cd frontend && npx vitest run --coverage
+
+      # --- Upload to Codecov ---
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: |
+            backend/coverage.xml
+            frontend/coverage/lcov.info
+          fail_ci_if_error: true
