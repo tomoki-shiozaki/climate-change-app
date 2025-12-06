@@ -1,0 +1,21 @@
+coverage:
+  status:
+    project:
+      backend:
+        # backend/coverage.xml を backend カバレッジとして扱う
+        paths:
+          - "backend/"
+        informational: true
+
+      frontend:
+        # frontend/lcov.info を frontend カバレッジとして扱う
+        paths:
+          - "frontend/"
+        informational: true
+
+    patch:
+      default:
+        informational: true
+
+comment:
+  layout: "reach, diff, flags"
