@@ -5,12 +5,14 @@ coverage:
         # backend/coverage.xml を backend カバレッジとして扱う
         paths:
           - "backend/"
+        flags: backend
         informational: true
 
       frontend:
         # frontend/lcov.info を frontend カバレッジとして扱う
         paths:
           - "frontend/"
+        flags: frontend
         informational: true
 
     patch:
