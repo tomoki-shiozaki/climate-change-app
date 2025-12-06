@@ -1,5 +1,9 @@
 # 気候変動データ閲覧アプリ
 
+[![Build Status](https://github.com/tomoki-shiozaki/climate-change-app/actions/workflows/ci.yml/badge.svg)](https://github.com/tomoki-shiozaki/climate-change-app/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/tomoki-shiozaki/climate-change-app/graph/badge.svg?token=UH6D9YYQXM)](https://codecov.io/gh/tomoki-shiozaki/climate-change-app)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 Django REST Framework（API）と React（UI）を使った、気候変動データの可視化アプリです。
 
 ## 使用技術

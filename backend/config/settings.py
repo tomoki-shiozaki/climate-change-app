@@ -33,7 +33,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # -------------------------------
 # DJANGO_ENV による環境切り替え
 # -------------------------------
-DJANGO_ENV = env.str("DJANGO_ENV", default="development").lower()
+DJANGO_ENV = env.str("DJANGO_ENV", default="production").lower()
 
 IS_PRODUCTION = DJANGO_ENV == "production"
 IS_DEVELOPMENT = DJANGO_ENV == "development"

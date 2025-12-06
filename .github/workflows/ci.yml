@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, develop]
   pull_request:
-    branches: [main]
+    branches: [main, develop]
 
 jobs:
   check-openapi:
@@ -15,7 +15,7 @@ jobs:
       GENERATE_SCHEMA: "True"
     strategy:
       matrix:
-        python-version: [3.12, 3.13]
+        python-version: [3.13]
 
     steps:
       - uses: actions/checkout@v5
@@ -49,3 +49,46 @@ jobs:
 
       - name: Verify API client is up-to-date
         run: git diff --exit-code frontend/src/types/api.d.ts || (echo "❌ API client is not up-to-date. Run 'make generate-api' and commit the result." && exit 1)
+
+  test-and-coverage:
+    runs-on: ubuntu-latest
+    env:
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      DEBUG: "False"
+      GENERATE_SCHEMA: "True"
+
+    steps:
+      - uses: actions/checkout@v5
+
+      # --- Backend coverage ---
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Install Python dependencies
+        run: cd backend && pip install -r requirements/dev.txt
+
+      - name: Run backend tests with coverage
+        run: cd backend && pytest --cov=apps --cov-report=xml:coverage.xml
+
+      # --- Frontend coverage ---
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+
+      - name: Install Node.js dependencies
+        run: cd frontend && npm ci
+
+      - name: Run frontend tests with coverage
+        run: cd frontend && npx vitest run --coverage
+
+      # --- Upload to Codecov ---
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          files: |
+            backend/coverage.xml
+            frontend/coverage/lcov.info
+          fail_ci_if_error: true
