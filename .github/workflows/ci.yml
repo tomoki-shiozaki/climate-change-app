@@ -58,29 +58,35 @@ jobs:
       GENERATE_SCHEMA: "True"
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       # --- Backend coverage ---
       - name: Setup Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
-          python-version: "3.12"
+          python-version: "3.13"
 
-      - run: cd backend && pip install -r requirements/dev.txt
-      - run: cd backend && pytest --cov=apps --cov-report=xml:coverage.xml
+      - name: Install Python dependencies
+        run: cd backend && pip install -r requirements/dev.txt
+
+      - name: Run backend tests with coverage
+        run: cd backend && pytest --cov=apps --cov-report=xml:coverage.xml
 
       # --- Frontend coverage ---
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: "24"
 
-      - run: cd frontend && npm ci
-      - run: cd frontend && npx vitest run --coverage
+      - name: Install Node.js dependencies
+        run: cd frontend && npm ci
+
+      - name: Run frontend tests with coverage
+        run: cd frontend && npx vitest run --coverage
 
       # --- Upload to Codecov ---
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           files: |
             backend/coverage.xml
