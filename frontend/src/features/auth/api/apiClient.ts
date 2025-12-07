@@ -1,8 +1,8 @@
 import axios from "axios";
 import type { AxiosInstance } from "axios";
-import { extractErrorMessage } from "../lib/errors/extractErrorMessage";
-import { refreshToken } from "../features/auth/api/refreshToken";
-import { LOCALSTORAGE_USERNAME_KEY } from "../constants/storage";
+import { extractErrorMessage } from "../../../lib/errors/extractErrorMessage";
+import { refreshToken } from "./refreshToken";
+import { LOCALSTORAGE_USERNAME_KEY } from "../../../constants/storage";
 
 // AxiosRequestConfig に _retry を追加（型安全用）
 declare module "axios" {

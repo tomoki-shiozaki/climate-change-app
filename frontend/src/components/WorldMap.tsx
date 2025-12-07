@@ -4,7 +4,7 @@ import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
 import type { Feature, Geometry } from "geojson";
 import type { PathOptions, Layer } from "leaflet";
 import { useQuery } from "@tanstack/react-query";
-import apiClient from "@/api/apiClient";
+import apiClient from "@/features/auth/api/apiClient";
 import type {
   CountryFeatureCollection,
   CO2DataByYear,

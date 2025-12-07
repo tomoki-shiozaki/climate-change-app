@@ -1,4 +1,4 @@
-import apiClient from "../api/apiClient";
+import apiClient from "../features/auth/api/apiClient";
 import type { TemperatureData } from "../types/models/climate";
 
 export async function fetchTemperatureData(): Promise<TemperatureData> {
