@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from "axios";
-import type { AxiosInstance } from "axios";
+import type { AxiosInstance, InternalAxiosRequestConfig } from "axios";
 import { extractErrorMessage } from "../../../lib/errors/extractErrorMessage";
 import { refreshToken } from "./refreshToken";
 import { LOCALSTORAGE_USERNAME_KEY } from "../../../constants/storage";
@@ -18,49 +19,49 @@ const apiClient: AxiosInstance = axios.create({
   withCredentials: true, // Cookie を送信
 });
 
-// リクエスト interceptor: CSRF トークンをヘッダに追加
-apiClient.interceptors.request.use((config) => {
+// --- interceptor 関数を切り出し ---
+// CSRF トークンをヘッダに追加
+const addCsrfToken = (config: InternalAxiosRequestConfig) => {
   // Cookie から csrftoken を取得
   const csrfToken = document.cookie
     .split("; ")
     .find((row) => row.startsWith("csrftoken="))
     ?.split("=")[1];
+
   // CSRF トークンをヘッダに追加
-  // 注意: config.headers は TypeScript 上は optional だが、
-  // 実行時には axios が空オブジェクトとして初期化していることが多い。
-  // 安全策として undefined チェックを行っている。
-  if (csrfToken && config.headers) {
+  if (csrfToken) {
+    config.headers = config.headers || {};
     config.headers["X-CSRFToken"] = csrfToken;
   }
-
   return config;
-});
+};
 
-// response interceptor: 401 時に refresh token を使って再リクエスト
-apiClient.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    const originalRequest = error.config;
+// 401 時に refresh token を使って再リクエスト
+export const handle401 = async (error: any) => {
+  const originalRequest = error.config;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
+  if (error.response?.status === 401 && !originalRequest._retry) {
+    originalRequest._retry = true;
 
-      try {
-        // refreshToken() が新しい access token を返す場合
-        await refreshToken();
-        // 再リクエスト
-        return apiClient(originalRequest);
-      } catch (err) {
-        console.warn("トークンリフレッシュに失敗しました。");
-        localStorage.removeItem(LOCALSTORAGE_USERNAME_KEY);
-        return Promise.reject(err);
-      }
+    try {
+      // refreshToken() が新しい access token を返す場合
+      await refreshToken();
+      // 再リクエスト
+      return apiClient(originalRequest);
+    } catch (err) {
+      console.warn("トークンリフレッシュに失敗しました。");
+      localStorage.removeItem(LOCALSTORAGE_USERNAME_KEY);
+      return Promise.reject(err);
     }
-
-    // エラーメッセージ整形
-    error.message = extractErrorMessage(error);
-    return Promise.reject(error);
   }
-);
+
+  // エラーメッセージ整形
+  error.message = extractErrorMessage(error);
+  return Promise.reject(error);
+};
+
+// --- interceptor 登録 ---
+apiClient.interceptors.request.use(addCsrfToken);
+apiClient.interceptors.response.use((res) => res, handle401);
 
 export default apiClient;
