@@ -3,7 +3,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
 import AuthService from "../services/auth";
-import { refreshToken } from "../services/refreshToken";
+import { refreshToken } from "../features/auth/api/refreshToken";
 import type { paths } from "../types/api";
 import { useErrorContext } from "./ErrorContext";
 import { LOCALSTORAGE_USERNAME_KEY } from "../constants/storage";
