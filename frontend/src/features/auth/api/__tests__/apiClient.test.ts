@@ -1,4 +1,4 @@
-// __tests__/apiClient.test.ts
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { AxiosHeaders } from "axios";
 import type { InternalAxiosRequestConfig } from "axios";
@@ -8,20 +8,22 @@ import { LOCALSTORAGE_USERNAME_KEY } from "@/constants/storage";
 import { extractErrorMessage } from "@/lib/errors/extractErrorMessage";
 
 // refreshToken と extractErrorMessage をモック
-vi.mock("../refreshToken");
-vi.mock("../../../lib/errors/extractErrorMessage");
+vi.mock("../refreshToken", () => ({ refreshToken: vi.fn() }));
+vi.mock("../../../lib/errors/extractErrorMessage", () => ({
+  extractErrorMessage: vi.fn(),
+}));
 
 describe("apiClient", () => {
-  const mockedRefreshToken = refreshToken as unknown as ReturnType<
-    typeof vi.fn
-  >;
+  // vi.mocked を使うと型安全にモックを扱える
+  const mockedExtractErrorMessage = vi.mocked(extractErrorMessage);
+  const mockedRefreshToken = vi.mocked(refreshToken);
 
   beforeEach(() => {
     vi.clearAllMocks();
     localStorage.clear();
     document.cookie = "csrftoken=test-csrf";
 
-    // ここで Axios の adapter をモック
+    // Axios の adapter を置き換えてネットワークに行かないようにする
     apiClient.defaults.adapter = async (config) => {
       return {
         status: 200,
@@ -35,7 +37,7 @@ describe("apiClient", () => {
 
   it("should add CSRF token header in request interceptor", async () => {
     const config: InternalAxiosRequestConfig = await addCsrfToken({
-      headers: new AxiosHeaders(), // ← ここを {} ではなく AxiosHeaders にする
+      headers: new AxiosHeaders(),
     });
 
     expect(config.headers?.["X-CSRFToken"]).toBe("test-csrf");
@@ -52,14 +54,11 @@ describe("apiClient", () => {
       refresh: "new-refresh-token",
     });
 
-    // adapter が置き換え済みなのでネットワークは行かない
     const result = await handle401(error as any);
 
     expect(mockedRefreshToken).toHaveBeenCalledTimes(1);
     expect(result.data).toEqual({ success: true }); // adapter の返り値
     expect(error.config._retry).toBe(true);
-
-    // requestSpy をチェックする必要はない
   });
 
   it("should remove username from localStorage if refresh fails", async () => {
@@ -67,7 +66,7 @@ describe("apiClient", () => {
 
     const error = {
       response: { status: 401 },
-      config: {},
+      config: {} as any,
     };
 
     mockedRefreshToken.mockRejectedValueOnce(new Error("fail"));
@@ -78,13 +77,13 @@ describe("apiClient", () => {
   });
 
   it("should format error message for non-401 errors", async () => {
-    const error = { response: { status: 500 }, config: {} };
-    (extractErrorMessage as any).mockReturnValue("formatted error");
+    const error = { response: { status: 500 }, config: {} as any };
+    mockedExtractErrorMessage.mockReturnValue("formatted error");
 
     await expect(handle401(error as any)).rejects.toEqual(
       expect.objectContaining({ message: "formatted error" })
     );
 
-    expect(extractErrorMessage).toHaveBeenCalledWith(error);
+    expect(mockedExtractErrorMessage).toHaveBeenCalledWith(error);
   });
 });
