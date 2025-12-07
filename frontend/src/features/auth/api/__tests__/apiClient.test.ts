@@ -20,6 +20,17 @@ describe("apiClient", () => {
     vi.clearAllMocks();
     localStorage.clear();
     document.cookie = "csrftoken=test-csrf";
+
+    // ここで Axios の adapter をモック
+    apiClient.defaults.adapter = async (config) => {
+      return {
+        status: 200,
+        statusText: "OK",
+        headers: {},
+        config,
+        data: { success: true },
+      };
+    };
   });
 
   it("should add CSRF token header in request interceptor", async () => {
@@ -33,7 +44,7 @@ describe("apiClient", () => {
   it("should call refreshToken and retry request on 401", async () => {
     const error = {
       response: { status: 401 },
-      config: {},
+      config: { _retry: false } as any,
     };
 
     mockedRefreshToken.mockResolvedValueOnce({
@@ -41,19 +52,14 @@ describe("apiClient", () => {
       refresh: "new-refresh-token",
     });
 
-    // apiClient.request の呼び出しを spy
-    const requestSpy = vi
-      .spyOn(apiClient, "request")
-      .mockResolvedValue({ data: "ok" });
-
+    // adapter が置き換え済みなのでネットワークは行かない
     const result = await handle401(error as any);
 
     expect(mockedRefreshToken).toHaveBeenCalledTimes(1);
-    expect(requestSpy).toHaveBeenCalled();
-    expect(result.data).toBe("ok");
-
-    // _retry が true にセットされていること
+    expect(result.data).toEqual({ success: true }); // adapter の返り値
     expect(error.config._retry).toBe(true);
+
+    // requestSpy をチェックする必要はない
   });
 
   it("should remove username from localStorage if refresh fails", async () => {
