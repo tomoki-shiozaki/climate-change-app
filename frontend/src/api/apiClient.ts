@@ -1,6 +1,6 @@
 import axios from "axios";
 import type { AxiosInstance } from "axios";
-import { extractErrorMessage } from "../lib/errors/errorHandler";
+import { extractErrorMessage } from "../lib/errors/extractErrorMessage";
 import { refreshToken } from "../services/refreshToken";
 import { LOCALSTORAGE_USERNAME_KEY } from "../constants/storage";
 

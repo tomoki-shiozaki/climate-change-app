@@ -141,6 +141,7 @@ docker-shell:
 # Docker コンテナ上で新規に schema.json を生成
 docker-generate-schema:
 	docker compose run --rm \
+	  -e DJANGO_ENV=production \
 	  -e DEBUG=False \
 	  -e GENERATE_SCHEMA=True \
 	  backend \
@@ -150,6 +151,7 @@ docker-generate-schema:
 # Docker コンテナ上で既存の backend コンテナに対して schema.json を生成
 docker-generate-schema-exec:
 	docker compose exec \
+	  -e DJANGO_ENV=production \
 	  -e DEBUG=False \
 	  -e GENERATE_SCHEMA=True \
 	  backend \
