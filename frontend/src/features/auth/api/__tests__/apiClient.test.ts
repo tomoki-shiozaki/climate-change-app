@@ -1,5 +1,6 @@
 // __tests__/apiClient.test.ts
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import { AxiosHeaders } from "axios";
 import type { InternalAxiosRequestConfig } from "axios";
 import apiClient, { addCsrfToken, handle401 } from "../apiClient";
 import { refreshToken } from "../refreshToken";
@@ -23,8 +24,9 @@ describe("apiClient", () => {
 
   it("should add CSRF token header in request interceptor", async () => {
     const config: InternalAxiosRequestConfig = await addCsrfToken({
-      headers: {},
+      headers: new AxiosHeaders(), // ← ここを {} ではなく AxiosHeaders にする
     });
+
     expect(config.headers?.["X-CSRFToken"]).toBe("test-csrf");
   });
 
