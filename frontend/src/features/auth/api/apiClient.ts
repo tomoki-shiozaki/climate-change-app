@@ -20,7 +20,7 @@ const apiClient: AxiosInstance = axios.create({
 
 // --- interceptor 関数を切り出し ---
 // CSRF トークンをヘッダに追加
-const addCsrfToken = (config: InternalAxiosRequestConfig) => {
+export const addCsrfToken = (config: InternalAxiosRequestConfig) => {
   // Cookie から csrftoken を取得
   const csrfToken = document.cookie
     .split("; ")
