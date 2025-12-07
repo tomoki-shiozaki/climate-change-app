@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from "axios";
 import type { AxiosInstance, InternalAxiosRequestConfig } from "axios";
 import { extractErrorMessage } from "../../../lib/errors/extractErrorMessage";
@@ -37,6 +36,7 @@ const addCsrfToken = (config: InternalAxiosRequestConfig) => {
 };
 
 // 401 時に refresh token を使って再リクエスト
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const handle401 = async (error: any) => {
   const originalRequest = error.config;
 
