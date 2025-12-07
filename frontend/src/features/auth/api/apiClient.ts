@@ -25,7 +25,10 @@ apiClient.interceptors.request.use((config) => {
     .split("; ")
     .find((row) => row.startsWith("csrftoken="))
     ?.split("=")[1];
-
+  // CSRF トークンをヘッダに追加
+  // 注意: config.headers は TypeScript 上は optional だが、
+  // 実行時には axios が空オブジェクトとして初期化していることが多い。
+  // 安全策として undefined チェックを行っている。
   if (csrfToken && config.headers) {
     config.headers["X-CSRFToken"] = csrfToken;
   }
