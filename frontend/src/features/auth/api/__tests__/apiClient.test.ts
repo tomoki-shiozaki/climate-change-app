@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { describe, it, expect, vi, beforeEach } from "vitest";
 import { AxiosHeaders } from "axios";
 import type { InternalAxiosRequestConfig } from "axios";
 import apiClient, { addCsrfToken, handle401 } from "../apiClient";
@@ -9,7 +8,7 @@ import { extractErrorMessage } from "@/lib/errors/extractErrorMessage";
 
 // refreshToken と extractErrorMessage をモック
 vi.mock("../refreshToken", () => ({ refreshToken: vi.fn() }));
-vi.mock("../../../lib/errors/extractErrorMessage", () => ({
+vi.mock("@/lib/errors/extractErrorMessage", () => ({
   extractErrorMessage: vi.fn(),
 }));
 
