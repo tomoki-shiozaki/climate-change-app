@@ -1,4 +1,3 @@
-// useErrorContext.test.ts
 import { renderHook } from "@testing-library/react";
 import { useErrorContext } from "../useErrorContext";
 import { TestErrorProvider } from "./TestErrorProvider";
@@ -15,9 +14,16 @@ describe("useErrorContext", () => {
   });
 
   it("throws error when used outside of ErrorProvider", () => {
-    const { result } = renderHook(() => useErrorContext());
-    expect(result.error).toBeInstanceOf(Error);
-    expect(result.error?.message).toBe(
+    let error: unknown;
+
+    try {
+      renderHook(() => useErrorContext());
+    } catch (e) {
+      error = e;
+    }
+
+    expect(error).toBeInstanceOf(Error);
+    expect((error as Error).message).toBe(
       "useErrorContext must be used within an ErrorProvider"
     );
   });

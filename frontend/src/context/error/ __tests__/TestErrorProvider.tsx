@@ -1,4 +1,3 @@
-// src/context/error/__tests__/TestErrorProvider.tsx
 import type { ReactNode } from "react";
 import { ErrorProvider } from "../ErrorProvider";
 
