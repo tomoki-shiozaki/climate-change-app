@@ -1,5 +1,5 @@
 import Toast from "react-bootstrap/Toast";
-import { useErrorContext } from "../../context/ErrorContext";
+import { useErrorContext } from "../../context/error";
 
 const ErrorToast = () => {
   const { error, clearError } = useErrorContext();

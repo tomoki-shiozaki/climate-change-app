@@ -4,7 +4,7 @@ import { FullScreenLoading, AppNavbar, Footer, ErrorToast } from "../common";
 import AppRoutes from "../../AppRoutes";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { useErrorContext } from "../../context/ErrorContext";
+import { useErrorContext } from "../../context/error";
 
 const AppContent = () => {
   const { authLoading } = useAuthContext();
