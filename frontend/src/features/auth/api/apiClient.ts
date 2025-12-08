@@ -1,5 +1,9 @@
 import axios from "axios";
-import type { AxiosInstance, InternalAxiosRequestConfig } from "axios";
+import type {
+  AxiosError,
+  AxiosInstance,
+  InternalAxiosRequestConfig,
+} from "axios";
 import { extractErrorMessage } from "../../../lib/errors/extractErrorMessage";
 import { refreshToken } from "./refreshToken";
 import { LOCALSTORAGE_USERNAME_KEY } from "../../../constants/storage";
@@ -37,7 +41,7 @@ export const addCsrfToken = (config: InternalAxiosRequestConfig) => {
 
 // 401 時に refresh token を使って再リクエスト
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const handle401 = async (error: any) => {
+export const handle401 = async (error: AxiosError | any) => {
   const originalRequest = error.config;
 
   if (error.response?.status === 401 && !originalRequest._retry) {
