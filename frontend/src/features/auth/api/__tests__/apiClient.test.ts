@@ -3,7 +3,7 @@ import { AxiosHeaders } from "axios";
 import type { InternalAxiosRequestConfig } from "axios";
 import apiClient, { addCsrfToken, handle401 } from "../apiClient";
 import { refreshToken } from "../refreshToken";
-import { LOCALSTORAGE_USERNAME_KEY } from "@/constants/storage";
+import { LOCALSTORAGE_USERNAME_KEY } from "@/features/auth/constants";
 import { extractErrorMessage } from "@/lib/errors/extractErrorMessage";
 
 // refreshToken と extractErrorMessage をモック

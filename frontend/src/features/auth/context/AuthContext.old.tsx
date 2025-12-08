@@ -6,7 +6,7 @@ import AuthService from "../../../services/auth";
 import { refreshToken } from "../api/refreshToken";
 import type { paths } from "../../../types/api";
 import { useErrorContext } from "../../../context/error";
-import { LOCALSTORAGE_USERNAME_KEY } from "../../../constants/storage";
+import { LOCALSTORAGE_USERNAME_KEY } from "../constants";
 
 type LoginRequest =
   paths["/api/v1/dj-rest-auth/login/"]["post"]["requestBody"]["content"]["application/json"];

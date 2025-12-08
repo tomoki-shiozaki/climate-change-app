@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { AuthContext } from "./AuthContext";
 import { useErrorContext } from "@/context/error";
 import { refreshToken } from "../api/refreshToken";
-import { LOCALSTORAGE_USERNAME_KEY } from "@/constants/storage";
+import { LOCALSTORAGE_USERNAME_KEY } from "@/features/auth/constants";
 import type { LoginRequest, SignupRequest } from "../types/apiTypes";
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
