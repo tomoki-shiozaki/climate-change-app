@@ -5,12 +5,11 @@ import type { paths } from "@/types/api";
 type RefreshResponse =
   paths["/api/v1/dj-rest-auth/token/refresh/"]["post"]["responses"]["200"]["content"]["application/json"];
 
-// Vitest で axios をモック
-vi.mock("axios");
+vi.mock("axios"); // Axiosをモック
+
+const mockedAxios = vi.mocked(axios, true); // ここでモック型を取得（深いモック）
 
 describe("refreshToken", () => {
-  const mockedAxios = axios as unknown as { post: ReturnType<typeof vi.fn> };
-
   const mockData: RefreshResponse = {
     access: "new-access-token",
     refresh: "new-refresh-token",
