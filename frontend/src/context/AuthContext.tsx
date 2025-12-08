@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 import AuthService from "../services/auth";
 import { refreshToken } from "../features/auth/api/refreshToken";
 import type { paths } from "../types/api";
-import { useErrorContext } from "./ErrorContext";
+import { useErrorContext } from "./error";
 import { LOCALSTORAGE_USERNAME_KEY } from "../constants/storage";
 
 type LoginRequest =

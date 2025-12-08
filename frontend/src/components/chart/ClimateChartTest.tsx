@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useErrorContext } from "../../context/ErrorContext";
+import { useErrorContext } from "../../context/error";
 import { fetchTemperatureDataWithError } from "../../api/fakeApi";
 
 export const ClimateChartTest = () => {
