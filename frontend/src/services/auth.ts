@@ -1,4 +1,4 @@
-import apiClient from "../api/apiClient";
+import apiClient from "../features/auth/api/apiClient";
 import type { paths } from "../types/api";
 
 // 型の抽出

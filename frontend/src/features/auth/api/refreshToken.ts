@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { paths } from "../types/api";
+import type { paths } from "../../../types/api";
 
 type RefreshResponse =
   paths["/api/v1/dj-rest-auth/token/refresh/"]["post"]["responses"]["200"]["content"]["application/json"];
