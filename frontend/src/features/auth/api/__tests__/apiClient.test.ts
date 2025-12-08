@@ -7,8 +7,12 @@ import { LOCALSTORAGE_USERNAME_KEY } from "@/constants/storage";
 import { extractErrorMessage } from "@/lib/errors/extractErrorMessage";
 
 // refreshToken と extractErrorMessage をモック
-vi.mock("../refreshToken", () => ({ refreshToken: vi.fn() }));
+vi.mock("../refreshToken", () => ({
+  __esModule: true,
+  refreshToken: vi.fn(),
+}));
 vi.mock("@/lib/errors/extractErrorMessage", () => ({
+  __esModule: true,
   extractErrorMessage: vi.fn(),
 }));
 
@@ -84,5 +88,24 @@ describe("apiClient", () => {
     );
 
     expect(mockedExtractErrorMessage).toHaveBeenCalledWith(error);
+  });
+
+  it("should not retry if _retry is already true", async () => {
+    const error = {
+      response: { status: 401 },
+      config: { _retry: true } as any,
+    };
+
+    mockedRefreshToken.mockResolvedValueOnce({
+      access: "dummy-access",
+      refresh: "dummy-refresh",
+    }); // 呼ばれないはず
+    mockedExtractErrorMessage.mockReturnValue("already retried");
+
+    await expect(handle401(error as any)).rejects.toEqual(
+      expect.objectContaining({ message: "already retried" })
+    );
+
+    expect(mockedRefreshToken).not.toHaveBeenCalled();
   });
 });
