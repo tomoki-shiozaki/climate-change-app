@@ -1,5 +1,5 @@
 import { Navigate } from "react-router-dom";
-import { useAuthContext } from "../../features/auth/context/AuthContext";
+import { useAuthContext } from "../../features/auth/context/AuthContext.old";
 import { FullScreenLoading } from "../common";
 
 interface PrivateRouteProps {
