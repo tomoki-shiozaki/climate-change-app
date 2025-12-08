@@ -2,11 +2,11 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
-import AuthService from "../services/auth";
-import { refreshToken } from "../features/auth/api/refreshToken";
-import type { paths } from "../types/api";
-import { useErrorContext } from "./error";
-import { LOCALSTORAGE_USERNAME_KEY } from "../constants/storage";
+import AuthService from "../../../services/auth";
+import { refreshToken } from "../api/refreshToken";
+import type { paths } from "../../../types/api";
+import { useErrorContext } from "../../../context/error";
+import { LOCALSTORAGE_USERNAME_KEY } from "../../../constants/storage";
 
 type LoginRequest =
   paths["/api/v1/dj-rest-auth/login/"]["post"]["requestBody"]["content"]["application/json"];
