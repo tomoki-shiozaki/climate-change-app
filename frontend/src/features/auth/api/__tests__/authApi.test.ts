@@ -1,40 +1,36 @@
 import { apiClient } from "../apiClient";
 import { loginUser, logoutUser, registerUser } from "../authApi";
 
-// axios の post メソッドをモック
-vi.mock("../apiClient", () => {
-  return {
-    apiClient: {
-      post: vi.fn(),
-    },
-  };
-});
+// apiClient の post をモック
+vi.mock("../apiClient", () => ({
+  apiClient: {
+    post: vi.fn(),
+  },
+}));
 
 beforeEach(() => {
   vi.clearAllMocks();
 });
 
 describe("authApi", () => {
+  const mockedPost = vi.mocked(apiClient.post);
+
   // ---------------------------
   // loginUser
   // ---------------------------
   it("loginUser: 正しい URL と payload で POST を呼び、レスポンスを返す", async () => {
     const mockResponse = { data: { access: "abc123", user: { id: 1 } } };
+    mockedPost.mockResolvedValue(mockResponse);
 
-    (apiClient.post as any).mockResolvedValue(mockResponse);
-
-    const result = await loginUser({
+    const payload = {
       username: "testuser",
       password: "pass1234",
-    });
+    };
 
-    // URL / payload が正しく渡されていること
-    expect(apiClient.post).toHaveBeenCalledWith("/dj-rest-auth/login/", {
-      username: "testuser",
-      password: "pass1234",
-    });
+    const result = await loginUser(payload);
 
-    // 戻り値
+    expect(mockedPost).toHaveBeenCalledOnce();
+    expect(mockedPost).toHaveBeenCalledWith("/dj-rest-auth/login/", payload);
     expect(result).toEqual(mockResponse.data);
   });
 
@@ -43,13 +39,12 @@ describe("authApi", () => {
   // ---------------------------
   it("logoutUser: 正しい URL と空オブジェクトで POST を呼び、レスポンスを返す", async () => {
     const mockResponse = { data: { detail: "logged out" } };
-
-    (apiClient.post as any).mockResolvedValue(mockResponse);
+    mockedPost.mockResolvedValue(mockResponse);
 
     const result = await logoutUser();
 
-    expect(apiClient.post).toHaveBeenCalledWith("/dj-rest-auth/logout/", {});
-
+    expect(mockedPost).toHaveBeenCalledOnce();
+    expect(mockedPost).toHaveBeenCalledWith("/dj-rest-auth/logout/", {});
     expect(result).toEqual(mockResponse.data);
   });
 
@@ -58,8 +53,7 @@ describe("authApi", () => {
   // ---------------------------
   it("registerUser: 正しい URL と payload で POST を呼び、レスポンスを返す", async () => {
     const mockResponse = { data: { user: 1, access: "aaa" } };
-
-    (apiClient.post as any).mockResolvedValue(mockResponse);
+    mockedPost.mockResolvedValue(mockResponse);
 
     const payload = {
       username: "user1",
@@ -70,11 +64,11 @@ describe("authApi", () => {
 
     const result = await registerUser(payload);
 
-    expect(apiClient.post).toHaveBeenCalledWith(
+    expect(mockedPost).toHaveBeenCalledOnce();
+    expect(mockedPost).toHaveBeenCalledWith(
       "/dj-rest-auth/registration/",
       payload
     );
-
     expect(result).toEqual(mockResponse.data);
   });
 });
