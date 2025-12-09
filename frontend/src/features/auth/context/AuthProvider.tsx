@@ -1,34 +1,12 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import type { ReactNode } from "react";
-import AuthService from "../services/auth";
-import { refreshToken } from "../features/auth/api/refreshToken";
-import type { paths } from "../types/api";
-import { useErrorContext } from "./error";
-import { LOCALSTORAGE_USERNAME_KEY } from "../constants/storage";
+import { AuthContext } from "./AuthContext";
+import { useErrorContext } from "@/context/error";
+import { refreshToken } from "../api/refreshToken";
+import { LOCALSTORAGE_USERNAME_KEY } from "@/features/auth/constants";
+import type { LoginRequest, SignupRequest } from "../types/apiTypes";
 
-type LoginRequest =
-  paths["/api/v1/dj-rest-auth/login/"]["post"]["requestBody"]["content"]["application/json"];
-type SignupRequest =
-  paths["/api/v1/dj-rest-auth/registration/"]["post"]["requestBody"]["content"]["application/json"];
-
-interface AuthContextType {
-  currentUsername: string | null;
-  authLoading: boolean;
-  login: (user: LoginRequest) => Promise<void>;
-  logout: () => Promise<void>;
-  signup: (user: SignupRequest) => Promise<void>;
-  refreshAccessToken: () => Promise<void>;
-}
-
-interface AuthProviderProps {
-  children: ReactNode;
-}
-
-const AuthContext = createContext<AuthContextType | null>(null);
-
-export const AuthProvider = ({ children }: AuthProviderProps) => {
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [currentUsername, setCurrentUsername] = useState<string | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
   const { setError } = useErrorContext();
@@ -72,7 +50,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
 
     try {
-      const data = await AuthService.login(user);
+      const data = await AuthApi.login(user);
       if (!data.access)
         throw new Error("サーバーから access token が返されませんでした。");
 
@@ -88,7 +66,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const logout = async () => {
     try {
-      await AuthService.logout();
+      await AuthApi.logout();
       setError(null);
     } catch (e: any) {
       console.error("logout error:", e);
@@ -106,7 +84,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
 
     try {
-      await AuthService.signup(user);
+      await AuthApi.signup(user);
       await login({ username: user.username, password: user.password1 });
     } catch (e: any) {
       console.error("signup error:", e);
@@ -140,11 +118,4 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       {children}
     </AuthContext.Provider>
   );
-};
-
-export const useAuthContext = () => {
-  const context = useContext(AuthContext);
-  if (!context)
-    throw new Error("useAuthContext must be used within an AuthProvider");
-  return context;
 };

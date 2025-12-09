@@ -1,6 +1,6 @@
 import { Navbar, Nav, NavDropdown, Button } from "react-bootstrap";
 import { Link, useLocation } from "react-router-dom";
-import { useAuthContext } from "../../context/AuthContext";
+import { useAuthContext } from "../../features/auth/context/AuthContext.old";
 
 const AppNavbar = () => {
   const location = useLocation();

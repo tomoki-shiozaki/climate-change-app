@@ -6,7 +6,7 @@ import type {
 } from "axios";
 import { extractErrorMessage } from "../../../lib/errors/extractErrorMessage";
 import { refreshToken } from "./refreshToken";
-import { LOCALSTORAGE_USERNAME_KEY } from "../../../constants/storage";
+import { LOCALSTORAGE_USERNAME_KEY } from "../constants";
 
 // AxiosRequestConfig に _retry を追加（型安全用）
 declare module "axios" {
@@ -17,7 +17,7 @@ declare module "axios" {
 
 const baseURL = import.meta.env.VITE_API_URL || "http://localhost:8000/api/v1";
 
-const apiClient: AxiosInstance = axios.create({
+export const apiClient: AxiosInstance = axios.create({
   baseURL,
   withCredentials: true, // Cookie を送信
 });
@@ -67,5 +67,3 @@ export const handle401 = async (error: AxiosError | any) => {
 // --- interceptor 登録 ---
 apiClient.interceptors.request.use(addCsrfToken);
 apiClient.interceptors.response.use((res) => res, handle401);
-
-export default apiClient;
