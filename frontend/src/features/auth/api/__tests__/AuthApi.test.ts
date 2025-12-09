@@ -1,4 +1,4 @@
-import AuthApi from "../AuthApi";
+import { authApi } from "../AuthApi";
 import { apiClient } from "../apiClient";
 
 // apiClient.post をモック可能にする
@@ -8,7 +8,7 @@ vi.mock("./apiClient", () => ({
   },
 }));
 
-describe("AuthApi", () => {
+describe("authApi", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -20,7 +20,7 @@ describe("AuthApi", () => {
 
     (apiClient.post as any).mockResolvedValue(mockResponse);
 
-    const result = await AuthApi.login({
+    const result = await authApi.login({
       email: "a@example.com",
       password: "pass",
     });
@@ -40,7 +40,7 @@ describe("AuthApi", () => {
     const mockResponse = { data: { detail: "Logged out" } };
     (apiClient.post as any).mockResolvedValue(mockResponse);
 
-    const result = await AuthApi.logout();
+    const result = await authApi.logout();
 
     expect(apiClient.post).toHaveBeenCalledWith(
       "/dj-rest-auth/logout/",
@@ -63,7 +63,7 @@ describe("AuthApi", () => {
     };
     (apiClient.post as any).mockResolvedValue(mockResponse);
 
-    const result = await AuthApi.signup(signupData);
+    const result = await authApi.signup(signupData);
 
     expect(apiClient.post).toHaveBeenCalledWith(
       "/dj-rest-auth/registration/",

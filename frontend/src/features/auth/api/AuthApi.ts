@@ -41,4 +41,4 @@ class AuthApi {
   }
 }
 
-export default new AuthApi();
+export const authApi = new AuthApi();
