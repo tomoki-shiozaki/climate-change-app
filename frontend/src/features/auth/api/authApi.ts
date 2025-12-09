@@ -1,23 +1,13 @@
 import apiClient from "./apiClient";
-import type { paths } from "../../../types/api";
+import type {
+  LoginRequest,
+  LoginResponse,
+  LogoutResponse,
+  SignupRequest,
+  SignupResponse,
+} from "../types";
 
-// 型の抽出
-type LoginRequest =
-  paths["/api/v1/dj-rest-auth/login/"]["post"]["requestBody"]["content"]["application/json"];
-
-type LoginResponse =
-  paths["/api/v1/dj-rest-auth/login/"]["post"]["responses"]["200"]["content"]["application/json"];
-
-type LogoutResponse =
-  paths["/api/v1/dj-rest-auth/logout/"]["post"]["responses"]["200"]["content"]["application/json"];
-
-type SignupRequest =
-  paths["/api/v1/dj-rest-auth/registration/"]["post"]["requestBody"]["content"]["application/json"];
-
-type SignupResponse =
-  paths["/api/v1/dj-rest-auth/registration/"]["post"]["responses"]["201"]["content"]["application/json"];
-
-class AuthService {
+class AuthApi {
   // ログイン
   async login(data: LoginRequest): Promise<LoginResponse> {
     // withCredentials:true で Cookie を自動送信
@@ -51,4 +41,4 @@ class AuthService {
   }
 }
 
-export default new AuthService();
+export default new AuthApi();

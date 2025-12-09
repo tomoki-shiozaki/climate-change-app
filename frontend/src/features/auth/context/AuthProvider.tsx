@@ -50,7 +50,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
 
     try {
-      const data = await AuthService.login(user);
+      const data = await AuthApi.login(user);
       if (!data.access)
         throw new Error("サーバーから access token が返されませんでした。");
 
@@ -66,7 +66,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = async () => {
     try {
-      await AuthService.logout();
+      await AuthApi.logout();
       setError(null);
     } catch (e: any) {
       console.error("logout error:", e);
@@ -84,7 +84,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
 
     try {
-      await AuthService.signup(user);
+      await AuthApi.signup(user);
       await login({ username: user.username, password: user.password1 });
     } catch (e: any) {
       console.error("signup error:", e);
