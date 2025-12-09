@@ -1,5 +1,5 @@
-import apiClient from "../features/auth/api/apiClient";
-import type { paths } from "../types/api";
+import apiClient from "./apiClient";
+import type { paths } from "../../../types/api";
 
 // 型の抽出
 type LoginRequest =
