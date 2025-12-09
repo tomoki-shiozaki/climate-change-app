@@ -34,7 +34,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       const savedUsername = localStorage.getItem(LOCALSTORAGE_USERNAME_KEY);
       if (savedUsername) {
         try {
-          const data = await refreshToken();
+          const data = await refreshToken(); // Cookie 内 refresh token で access token を再取得
           if (data.access) {
             setCurrentUsername(savedUsername);
           } else {
