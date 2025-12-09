@@ -1,4 +1,4 @@
-import { loginUser, logoutUser, registerUser } from "../AuthApi";
+import { loginUser, logoutUser, registerUser } from "../authApi";
 import { apiClient } from "../apiClient";
 
 // apiClient.post をモック可能にする
