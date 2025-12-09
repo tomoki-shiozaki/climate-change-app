@@ -1,5 +1,5 @@
 import AuthApi from "../AuthApi";
-import apiClient from "../apiClient";
+import { apiClient } from "../apiClient";
 
 // apiClient.post をモック可能にする
 vi.mock("./apiClient", () => ({

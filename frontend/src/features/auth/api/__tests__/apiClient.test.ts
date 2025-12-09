@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AxiosHeaders } from "axios";
 import type { InternalAxiosRequestConfig } from "axios";
-import apiClient, { addCsrfToken, handle401 } from "../apiClient";
+import { apiClient, addCsrfToken, handle401 } from "../apiClient";
 import { refreshToken } from "../refreshToken";
 import { LOCALSTORAGE_USERNAME_KEY } from "@/features/auth/constants";
 import { extractErrorMessage } from "@/lib/errors/extractErrorMessage";
