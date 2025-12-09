@@ -1,4 +1,4 @@
-import { authApi } from "../AuthApi";
+import { loginUser, logoutUser, registerUser } from "../AuthApi";
 import { apiClient } from "../apiClient";
 
 // apiClient.post をモック可能にする
@@ -20,7 +20,7 @@ describe("authApi", () => {
 
     (apiClient.post as any).mockResolvedValue(mockResponse);
 
-    const result = await authApi.login({
+    const result = await loginUser({
       email: "a@example.com",
       password: "pass",
     });
@@ -40,7 +40,7 @@ describe("authApi", () => {
     const mockResponse = { data: { detail: "Logged out" } };
     (apiClient.post as any).mockResolvedValue(mockResponse);
 
-    const result = await authApi.logout();
+    const result = await logoutUser();
 
     expect(apiClient.post).toHaveBeenCalledWith(
       "/dj-rest-auth/logout/",
@@ -63,7 +63,7 @@ describe("authApi", () => {
     };
     (apiClient.post as any).mockResolvedValue(mockResponse);
 
-    const result = await authApi.signup(signupData);
+    const result = await registerUser(signupData);
 
     expect(apiClient.post).toHaveBeenCalledWith(
       "/dj-rest-auth/registration/",

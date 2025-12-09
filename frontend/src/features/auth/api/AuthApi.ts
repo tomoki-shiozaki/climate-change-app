@@ -8,9 +8,9 @@ import type {
 } from "../types";
 
 /**
- * ログイン
+ * ユーザーのログイン
  */
-export async function login(data: LoginRequest): Promise<LoginResponse> {
+export async function loginUser(data: LoginRequest): Promise<LoginResponse> {
   const response = await apiClient.post<LoginResponse>(
     "/dj-rest-auth/login/",
     data
@@ -19,9 +19,9 @@ export async function login(data: LoginRequest): Promise<LoginResponse> {
 }
 
 /**
- * ログアウト
+ * ユーザーのログアウト
  */
-export async function logout(): Promise<LogoutResponse> {
+export async function logoutUser(): Promise<LogoutResponse> {
   const response = await apiClient.post<LogoutResponse>(
     "/dj-rest-auth/logout/",
     {}
@@ -30,9 +30,11 @@ export async function logout(): Promise<LogoutResponse> {
 }
 
 /**
- * 新規登録
+ * ユーザーの新規登録
  */
-export async function signup(data: SignupRequest): Promise<SignupResponse> {
+export async function registerUser(
+  data: SignupRequest
+): Promise<SignupResponse> {
   const response = await apiClient.post<SignupResponse>(
     "/dj-rest-auth/registration/",
     data

@@ -2,7 +2,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
-import { authApi } from "../api/AuthApi";
+import { loginUser, logoutUser, registerUser } from "../api/AuthApi";
 import { refreshToken } from "../api/refreshToken";
 import type { paths } from "../../../types/api";
 import { useErrorContext } from "../../../context/error";
@@ -72,7 +72,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
 
     try {
-      const data = await authApi.login(user);
+      const data = await loginUser(user);
       if (!data.access)
         throw new Error("サーバーから access token が返されませんでした。");
 
@@ -88,7 +88,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const logout = async () => {
     try {
-      await authApi.logout();
+      await logoutUser();
       setError(null);
     } catch (e: any) {
       console.error("logout error:", e);
@@ -106,7 +106,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
 
     try {
-      await authApi.signup(user);
+      await registerUser(user);
       await login({ username: user.username, password: user.password1 });
     } catch (e: any) {
       console.error("signup error:", e);
