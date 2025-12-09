@@ -2,7 +2,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
-import AuthApi from "../api/authApi";
+import AuthApi from "../api/AuthApi";
 import { refreshToken } from "../api/refreshToken";
 import type { paths } from "../../../types/api";
 import { useErrorContext } from "../../../context/error";
