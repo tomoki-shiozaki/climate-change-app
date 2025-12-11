@@ -5,6 +5,7 @@ import type {
   LogoutResponse,
   SignupRequest,
   SignupResponse,
+  MeResponse,
 } from "../types";
 
 /**
@@ -39,5 +40,13 @@ export async function registerUser(
     "/dj-rest-auth/registration/",
     data
   );
+  return response.data;
+}
+
+/**
+ * 現在ログイン中のユーザー情報を取得
+ */
+export async function fetchMeApi(): Promise<MeResponse> {
+  const response = await apiClient.get<MeResponse>("/dj-rest-auth/user/");
   return response.data;
 }
