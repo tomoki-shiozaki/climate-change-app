@@ -1,5 +1,5 @@
-import { AuthProvider } from "./context/AuthContext";
-import { ErrorProvider, useErrorContext } from "./context/ErrorContext";
+import { AuthProvider } from "@/features/auth/context/AuthProvider";
+import { ErrorProvider, useErrorContext } from "./context/error";
 import { AppContent } from "./components/layout";
 
 import { QueryClientProvider } from "@tanstack/react-query";

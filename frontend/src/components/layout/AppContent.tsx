@@ -1,10 +1,10 @@
 import { Container } from "react-bootstrap";
-import { useAuthContext } from "../../context/AuthContext";
+import { useAuthContext } from "@/features/auth/context/useAuthContext";
 import { FullScreenLoading, AppNavbar, Footer, ErrorToast } from "../common";
 import AppRoutes from "../../AppRoutes";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { useErrorContext } from "../../context/ErrorContext";
+import { useErrorContext } from "../../context/error";
 
 const AppContent = () => {
   const { authLoading } = useAuthContext();
