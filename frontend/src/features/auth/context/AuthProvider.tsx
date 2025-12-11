@@ -3,11 +3,9 @@
 import { useState, useEffect } from "react";
 import type { ReactNode } from "react";
 import { AuthContext } from "./AuthContext";
-import { loginUser, logoutUser, registerUser } from "../api/authApi";
-import { refreshToken } from "../api/refreshToken";
 import { useErrorContext } from "@/context/error";
 import type { AuthContextType } from "@/features/auth/types";
-import { LOCALSTORAGE_USERNAME_KEY } from "../constants";
+import { authService } from "@/features/auth/services/authService";
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -28,24 +26,17 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
-  // ページロード時の自動ログイン処理
+  // 自動ログイン
   useEffect(() => {
     const initAuth = async () => {
-      const savedUsername = localStorage.getItem(LOCALSTORAGE_USERNAME_KEY);
-      if (savedUsername) {
-        try {
-          const data = await refreshToken(); // Cookie 内 refresh token で access token を再取得
-          if (data.access) {
-            setCurrentUsername(savedUsername);
-          } else {
-            localStorage.removeItem(LOCALSTORAGE_USERNAME_KEY);
-          }
-        } catch (err) {
-          console.warn("自動ログインに失敗しました:", err);
-          localStorage.removeItem(LOCALSTORAGE_USERNAME_KEY);
-        }
+      try {
+        const username = await authService.tryAutoLogin();
+        setCurrentUsername(username);
+      } catch (err) {
+        console.warn("自動ログイン失敗:", err);
+      } finally {
+        setAuthLoading(false);
       }
-      setAuthLoading(false);
     };
 
     void initAuth();
@@ -54,18 +45,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   // ---- Auth Functions ----
 
   const login: AuthContextType["login"] = async (user) => {
-    if (!user?.username || !user?.password) {
-      throw new Error("ユーザー名とパスワードが必要です。");
-    }
-
     try {
-      const data = await loginUser(user);
-      if (!data.access) {
-        throw new Error("サーバーから access token が返されませんでした。");
-      }
-
+      await authService.login(user); // ← 修正
       setCurrentUsername(user.username);
-      localStorage.setItem(LOCALSTORAGE_USERNAME_KEY, user.username);
       setError(null);
     } catch (e: any) {
       console.error("login error:", e);
@@ -76,7 +58,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const logout: AuthContextType["logout"] = async () => {
     try {
-      await logoutUser();
+      await authService.logout();
       setError(null);
     } catch (e: any) {
       console.error("logout error:", e);
@@ -84,18 +66,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       throw e;
     } finally {
       setCurrentUsername(null);
-      localStorage.removeItem(LOCALSTORAGE_USERNAME_KEY);
     }
   };
 
   const signup: AuthContextType["signup"] = async (user) => {
-    if (!user.username || !user.email || !user.password1 || !user.password2) {
-      throw new Error("すべてのフィールドを入力してください。");
-    }
-
     try {
-      await registerUser(user);
-      await login({ username: user.username, password: user.password1 });
+      await authService.signup(user); // ← 修正なし（正しい）
+      setCurrentUsername(user.username);
+      setError(null);
     } catch (e: any) {
       console.error("signup error:", e);
       handleGlobalError(e);
@@ -106,17 +84,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const refreshAccessToken: AuthContextType["refreshAccessToken"] =
     async () => {
       try {
-        const data = await refreshToken();
-        if (!data.access) {
-          throw new Error("Access token の更新に失敗しました。");
-        }
+        await authService.refreshAccessToken();
       } catch (e: any) {
-        console.warn("Access token refresh failed. Logging out.", e);
+        console.warn("refresh failed, logging out", e);
         await logout();
       }
     };
-
-  // ---- Provider ----
 
   return (
     <AuthContext.Provider
