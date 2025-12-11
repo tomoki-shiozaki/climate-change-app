@@ -1,4 +1,4 @@
-import { AuthProvider } from "./features/auth/context/AuthContext.old";
+import { AuthProvider } from "@/features/auth/context/AuthProvider";
 import { ErrorProvider, useErrorContext } from "./context/error";
 import { AppContent } from "./components/layout";
 

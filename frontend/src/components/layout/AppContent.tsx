@@ -1,5 +1,5 @@
 import { Container } from "react-bootstrap";
-import { useAuthContext } from "../../features/auth/context/AuthContext.old";
+import { useAuthContext } from "@/features/auth/context/useAuthContext";
 import { FullScreenLoading, AppNavbar, Footer, ErrorToast } from "../common";
 import AppRoutes from "../../AppRoutes";
 import { useEffect } from "react";
