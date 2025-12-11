@@ -1,12 +1,19 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { useState, useEffect } from "react";
 import type { ReactNode } from "react";
 import { AuthContext } from "./AuthContext";
-import { useErrorContext } from "@/context/error";
+import { loginUser, logoutUser, registerUser } from "../api/authApi";
 import { refreshToken } from "../api/refreshToken";
-import { LOCALSTORAGE_USERNAME_KEY } from "@/features/auth/constants";
-import type { LoginRequest, SignupRequest } from "../types/apiTypes";
+import { useErrorContext } from "@/context/error";
+import type { AuthContextType } from "@/features/auth/types";
+import { LOCALSTORAGE_USERNAME_KEY } from "../constants";
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
+interface AuthProviderProps {
+  children: ReactNode;
+}
+
+export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [currentUsername, setCurrentUsername] = useState<string | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
   const { setError } = useErrorContext();
@@ -21,7 +28,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  // ページロード時に username を確認して refresh token で自動ログイン
+  // ページロード時の自動ログイン処理
   useEffect(() => {
     const initAuth = async () => {
       const savedUsername = localStorage.getItem(LOCALSTORAGE_USERNAME_KEY);
@@ -34,25 +41,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             localStorage.removeItem(LOCALSTORAGE_USERNAME_KEY);
           }
         } catch (err) {
-          console.warn("自動ログインに失敗しました。", err);
+          console.warn("自動ログインに失敗しました:", err);
           localStorage.removeItem(LOCALSTORAGE_USERNAME_KEY);
         }
       }
       setAuthLoading(false);
     };
 
-    initAuth();
+    void initAuth();
   }, []);
 
-  const login = async (user: LoginRequest) => {
+  // ---- Auth Functions ----
+
+  const login: AuthContextType["login"] = async (user) => {
     if (!user?.username || !user?.password) {
       throw new Error("ユーザー名とパスワードが必要です。");
     }
 
     try {
-      const data = await AuthApi.login(user);
-      if (!data.access)
+      const data = await loginUser(user);
+      if (!data.access) {
         throw new Error("サーバーから access token が返されませんでした。");
+      }
 
       setCurrentUsername(user.username);
       localStorage.setItem(LOCALSTORAGE_USERNAME_KEY, user.username);
@@ -64,9 +74,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const logout = async () => {
+  const logout: AuthContextType["logout"] = async () => {
     try {
-      await AuthApi.logout();
+      await logoutUser();
       setError(null);
     } catch (e: any) {
       console.error("logout error:", e);
@@ -78,13 +88,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const signup = async (user: SignupRequest) => {
+  const signup: AuthContextType["signup"] = async (user) => {
     if (!user.username || !user.email || !user.password1 || !user.password2) {
       throw new Error("すべてのフィールドを入力してください。");
     }
 
     try {
-      await AuthApi.signup(user);
+      await registerUser(user);
       await login({ username: user.username, password: user.password1 });
     } catch (e: any) {
       console.error("signup error:", e);
@@ -93,16 +103,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const refreshAccessToken = async () => {
-    try {
-      const data = await refreshToken();
-      if (!data.access) throw new Error("Access token の更新に失敗しました。");
-      // メモリに token を持たないので何もセットしない
-    } catch (e: any) {
-      console.warn("Access token refresh failed. Logging out.", e);
-      await logout();
-    }
-  };
+  const refreshAccessToken: AuthContextType["refreshAccessToken"] =
+    async () => {
+      try {
+        const data = await refreshToken();
+        if (!data.access) {
+          throw new Error("Access token の更新に失敗しました。");
+        }
+      } catch (e: any) {
+        console.warn("Access token refresh failed. Logging out.", e);
+        await logout();
+      }
+    };
+
+  // ---- Provider ----
 
   return (
     <AuthContext.Provider
