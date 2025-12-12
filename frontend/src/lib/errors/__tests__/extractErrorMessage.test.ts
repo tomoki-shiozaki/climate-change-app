@@ -1,6 +1,6 @@
 import type { AxiosErrorWithResponse } from "@/types/client";
 import { AxiosHeaders } from "axios";
-import { extractErrorMessage } from "./extractErrorMessage";
+import { extractErrorMessage } from "@/lib/errors/extractErrorMessage";
 
 describe("extractErrorMessage", () => {
   // テスト用のベースエラーを作成（Partial で簡略化）
