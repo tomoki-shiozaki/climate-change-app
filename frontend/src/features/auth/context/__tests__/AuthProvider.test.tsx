@@ -5,7 +5,7 @@ import type { SignupForm } from "@/features/auth/types";
 import { useErrorContext } from "@/context/error";
 import type { ErrorContextType } from "@/context/error/ErrorContext";
 
-// モック作成
+// ----------- モック設定 ---------------
 vi.mock("@/features/auth/services/authService", () => ({
   authService: {
     tryAutoLogin: vi.fn(),
@@ -21,7 +21,9 @@ vi.mock("@/context/error", () => ({
 }));
 
 describe("AuthProvider (renderHook)", () => {
+  const mockedAuthService = vi.mocked(authService);
   const mockedUseErrorContext = vi.mocked(useErrorContext);
+
   const setErrorMock: ErrorContextType["setError"] = vi.fn();
 
   beforeEach(() => {
@@ -33,13 +35,21 @@ describe("AuthProvider (renderHook)", () => {
     });
   });
 
-  it("should set currentUsername on auto login success", async () => {
-    const mockedAuthService = vi.mocked(authService);
+  const renderAuth = () =>
+    renderHook(() => useAuthContext(), { wrapper: AuthProvider });
+
+  // ----------- 共通で使う AxiosError 風モック生成 -------
+  const makeAxiosError = (message: string, status?: number) => ({
+    isAxiosError: true,
+    message,
+    response: status !== undefined ? { status } : undefined,
+  });
+
+  // ---------- テスト本体 --------------
+  it("auto login sets currentUsername", async () => {
     mockedAuthService.tryAutoLogin.mockResolvedValue("alice");
 
-    const { result } = renderHook(() => useAuthContext(), {
-      wrapper: AuthProvider,
-    });
+    const { result } = renderAuth();
 
     await waitFor(() => {
       expect(result.current.currentUsername).toBe("alice");
@@ -47,10 +57,9 @@ describe("AuthProvider (renderHook)", () => {
     });
   });
 
-  it("login should call authService.login and set username", async () => {
+  it("login sets username", async () => {
     const user = { username: "bob", password: "pass" };
 
-    const mockedAuthService = vi.mocked(authService);
     mockedAuthService.login.mockResolvedValue({
       access: "dummyAccessToken",
       refresh: "dummyRefreshToken",
@@ -61,9 +70,7 @@ describe("AuthProvider (renderHook)", () => {
       },
     });
 
-    const { result } = renderHook(() => useAuthContext(), {
-      wrapper: AuthProvider,
-    });
+    const { result } = renderAuth();
 
     await act(async () => {
       await result.current.login(user);
@@ -74,13 +81,10 @@ describe("AuthProvider (renderHook)", () => {
     expect(setErrorMock).toHaveBeenCalledWith(null);
   });
 
-  it("logout should call authService.logout and clear username", async () => {
-    const mockedAuthService = vi.mocked(authService);
+  it("logout clears username", async () => {
     mockedAuthService.logout.mockResolvedValue();
 
-    const { result } = renderHook(() => useAuthContext(), {
-      wrapper: AuthProvider,
-    });
+    const { result } = renderAuth();
 
     await act(async () => {
       await result.current.logout();
@@ -91,7 +95,7 @@ describe("AuthProvider (renderHook)", () => {
     expect(setErrorMock).toHaveBeenCalledWith(null);
   });
 
-  it("signup should call authService.signup and set username", async () => {
+  it("signup sets username", async () => {
     const user: SignupForm = {
       username: "carol",
       email: "carol@example.com",
@@ -99,20 +103,13 @@ describe("AuthProvider (renderHook)", () => {
       password2: "pass",
     };
 
-    const mockedAuthService = vi.mocked(authService);
     mockedAuthService.signup.mockResolvedValue({
       access: "dummyAccessToken",
       refresh: "dummyRefreshToken",
-      user: {
-        pk: 1,
-        username: "carol",
-        email: "carol@example.com",
-      },
+      user: { pk: 1, username: "carol", email: "carol@example.com" },
     });
 
-    const { result } = renderHook(() => useAuthContext(), {
-      wrapper: AuthProvider,
-    });
+    const { result } = renderAuth();
 
     await act(async () => {
       await result.current.signup(user);
@@ -123,16 +120,13 @@ describe("AuthProvider (renderHook)", () => {
     expect(setErrorMock).toHaveBeenCalledWith(null);
   });
 
-  it("refreshAccessToken should call authService.refreshAccessToken", async () => {
-    const mockedAuthService = vi.mocked(authService);
+  it("refreshAccessToken calls service", async () => {
     mockedAuthService.refreshAccessToken.mockResolvedValue({
       access: "dummyAccessToken",
       refresh: "dummyRefreshToken",
     });
 
-    const { result } = renderHook(() => useAuthContext(), {
-      wrapper: AuthProvider,
-    });
+    const { result } = renderAuth();
 
     await act(async () => {
       await result.current.refreshAccessToken();
@@ -141,14 +135,11 @@ describe("AuthProvider (renderHook)", () => {
     expect(mockedAuthService.refreshAccessToken).toHaveBeenCalled();
   });
 
-  it("refreshAccessToken failure should call logout", async () => {
-    const mockedAuthService = vi.mocked(authService);
+  it("refreshAccessToken failure triggers logout", async () => {
     mockedAuthService.refreshAccessToken.mockRejectedValue(new Error("fail"));
     mockedAuthService.logout.mockResolvedValue();
 
-    const { result } = renderHook(() => useAuthContext(), {
-      wrapper: AuthProvider,
-    });
+    const { result } = renderAuth();
 
     await act(async () => {
       await result.current.refreshAccessToken();
@@ -156,5 +147,56 @@ describe("AuthProvider (renderHook)", () => {
 
     expect(mockedAuthService.refreshAccessToken).toHaveBeenCalled();
     expect(mockedAuthService.logout).toHaveBeenCalled();
+  });
+
+  // --- Error cases -----
+  it("login failure (AxiosError, no response)", async () => {
+    mockedAuthService.login.mockRejectedValue(makeAxiosError("network error"));
+
+    const { result } = renderAuth();
+
+    await expect(
+      result.current.login({ username: "bob", password: "x" })
+    ).rejects.toThrow();
+
+    expect(setErrorMock).toHaveBeenCalledWith("network error");
+  });
+
+  it("login failure (AxiosError, 500)", async () => {
+    mockedAuthService.login.mockRejectedValue(
+      makeAxiosError("server error", 500)
+    );
+
+    const { result } = renderAuth();
+
+    await expect(
+      result.current.login({ username: "bob", password: "x" })
+    ).rejects.toThrow();
+
+    expect(setErrorMock).toHaveBeenCalledWith("server error");
+  });
+
+  it("login failure (normal Error)", async () => {
+    mockedAuthService.login.mockRejectedValue(new Error("normal error"));
+
+    const { result } = renderAuth();
+
+    await expect(
+      result.current.login({ username: "bob", password: "x" })
+    ).rejects.toThrow();
+
+    expect(setErrorMock).toHaveBeenCalledWith("normal error");
+  });
+
+  it("login failure (unknown error string)", async () => {
+    mockedAuthService.login.mockRejectedValue("something bad");
+
+    const { result } = renderAuth();
+
+    await expect(
+      result.current.login({ username: "bob", password: "x" })
+    ).rejects.toThrow();
+
+    expect(setErrorMock).toHaveBeenCalledWith("something bad");
   });
 });
