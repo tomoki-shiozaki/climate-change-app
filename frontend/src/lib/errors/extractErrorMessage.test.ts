@@ -1,18 +1,37 @@
-import { describe, it, expect } from "vitest";
+import type { AxiosErrorWithResponse } from "@/types/client";
+import { AxiosHeaders } from "axios";
 import { extractErrorMessage } from "./extractErrorMessage";
-import type { AxiosErrorWithResponse } from "../../types/client";
 
 describe("extractErrorMessage", () => {
+  // テスト用のベースエラーを作成（Partial で簡略化）
+  const baseError: Partial<AxiosErrorWithResponse> = {
+    config: {
+      headers: new AxiosHeaders(), // AxiosHeaders を使って型を満たす
+      _retry: false,
+    },
+    isAxiosError: true,
+    name: "AxiosError",
+  };
+
   it("ネットワークエラーの場合（responseなし）", () => {
-    const error = { message: "Network Error" } as AxiosErrorWithResponse;
+    const error = {
+      ...baseError,
+      message: "Network Error",
+    } as unknown as AxiosErrorWithResponse;
+
     expect(extractErrorMessage(error)).toBe("サーバーに接続できませんでした。");
   });
 
   it("サーバーエラー（500系）の場合", () => {
     const error = {
-      response: { status: 503, data: undefined },
+      ...baseError,
       message: "Service Unavailable",
-    } as AxiosErrorWithResponse;
+      response: {
+        status: 503,
+        data: undefined,
+      },
+    } as unknown as AxiosErrorWithResponse;
+
     expect(extractErrorMessage(error)).toBe(
       "サーバーで問題が発生しました。時間を置いて再度お試しください。"
     );
@@ -20,54 +39,94 @@ describe("extractErrorMessage", () => {
 
   it("dataが文字列の場合", () => {
     const error = {
-      response: { data: "エラーです" },
+      ...baseError,
       message: "ignored",
-    } as AxiosErrorWithResponse;
+      response: {
+        status: 400,
+        data: "エラーです",
+      },
+    } as unknown as AxiosErrorWithResponse;
+
     expect(extractErrorMessage(error)).toBe("エラーです");
   });
 
   it("data.detailがある場合", () => {
     const error = {
-      response: { data: { detail: "詳細エラー" } },
+      ...baseError,
       message: "ignored",
-    } as AxiosErrorWithResponse;
+      response: {
+        status: 400,
+        data: { detail: "詳細エラー" },
+      },
+    } as unknown as AxiosErrorWithResponse;
+
     expect(extractErrorMessage(error)).toBe("詳細エラー");
   });
 
   it("data.non_field_errorsがある場合", () => {
     const error = {
-      response: { data: { non_field_errors: ["非フィールドエラー"] } },
+      ...baseError,
       message: "ignored",
-    } as AxiosErrorWithResponse;
+      response: {
+        status: 400,
+        data: { non_field_errors: ["非フィールドエラー"] },
+      },
+    } as unknown as AxiosErrorWithResponse;
+
     expect(extractErrorMessage(error)).toBe("非フィールドエラー");
   });
 
   it("その他のフィールドの配列や文字列がある場合", () => {
     const error1 = {
-      response: { data: { username: ["ユーザー名エラー"] } },
+      ...baseError,
       message: "ignored",
-    } as AxiosErrorWithResponse;
+      response: {
+        status: 400,
+        data: { username: ["ユーザー名エラー"] },
+      },
+    } as unknown as AxiosErrorWithResponse;
+
     expect(extractErrorMessage(error1)).toBe("ユーザー名エラー");
 
     const error2 = {
-      response: { data: { email: "メールエラー" } },
+      ...baseError,
       message: "ignored",
-    } as AxiosErrorWithResponse;
+      response: {
+        status: 400,
+        data: { email: "メールエラー" },
+      },
+    } as unknown as AxiosErrorWithResponse;
+
     expect(extractErrorMessage(error2)).toBe("メールエラー");
   });
 
   it("どれにも当てはまらない場合、error.messageを返す", () => {
     const error = {
-      response: { data: {} },
+      ...baseError,
       message: "不明なエラー",
-    } as AxiosErrorWithResponse;
+      response: {
+        status: 400,
+        data: {},
+      },
+    } as unknown as AxiosErrorWithResponse;
+
     expect(extractErrorMessage(error)).toBe("不明なエラー");
   });
 
   it("どれにも当てはまらずerror.messageもない場合、デフォルト文字列を返す", () => {
     const error = {
-      response: { data: {} },
-    } as AxiosErrorWithResponse;
+      config: {
+        headers: new AxiosHeaders(),
+        _retry: false,
+      },
+      isAxiosError: true,
+      name: "AxiosError",
+      response: {
+        status: 400,
+        data: {},
+      },
+    } as unknown as AxiosErrorWithResponse;
+
     expect(extractErrorMessage(error)).toBe("エラーが発生しました。");
   });
 });
