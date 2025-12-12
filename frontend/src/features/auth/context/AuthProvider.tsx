@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import type { ReactNode } from "react";
+import { AxiosError } from "axios";
 import { AuthContext } from "./AuthContext";
 import { useErrorContext } from "@/context/error";
 import type { AuthContextType } from "@/features/auth/types";
@@ -17,12 +18,16 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const { setError } = useErrorContext();
 
   // 共通のグローバルエラー処理
-  const handleGlobalError = (error: any) => {
+  const handleGlobalError = (error: unknown) => {
     if (
-      !error.response ||
-      (error.response.status >= 500 && error.response.status < 600)
+      error instanceof AxiosError &&
+      (!error.response ||
+        (error.response.status >= 500 && error.response.status < 600))
     ) {
       setError(error.message);
+    } else {
+      const message = error instanceof Error ? error.message : String(error);
+      setError(message || "エラーが発生しました。");
     }
   };
 
