@@ -53,15 +53,13 @@ export const authService = {
     const savedUsername = localStorage.getItem(LOCALSTORAGE_USERNAME_KEY);
     if (!savedUsername) return null;
 
-    const data = await refreshToken();
-
-    // 失効していたら強制ログアウト
-    if (!data.access) {
+    try {
+      await refreshToken(); // 有効なら成功、失効なら throw
+      return savedUsername;
+    } catch {
       localStorage.removeItem(LOCALSTORAGE_USERNAME_KEY);
       return null;
     }
-
-    return savedUsername; // Context 側で state にセットさせる
   },
 
   // ------------------------------------------
