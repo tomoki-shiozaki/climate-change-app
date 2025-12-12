@@ -1,7 +1,8 @@
-import type {
-  AxiosErrorWithResponse,
-  ApiErrorResponse,
-} from "../../types/client";
+import type { AxiosErrorWithResponse, ApiErrorResponse } from "@/types/client";
+
+// 型ガード
+const isApiErrorResponse = (data: unknown): data is ApiErrorResponse =>
+  typeof data === "object" && data !== null;
 
 export const extractErrorMessage = (error: AxiosErrorWithResponse): string => {
   const status = error.response?.status;
@@ -17,31 +18,25 @@ export const extractErrorMessage = (error: AxiosErrorWithResponse): string => {
     return error.message || "不明なエラーが発生しました。";
   }
 
-  // 文字列が返ってきた場合
+  // 文字列の場合
   if (typeof data === "string") return data;
 
-  // data がオブジェクトの場合
-  const obj = data as ApiErrorResponse;
-
-  // detail
-  if (obj.detail) return obj.detail;
-
-  // non_field_errors の先頭
-  if (obj.non_field_errors && obj.non_field_errors.length > 0) {
-    return obj.non_field_errors[0];
-  }
-
-  // その他のフィールドの先頭の配列または文字列を返す
-  for (const value of Object.values(obj)) {
-    if (
-      Array.isArray(value) &&
-      value.length > 0 &&
-      typeof value[0] === "string"
-    ) {
-      return value[0];
+  // オブジェクトの場合
+  if (isApiErrorResponse(data)) {
+    if (data.detail) return data.detail;
+    if (data.non_field_errors && data.non_field_errors.length > 0) {
+      return data.non_field_errors[0];
     }
-    if (typeof value === "string") {
-      return value;
+
+    for (const value of Object.values(data)) {
+      if (
+        Array.isArray(value) &&
+        value.length > 0 &&
+        typeof value[0] === "string"
+      ) {
+        return value[0];
+      }
+      if (typeof value === "string") return value;
     }
   }
 
