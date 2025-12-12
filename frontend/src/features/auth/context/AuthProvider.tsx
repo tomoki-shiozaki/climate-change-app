@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { useState, useEffect } from "react";
 import type { ReactNode } from "react";
 import { AxiosError } from "axios";
@@ -51,10 +49,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const login: AuthContextType["login"] = async (user) => {
     try {
-      await authService.login(user); // ← 修正
+      await authService.login(user);
       setCurrentUsername(user.username);
       setError(null);
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error("login error:", e);
       handleGlobalError(e);
       throw e;
@@ -65,7 +63,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     try {
       await authService.logout();
       setError(null);
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error("logout error:", e);
       handleGlobalError(e);
       throw e;
@@ -76,10 +74,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const signup: AuthContextType["signup"] = async (user) => {
     try {
-      await authService.signup(user); // ← 修正なし（正しい）
+      await authService.signup(user);
       setCurrentUsername(user.username);
       setError(null);
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error("signup error:", e);
       handleGlobalError(e);
       throw e;
@@ -90,7 +88,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     async () => {
       try {
         await authService.refreshAccessToken();
-      } catch (e: any) {
+      } catch (e: unknown) {
         console.warn("refresh failed, logging out", e);
         await logout();
       }
