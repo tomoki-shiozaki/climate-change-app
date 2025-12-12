@@ -50,7 +50,6 @@ describe("AuthProvider (renderHook)", () => {
   it("login should call authService.login and set username", async () => {
     const user = { username: "bob", password: "pass" };
 
-    // 型安全にモック
     const mockedAuthService = vi.mocked(authService);
     mockedAuthService.login.mockResolvedValue({
       access: "dummyAccessToken",
@@ -66,24 +65,17 @@ describe("AuthProvider (renderHook)", () => {
       wrapper: AuthProvider,
     });
 
-    // login は非同期なので act でラップ
     await act(async () => {
       await result.current.login(user);
     });
 
-    // login が呼ばれたことを確認
     expect(mockedAuthService.login).toHaveBeenCalledWith(user);
-
-    // フックの状態が正しく更新されていることを確認
     expect(result.current.currentUsername).toBe("bob");
-
-    // エラーがクリアされていることを確認
     expect(setErrorMock).toHaveBeenCalledWith(null);
   });
 
   it("logout should call authService.logout and clear username", async () => {
     const mockedAuthService = vi.mocked(authService);
-
     mockedAuthService.logout.mockResolvedValue();
 
     const { result } = renderHook(() => useAuthContext(), {
@@ -94,7 +86,7 @@ describe("AuthProvider (renderHook)", () => {
       await result.current.logout();
     });
 
-    expect(authService.logout).toHaveBeenCalled();
+    expect(mockedAuthService.logout).toHaveBeenCalled();
     expect(result.current.currentUsername).toBe(null);
     expect(setErrorMock).toHaveBeenCalledWith(null);
   });
@@ -146,7 +138,7 @@ describe("AuthProvider (renderHook)", () => {
       await result.current.refreshAccessToken();
     });
 
-    expect(authService.refreshAccessToken).toHaveBeenCalled();
+    expect(mockedAuthService.refreshAccessToken).toHaveBeenCalled();
   });
 
   it("refreshAccessToken failure should call logout", async () => {
@@ -162,7 +154,7 @@ describe("AuthProvider (renderHook)", () => {
       await result.current.refreshAccessToken();
     });
 
-    expect(authService.refreshAccessToken).toHaveBeenCalled();
-    expect(authService.logout).toHaveBeenCalled();
+    expect(mockedAuthService.refreshAccessToken).toHaveBeenCalled();
+    expect(mockedAuthService.logout).toHaveBeenCalled();
   });
 });
