@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { useState, useEffect } from "react";
 import type { ReactNode } from "react";
+import { AxiosError } from "axios";
 import { AuthContext } from "./AuthContext";
 import { useErrorContext } from "@/context/error";
 import type { AuthContextType } from "@/features/auth/types";
@@ -17,10 +16,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const { setError } = useErrorContext();
 
   // 共通のグローバルエラー処理
-  const handleGlobalError = (error: any) => {
+  const handleGlobalError = (error: unknown) => {
     if (
-      !error.response ||
-      (error.response.status >= 500 && error.response.status < 600)
+      error instanceof AxiosError &&
+      (!error.response ||
+        (error.response.status >= 500 && error.response.status < 600))
     ) {
       setError(error.message);
     }
@@ -46,10 +46,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const login: AuthContextType["login"] = async (user) => {
     try {
-      await authService.login(user); // ← 修正
+      await authService.login(user);
       setCurrentUsername(user.username);
       setError(null);
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error("login error:", e);
       handleGlobalError(e);
       throw e;
@@ -60,7 +60,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     try {
       await authService.logout();
       setError(null);
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error("logout error:", e);
       handleGlobalError(e);
       throw e;
@@ -71,10 +71,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const signup: AuthContextType["signup"] = async (user) => {
     try {
-      await authService.signup(user); // ← 修正なし（正しい）
+      await authService.signup(user);
       setCurrentUsername(user.username);
       setError(null);
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error("signup error:", e);
       handleGlobalError(e);
       throw e;
@@ -85,7 +85,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     async () => {
       try {
         await authService.refreshAccessToken();
-      } catch (e: any) {
+      } catch (e: unknown) {
         console.warn("refresh failed, logging out", e);
         await logout();
       }
