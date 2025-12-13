@@ -1,12 +1,10 @@
 import axios from "axios";
-import type {
-  AxiosError,
-  AxiosInstance,
-  InternalAxiosRequestConfig,
-} from "axios";
-import { extractErrorMessage } from "../../../lib/errors/extractErrorMessage";
+import type { AxiosInstance, InternalAxiosRequestConfig } from "axios";
+import type { AxiosErrorWithResponse } from "@/types/client";
+import { extractErrorMessage } from "@/lib/errors/extractErrorMessage";
 import { refreshToken } from "./refreshToken";
 import { LOCALSTORAGE_USERNAME_KEY } from "../constants";
+import { logWarn } from "@/lib/logger";
 
 // AxiosRequestConfig に _retry を追加（型安全用）
 declare module "axios" {
@@ -40,20 +38,18 @@ export const addCsrfToken = (config: InternalAxiosRequestConfig) => {
 };
 
 // 401 時に refresh token を使って再リクエスト
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const handle401 = async (error: AxiosError | any) => {
+export const handle401 = async (error: AxiosErrorWithResponse) => {
   const originalRequest = error.config;
 
   if (error.response?.status === 401 && !originalRequest._retry) {
     originalRequest._retry = true;
-
     try {
       // refreshToken() が新しい access token を返す場合
       await refreshToken();
       // 再リクエスト
       return apiClient(originalRequest);
     } catch (err) {
-      console.warn("トークンリフレッシュに失敗しました。");
+      logWarn("トークンリフレッシュに失敗しました。");
       localStorage.removeItem(LOCALSTORAGE_USERNAME_KEY);
       return Promise.reject(err);
     }
