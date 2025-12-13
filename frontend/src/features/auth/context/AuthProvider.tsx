@@ -23,9 +23,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         (error.response.status >= 500 && error.response.status < 600))
     ) {
       setError(error.message);
-    } else {
-      const message = error instanceof Error ? error.message : String(error);
-      setError(message || "エラーが発生しました。");
     }
   };
 

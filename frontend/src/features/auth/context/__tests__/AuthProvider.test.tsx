@@ -4,6 +4,8 @@ import { authService } from "@/features/auth/services/authService";
 import type { SignupForm } from "@/features/auth/types";
 import { useErrorContext } from "@/context/error";
 import type { ErrorContextType } from "@/context/error/ErrorContext";
+import { AxiosError } from "axios";
+import type { AxiosResponse, InternalAxiosRequestConfig } from "axios";
 
 // ----------- モック設定 ---------------
 vi.mock("@/features/auth/services/authService", () => ({
@@ -38,12 +40,30 @@ describe("AuthProvider (renderHook)", () => {
   const renderAuth = () =>
     renderHook(() => useAuthContext(), { wrapper: AuthProvider });
 
-  // ----------- 共通で使う AxiosError 風モック生成 -------
-  const makeAxiosError = (message: string, status?: number) => ({
-    isAxiosError: true,
-    message,
-    response: status !== undefined ? { status } : undefined,
-  });
+  // ----------- AxiosError 正式生成関数 -----------
+  const makeAxiosError = (message: string, status?: number) => {
+    // Dummy config（headers が必要）
+    const dummyConfig: InternalAxiosRequestConfig = {
+      headers: {},
+    } as InternalAxiosRequestConfig;
+
+    // Dummy response（AxiosResponse の required fields を満たす）
+    const dummyResponse: AxiosResponse = {
+      status: status ?? 0,
+      data: null,
+      statusText: "",
+      headers: {},
+      config: dummyConfig,
+    };
+
+    return new AxiosError(
+      message,
+      undefined,
+      dummyConfig,
+      undefined,
+      status !== undefined ? dummyResponse : undefined
+    );
+  };
 
   // ---------- テスト本体 --------------
   it("auto login sets currentUsername", async () => {
@@ -174,29 +194,5 @@ describe("AuthProvider (renderHook)", () => {
     ).rejects.toThrow();
 
     expect(setErrorMock).toHaveBeenCalledWith("server error");
-  });
-
-  it("login failure (normal Error)", async () => {
-    mockedAuthService.login.mockRejectedValue(new Error("normal error"));
-
-    const { result } = renderAuth();
-
-    await expect(
-      result.current.login({ username: "bob", password: "x" })
-    ).rejects.toThrow();
-
-    expect(setErrorMock).toHaveBeenCalledWith("normal error");
-  });
-
-  it("login failure (unknown error string)", async () => {
-    mockedAuthService.login.mockRejectedValue("something bad");
-
-    const { result } = renderAuth();
-
-    await expect(
-      result.current.login({ username: "bob", password: "x" })
-    ).rejects.toThrow();
-
-    expect(setErrorMock).toHaveBeenCalledWith("something bad");
   });
 });
