@@ -4,6 +4,7 @@ import type { AxiosErrorWithResponse } from "@/types/client";
 import { extractErrorMessage } from "@/lib/errors/extractErrorMessage";
 import { refreshToken } from "./refreshToken";
 import { LOCALSTORAGE_USERNAME_KEY } from "../constants";
+import { logWarn } from "@/lib/logger";
 
 // AxiosRequestConfig に _retry を追加（型安全用）
 declare module "axios" {
@@ -48,7 +49,7 @@ export const handle401 = async (error: AxiosErrorWithResponse) => {
       // 再リクエスト
       return apiClient(originalRequest);
     } catch (err) {
-      console.warn("トークンリフレッシュに失敗しました。");
+      logWarn("トークンリフレッシュに失敗しました。");
       localStorage.removeItem(LOCALSTORAGE_USERNAME_KEY);
       return Promise.reject(err);
     }

@@ -9,6 +9,7 @@ import Spinner from "react-bootstrap/Spinner";
 import { useAuthContext } from "@/features/auth/context/useAuthContext";
 import { Loading } from "../../components/common";
 import { AxiosError } from "axios";
+import { logError } from "@/lib/logger";
 
 const Signup = () => {
   const [username, setUsername] = useState("");
@@ -50,7 +51,7 @@ const Signup = () => {
       // signup 成功後にトップページへ遷移
       navigate("/");
     } catch (err: unknown) {
-      console.error(err);
+      logError(err);
 
       if (err instanceof AxiosError) {
         setError(err.message);

@@ -5,6 +5,7 @@ import { useErrorContext } from "@/context/error";
 import type { AuthContextType } from "@/features/auth/types";
 import { authService } from "@/features/auth/services/authService";
 import { shouldHandleGlobalError } from "@/lib/errors/shouldHandleGlobalError";
+import { logError, logWarn } from "@/lib/logger";
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -29,7 +30,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         const username = await authService.tryAutoLogin();
         setCurrentUsername(username);
       } catch (err) {
-        console.warn("自動ログイン失敗:", err);
+        logWarn("自動ログイン失敗:", err);
       } finally {
         setAuthLoading(false);
       }
@@ -46,7 +47,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setCurrentUsername(user.username);
       setError(null);
     } catch (e: unknown) {
-      console.error("login error:", e);
+      logError("login error:", e);
       handleGlobalError(e);
       throw e;
     }
@@ -57,7 +58,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       await authService.logout();
       setError(null);
     } catch (e: unknown) {
-      console.error("logout error:", e);
+      logError("logout error:", e);
       handleGlobalError(e);
       throw e;
     } finally {
@@ -71,7 +72,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setCurrentUsername(user.username);
       setError(null);
     } catch (e: unknown) {
-      console.error("signup error:", e);
+      logError("signup error:", e);
       handleGlobalError(e);
       throw e;
     }
@@ -82,7 +83,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       try {
         await authService.refreshAccessToken();
       } catch (e: unknown) {
-        console.warn("refresh failed, logging out", e);
+        logWarn("refresh failed, logging out", e);
         await logout();
       }
     };
