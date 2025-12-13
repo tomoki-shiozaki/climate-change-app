@@ -175,9 +175,11 @@ describe("AuthProvider (renderHook)", () => {
 
     const { result } = renderAuth();
 
-    await expect(
-      result.current.login({ username: "bob", password: "x" })
-    ).rejects.toThrow();
+    await act(async () => {
+      await expect(
+        result.current.login({ username: "bob", password: "x" })
+      ).rejects.toThrow();
+    });
 
     expect(setErrorMock).toHaveBeenCalledWith("network error");
   });
@@ -189,10 +191,30 @@ describe("AuthProvider (renderHook)", () => {
 
     const { result } = renderAuth();
 
-    await expect(
-      result.current.login({ username: "bob", password: "x" })
-    ).rejects.toThrow();
+    await act(async () => {
+      await expect(
+        result.current.login({ username: "bob", password: "x" })
+      ).rejects.toThrow();
+    });
 
     expect(setErrorMock).toHaveBeenCalledWith("server error");
+  });
+
+  it("login failure (AxiosError, 400) does NOT set global error", async () => {
+    mockedAuthService.login.mockRejectedValue(
+      makeAxiosError("bad request", 400)
+    );
+
+    const { result } = renderAuth();
+
+    await act(async () => {
+      try {
+        await result.current.login({ username: "bob", password: "x" });
+      } catch {
+        // 失敗を期待しているので何もしない
+      }
+    });
+
+    expect(setErrorMock).not.toHaveBeenCalled();
   });
 });
