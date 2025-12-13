@@ -9,6 +9,7 @@ import Spinner from "react-bootstrap/Spinner";
 import { useAuthContext } from "@/features/auth/context/useAuthContext";
 import { Loading } from "../../components/common";
 import { AxiosError } from "axios";
+import { logError } from "@/lib/logger";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -42,7 +43,7 @@ const Login = () => {
       await login({ username, password });
       navigate("/"); // ログイン成功でトップへ
     } catch (err: unknown) {
-      console.error(err);
+      logError(err);
 
       if (err instanceof AxiosError) {
         setError(err.message);
