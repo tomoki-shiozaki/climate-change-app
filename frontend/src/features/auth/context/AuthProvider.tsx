@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import type { ReactNode } from "react";
-import { AxiosError } from "axios";
 import { AuthContext } from "./AuthContext";
 import { useErrorContext } from "@/context/error";
 import type { AuthContextType } from "@/features/auth/types";
 import { authService } from "@/features/auth/services/authService";
+import { shouldHandleGlobalError } from "@/lib/errors/shouldHandleGlobalError";
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -17,11 +17,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   // 共通のグローバルエラー処理
   const handleGlobalError = (error: unknown) => {
-    if (
-      error instanceof AxiosError &&
-      (!error.response ||
-        (error.response.status >= 500 && error.response.status < 600))
-    ) {
+    if (shouldHandleGlobalError(error)) {
       setError(error.message);
     }
   };
