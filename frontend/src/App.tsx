@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider, useAuthContext } from "@/features/auth/context";
@@ -6,21 +6,18 @@ import { ErrorProvider, useErrorContext } from "./context/error";
 import { createQueryClient } from "./queryClient";
 import { AppRoutes } from "@/routes/AppRoutes";
 import { FullScreenLoading } from "@/components/common";
-import { LOCALSTORAGE_USERNAME_KEY } from "@/features/auth/constants";
 
 // ページ遷移ごとにエラーをクリアし、初回ロード中は全画面ローディングを表示するコンポーネント
 function AppContent() {
   const { authLoading } = useAuthContext();
   const { clearError } = useErrorContext();
   const location = useLocation();
-  const storedUsername = localStorage.getItem(LOCALSTORAGE_USERNAME_KEY);
 
   useEffect(() => {
     clearError();
   }, [location.pathname, clearError]);
 
-  const shouldShowLoading = authLoading && !!storedUsername;
-  if (shouldShowLoading) return <FullScreenLoading message="読み込み中..." />;
+  if (authLoading) return <FullScreenLoading message="読み込み中..." />;
 
   return <AppRoutes />;
 }
@@ -28,7 +25,7 @@ function AppContent() {
 // QueryClient を提供するだけのコンポーネント
 function AppWithQueryClient() {
   const { setError } = useErrorContext();
-  const queryClient = createQueryClient(setError);
+  const queryClient = useMemo(() => createQueryClient(setError), [setError]);
 
   return (
     <QueryClientProvider client={queryClient}>
