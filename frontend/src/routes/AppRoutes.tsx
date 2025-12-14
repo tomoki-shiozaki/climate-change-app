@@ -6,22 +6,20 @@ import { CO2Map } from "@/pages/CO2Map";
 import { DataPage } from "@/pages/Data";
 import { About } from "@/pages/About";
 import { Example } from "@/pages/Example";
-import { PrivateRoute } from "@/components/auth";
+import { PrivateLayout } from "@/routes";
 
 export function AppRoutes() {
   return (
     <Routes>
-      {/* ホームは / */}
-      <Route path="/" element={<PrivateRoute element={<Home />} />} />
-      <Route
-        path="/dashboard"
-        element={<PrivateRoute element={<Dashboard />} />}
-      />
-      {/* CO2地図専用ページ */}
-      <Route path="/co2-map" element={<PrivateRoute element={<CO2Map />} />} />
-      <Route path="/example" element={<PrivateRoute element={<Example />} />} />
-      <Route path="/data" element={<PrivateRoute element={<DataPage />} />} />
-      <Route path="/about" element={<PrivateRoute element={<About />} />} />
+      {/* 認証必須エリア */}
+      <Route element={<PrivateLayout />}>
+        <Route path="/" element={<Home />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/co2-map" element={<CO2Map />} />
+        <Route path="/example" element={<Example />} />
+        <Route path="/data" element={<DataPage />} />
+        <Route path="/about" element={<About />} />
+      </Route>
 
       {/* 認証ページ */}
       <Route path="/login" element={<Login />} />
