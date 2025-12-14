@@ -13,15 +13,13 @@ import { Example } from "@/pages/Example";
 export function AppRoutes() {
   return (
     <Routes>
-      {/* 認証不要ページ */}
       <Route element={<AppLayout />}>
+        {/* 認証不要ページ */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-      </Route>
 
-      {/* 認証必須ページ */}
-      <Route element={<PrivateLayout />}>
-        <Route element={<AppLayout />}>
+        {/* 認証必須ページ */}
+        <Route element={<PrivateLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/co2-map" element={<CO2Map />} />
@@ -29,10 +27,10 @@ export function AppRoutes() {
           <Route path="/data" element={<DataPage />} />
           <Route path="/about" element={<About />} />
         </Route>
-      </Route>
 
-      {/* 404 */}
-      <Route path="*" element={<Navigate to="/" replace />} />
+        {/* 404 */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Route>
     </Routes>
   );
 }
