@@ -7,7 +7,6 @@ import Button from "react-bootstrap/Button";
 import Alert from "react-bootstrap/Alert";
 import Spinner from "react-bootstrap/Spinner";
 import { useAuthContext } from "@/features/auth/context/useAuthContext";
-import { Loading } from "../../components/common";
 import { AxiosError } from "axios";
 import { logError } from "@/lib/logger";
 
@@ -20,12 +19,7 @@ const Signup = () => {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-  const { signup, authLoading, currentUsername } = useAuthContext();
-
-  // 認証情報チェック中は Loading を表示
-  if (authLoading) {
-    return <Loading message="認証情報を確認中..." />;
-  }
+  const { signup, currentUsername } = useAuthContext();
 
   // すでにログイン済みならトップページへリダイレクト
   if (currentUsername) {
