@@ -1,14 +1,14 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import { Login, Signup } from "./pages/auth";
-import { Home } from "./pages/Home";
-import { Dashboard } from "./pages/Dashboard";
-import { CO2Map } from "./pages/CO2Map";
-import { DataPage } from "./pages/Data";
-import { About } from "./pages/About";
-import { Example } from "./pages/Example";
-import { PrivateRoute } from "./components/auth";
+import { Login, Signup } from "@/pages/auth";
+import { Home } from "@/pages/Home";
+import { Dashboard } from "@/pages/Dashboard";
+import { CO2Map } from "@/pages/CO2Map";
+import { DataPage } from "@/pages/Data";
+import { About } from "@/pages/About";
+import { Example } from "@/pages/Example";
+import { PrivateRoute } from "@/components/auth";
 
-function AppRoutes() {
+export function AppRoutes() {
   return (
     <Routes>
       {/* ホームは / */}
@@ -32,5 +32,3 @@ function AppRoutes() {
     </Routes>
   );
 }
-
-export default AppRoutes;
