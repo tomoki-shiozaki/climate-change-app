@@ -25,7 +25,7 @@ function AppWithQueryClient() {
   );
 }
 
-export function App() {
+export default function App() {
   return (
     <ErrorProvider>
       {/* アプリ全体の最上位レイアウト */}
