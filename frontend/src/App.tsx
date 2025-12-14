@@ -1,6 +1,6 @@
 import { AuthProvider } from "@/features/auth/context/AuthProvider";
 import { ErrorProvider, useErrorContext } from "./context/error";
-import { AppContent } from "./components/layout";
+import { AppLayout } from "@/components/layout";
 
 import { QueryClientProvider } from "@tanstack/react-query";
 import { createQueryClient } from "./queryClient";
@@ -23,7 +23,7 @@ const AppWithQueryClient = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <AppContent />
+        <AppLayout />
       </AuthProvider>
     </QueryClientProvider>
   );

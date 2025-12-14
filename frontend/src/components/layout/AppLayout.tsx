@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { useErrorContext } from "../../context/error";
 
-const AppContent = () => {
+export function AppLayout() {
   const { authLoading } = useAuthContext();
   const location = useLocation();
   const { clearError } = useErrorContext();
@@ -31,6 +31,4 @@ const AppContent = () => {
       <Footer />
     </>
   );
-};
-
-export default AppContent;
+}
