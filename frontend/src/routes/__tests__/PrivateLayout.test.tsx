@@ -17,6 +17,7 @@ test("未認証時はログインにリダイレクト", () => {
     <AuthContext.Provider value={mockAuthContext}>
       <MemoryRouter initialEntries={["/dashboard"]}>
         <Routes>
+          <Route path="/login" element={<div>Login Page</div>} />
           <Route element={<PrivateLayout />}>
             <Route path="/dashboard" element={<div>Dashboard</div>} />
           </Route>
