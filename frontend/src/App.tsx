@@ -41,7 +41,7 @@ export default function App() {
   return (
     <ErrorProvider>
       {/* アプリ全体の最上位レイアウト */}
-      <div className="App d-flex flex-column min-vh-100">
+      <div className="min-h-screen flex flex-col">
         <AppWithQueryClient />
       </div>
     </ErrorProvider>
