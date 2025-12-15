@@ -8,7 +8,7 @@ import { AppRoutes } from "@/routes/AppRoutes";
 import { FullScreenLoading } from "@/components/common";
 
 // ページ遷移ごとにエラーをクリアし、初回ロード中は全画面ローディングを表示するコンポーネント
-function AppContent() {
+export function AppContent() {
   const { authLoading } = useAuthContext();
   const { clearError } = useErrorContext();
   const location = useLocation();
@@ -23,6 +23,7 @@ function AppContent() {
 }
 
 // QueryClient を提供するだけのコンポーネント
+// QueryClient は ErrorContext に依存するため、ErrorProvider の内側で生成する
 function AppWithQueryClient() {
   const { setError } = useErrorContext();
   const queryClient = useMemo(() => createQueryClient(setError), [setError]);
