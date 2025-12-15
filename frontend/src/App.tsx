@@ -8,7 +8,7 @@ import { AppRoutes } from "@/routes/AppRoutes";
 import { FullScreenLoading } from "@/components/common";
 
 // ページ遷移ごとにエラーをクリアし、初回ロード中は全画面ローディングを表示するコンポーネント
-function AppContent() {
+export function AppContent() {
   const { authLoading } = useAuthContext();
   const { clearError } = useErrorContext();
   const location = useLocation();
