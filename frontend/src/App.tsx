@@ -23,6 +23,7 @@ function AppContent() {
 }
 
 // QueryClient を提供するだけのコンポーネント
+// QueryClient は ErrorContext に依存するため、ErrorProvider の内側で生成する
 function AppWithQueryClient() {
   const { setError } = useErrorContext();
   const queryClient = useMemo(() => createQueryClient(setError), [setError]);
