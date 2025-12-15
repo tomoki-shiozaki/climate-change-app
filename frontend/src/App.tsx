@@ -1,24 +1,32 @@
-import { AuthProvider } from "@/features/auth/context/AuthProvider";
-import { ErrorProvider, useErrorContext } from "./context/error";
-import { AppContent } from "./components/layout";
-
+import { useEffect, useMemo } from "react";
+import { useLocation } from "react-router-dom";
 import { QueryClientProvider } from "@tanstack/react-query";
+import { AuthProvider, useAuthContext } from "@/features/auth/context";
+import { ErrorProvider, useErrorContext } from "./context/error";
 import { createQueryClient } from "./queryClient";
+import { AppRoutes } from "@/routes/AppRoutes";
+import { FullScreenLoading } from "@/components/common";
 
-function App() {
-  return (
-    <div className="App d-flex flex-column min-vh-100">
-      <ErrorProvider>
-        <AppWithQueryClient />
-      </ErrorProvider>
-    </div>
-  );
+// ページ遷移ごとにエラーをクリアし、初回ロード中は全画面ローディングを表示するコンポーネント
+export function AppContent() {
+  const { authLoading } = useAuthContext();
+  const { clearError } = useErrorContext();
+  const location = useLocation();
+
+  useEffect(() => {
+    clearError();
+  }, [location.pathname, clearError]);
+
+  if (authLoading) return <FullScreenLoading message="読み込み中..." />;
+
+  return <AppRoutes />;
 }
 
-// ErrorContext の setError を使って QueryClient を作る
-const AppWithQueryClient = () => {
+// QueryClient を提供するだけのコンポーネント
+// QueryClient は ErrorContext に依存するため、ErrorProvider の内側で生成する
+function AppWithQueryClient() {
   const { setError } = useErrorContext();
-  const queryClient = createQueryClient(setError);
+  const queryClient = useMemo(() => createQueryClient(setError), [setError]);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -27,6 +35,15 @@ const AppWithQueryClient = () => {
       </AuthProvider>
     </QueryClientProvider>
   );
-};
+}
 
-export default App;
+export default function App() {
+  return (
+    <ErrorProvider>
+      {/* アプリ全体の最上位レイアウト */}
+      <div className="App d-flex flex-column min-vh-100">
+        <AppWithQueryClient />
+      </div>
+    </ErrorProvider>
+  );
+}
