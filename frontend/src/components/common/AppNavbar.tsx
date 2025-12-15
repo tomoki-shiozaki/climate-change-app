@@ -46,7 +46,7 @@ const AuthNav: React.FC<AuthNavProps> = ({ currentUsername, logout }) => {
   }
 };
 
-const AppNavbar = () => {
+export const AppNavbar = () => {
   const location = useLocation();
   const { currentUsername, logout } = useAuthContext();
 
@@ -98,5 +98,3 @@ const AppNavbar = () => {
     </Navbar>
   );
 };
-
-export default AppNavbar;
