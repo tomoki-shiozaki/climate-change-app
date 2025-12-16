@@ -2,7 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { AppLayout } from "@/components/layout";
 import { PrivateLayout } from "@/routes/PrivateLayout";
 
-import { Login, Signup } from "@/pages/auth";
+import { LoginPage, Signup } from "@/pages/auth";
 import { Home } from "@/pages/Home";
 import { Dashboard } from "@/pages/Dashboard";
 import { CO2Map } from "@/pages/CO2Map";
@@ -15,7 +15,7 @@ export function AppRoutes() {
     <Routes>
       <Route element={<AppLayout />}>
         {/* 認証不要ページ */}
-        <Route path="/login" element={<Login />} />
+        <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<Signup />} />
 
         {/* 認証必須ページ */}
