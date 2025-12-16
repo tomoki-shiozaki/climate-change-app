@@ -10,7 +10,7 @@ import { useAuthContext } from "@/features/auth/context/useAuthContext";
 import { AxiosError } from "axios";
 import { logError } from "@/lib/logger";
 
-const Signup = () => {
+const SignupPage = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password1, setPassword1] = useState("");
@@ -149,4 +149,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default SignupPage;
