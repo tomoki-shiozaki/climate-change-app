@@ -39,7 +39,7 @@ Django REST Framework（API）と React（UI）を使った、気候変動デー
 
 ## 気温変化グラフ
 
-![Climate Chart](docs/screenshots/climate-chart.png)
+![Temperature Chart](docs/screenshots/temperature-chart-v2.png)
 
 ## CO₂ 排出量マップ（年度スライダー）
 
