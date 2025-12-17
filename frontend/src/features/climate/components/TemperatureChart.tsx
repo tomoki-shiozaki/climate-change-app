@@ -13,7 +13,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchTemperatureData } from "@/features/climate/api/climateApi";
 import type { TemperatureData } from "@/types/models/climate";
 import { Loading, SelectBox } from "@/components/common";
-import { ClimateChartDescription } from "@/features/climate/components/ClimateChartDescription";
+import { TemperatureChartDescription } from "@/features/climate/components/TemperatureChartDescription";
 
 const regionLabels: Record<string, string> = {
   "Northern Hemisphere": "北半球",
@@ -111,7 +111,7 @@ export const TemperatureChart = () => {
       </ResponsiveContainer>
 
       {/* 説明文 */}
-      <ClimateChartDescription />
+      <TemperatureChartDescription />
     </div>
   );
 };
