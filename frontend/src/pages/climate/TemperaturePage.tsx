@@ -1,6 +1,6 @@
 import { TemperatureChart } from "@/features/climate/components/TemperatureChart";
 
-const Dashboard = () => {
+const TemperaturePage = () => {
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       <h1 className="text-2xl font-bold mb-2 text-gray-800">ダッシュボード</h1>
@@ -12,4 +12,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default TemperaturePage;
