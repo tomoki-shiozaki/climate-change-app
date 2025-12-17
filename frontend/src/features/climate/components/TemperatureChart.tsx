@@ -12,8 +12,12 @@ import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchTemperatureData } from "@/features/climate/api/climateApi";
 import type { TemperatureData } from "@/types/models/climate";
+<<<<<<<< HEAD:frontend/src/features/climate/components/TemperatureChart.tsx
 import { Loading, SelectBox } from "@/components/common";
 import { ClimateChartDescription } from "@/features/climate/components/ClimateChartDescription";
+========
+import { Loading } from "@/components/common";
+>>>>>>>> develop:frontend/src/features/climate/components/ClimateChart.tsx
 
 const regionLabels: Record<string, string> = {
   "Northern Hemisphere": "北半球",
@@ -21,7 +25,11 @@ const regionLabels: Record<string, string> = {
   World: "世界",
 };
 
+<<<<<<<< HEAD:frontend/src/features/climate/components/TemperatureChart.tsx
 export const TemperatureChart = () => {
+========
+export const ClimateChart = () => {
+>>>>>>>> develop:frontend/src/features/climate/components/ClimateChart.tsx
   const [selectedRegion, setSelectedRegion] = useState<string>("");
 
   const { data, isLoading, isError } = useQuery<TemperatureData>({
