@@ -1,4 +1,4 @@
-import { ClimateChart } from "@/features/climate/components/ClimateChart";
+import { TemperatureChart } from "@/features/climate/components/TemperatureChart";
 
 const Dashboard = () => {
   return (
@@ -6,7 +6,7 @@ const Dashboard = () => {
       <h1 className="text-2xl font-bold mb-2 text-gray-800">ダッシュボード</h1>
       <p className="mb-6 text-gray-600">地域ごとの気温推移グラフです。</p>
       <div className="bg-white p-4 rounded shadow">
-        <ClimateChart />
+        <TemperatureChart />
       </div>
     </div>
   );

@@ -21,7 +21,7 @@ const regionLabels: Record<string, string> = {
   World: "世界",
 };
 
-export const ClimateChart = () => {
+export const TemperatureChart = () => {
   const [selectedRegion, setSelectedRegion] = useState<string>("");
 
   const { data, isLoading, isError } = useQuery<TemperatureData>({
