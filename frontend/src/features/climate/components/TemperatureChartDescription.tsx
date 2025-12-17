@@ -1,4 +1,4 @@
-export const ClimateChartDescription = () => (
+export const TemperatureChartDescription = () => (
   <div className="mt-4 p-4 bg-gray-50 border-l-4 border-blue-400 text-gray-700 rounded">
     <p className="mb-2">
       このグラフは各地域の気温変化を示しています。Y軸の値は

@@ -13,7 +13,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchTemperatureData } from "@/features/climate/api/climateApi";
 import type { TemperatureData } from "@/types/models/climate";
 import { Loading, SelectBox } from "@/components/common";
-import { ClimateChartDescription } from "@/features/climate/components/ClimateChartDescription";
+import { TemperatureChartDescription } from "@/features/climate/components/TemperatureChartDescription";
 
 const regionLabels: Record<string, string> = {
   "Northern Hemisphere": "北半球",
@@ -21,25 +21,27 @@ const regionLabels: Record<string, string> = {
   World: "世界",
 };
 
-export const TemperatureChart = () => {
-  const [selectedRegion, setSelectedRegion] = useState<string>("");
+// 初期選択地域を決める関数
+const getInitialRegion = (data: TemperatureData | undefined): string => {
+  if (!data) return "";
+  if (data["World"]) return "World";
+  const regions = Object.keys(data);
+  return regions[0] || "";
+};
 
+export const TemperatureChart = () => {
   const { data, isLoading, isError } = useQuery<TemperatureData>({
     queryKey: ["temperatureData"],
     queryFn: fetchTemperatureData,
-    retry: false,
+    staleTime: 1000 * 60 * 60 * 24 * 30, // 30日
   });
 
-  // データ取得後、初期地域を Northern Hemisphere にセット
+  const [selectedRegion, setSelectedRegion] = useState<string>("");
+
+  // データ取得後、初期地域をセット
   useEffect(() => {
-    if (!data) return;
-    if (!selectedRegion) {
-      if (data["World"]) {
-        setSelectedRegion("World");
-      } else {
-        const regions = Object.keys(data);
-        if (regions.length > 0) setSelectedRegion(regions[0]);
-      }
+    if (!selectedRegion && data) {
+      setSelectedRegion(getInitialRegion(data));
     }
   }, [data, selectedRegion]);
 
@@ -60,6 +62,13 @@ export const TemperatureChart = () => {
     value: region,
     label: regionLabels[region] || region,
   }));
+
+  // 線の設定を配列でまとめて簡潔に
+  const lines = [
+    { key: "upper", color: "#ff4d4f", name: "上限値" },
+    { key: "global_average", color: "#faad14", name: "平均値" },
+    { key: "lower", color: "#1890ff", name: "下限値" },
+  ];
 
   return (
     <div>
@@ -89,29 +98,20 @@ export const TemperatureChart = () => {
           />
           <Tooltip />
           <Legend />
-          <Line
-            dataKey="upper"
-            stroke="#ff4d4f"
-            name="上限値"
-            type="monotone"
-          />
-          <Line
-            dataKey="global_average"
-            stroke="#faad14"
-            name="平均値"
-            type="monotone"
-          />
-          <Line
-            dataKey="lower"
-            stroke="#1890ff"
-            name="下限値"
-            type="monotone"
-          />
+          {lines.map((line) => (
+            <Line
+              key={line.key}
+              dataKey={line.key}
+              stroke={line.color}
+              name={line.name}
+              type="monotone"
+            />
+          ))}
         </LineChart>
       </ResponsiveContainer>
 
       {/* 説明文 */}
-      <ClimateChartDescription />
+      <TemperatureChartDescription />
     </div>
   );
 };
