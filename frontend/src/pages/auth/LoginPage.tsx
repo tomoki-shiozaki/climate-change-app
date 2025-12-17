@@ -2,15 +2,15 @@ import { useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import Form from "react-bootstrap/Form";
-import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
 import Alert from "react-bootstrap/Alert";
 import Spinner from "react-bootstrap/Spinner";
 import { useAuthContext } from "@/features/auth/context/useAuthContext";
 import { AxiosError } from "axios";
 import { logError } from "@/lib/logger";
+import { CenteredBox } from "@/components/layout";
 
-const Login = () => {
+const LoginPage = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -23,8 +23,10 @@ const Login = () => {
   if (currentUsername) {
     return <Navigate to="/" replace />;
   }
+
   const onChangeUsername = (e: ChangeEvent<HTMLInputElement>) =>
     setUsername(e.target.value);
+
   const onChangePassword = (e: ChangeEvent<HTMLInputElement>) =>
     setPassword(e.target.value);
 
@@ -50,7 +52,7 @@ const Login = () => {
   };
 
   return (
-    <Container className="mt-5" style={{ maxWidth: "500px" }}>
+    <CenteredBox>
       <h2 className="mb-4">ログイン</h2>
 
       {error && <Alert variant="danger">{error}</Alert>}
@@ -103,8 +105,8 @@ const Login = () => {
           )}
         </Button>
       </Form>
-    </Container>
+    </CenteredBox>
   );
 };
 
-export default Login;
+export default LoginPage;
