@@ -27,6 +27,24 @@ class TestCustomUserCreationForm:
         assert user.name == "Test User"
         assert user.check_password("StrongPassword123!")
 
+    def test_name_field_is_present(self):
+        form = CustomUserCreationForm()
+        assert "name" in form.fields
+
+    def test_password_mismatch_is_invalid(self):
+        form = CustomUserCreationForm(
+            data={
+                "username": "testuser",
+                "email": "test@example.com",
+                "name": "Test User",
+                "password1": "StrongPassword123!",
+                "password2": "DifferentPassword123!",
+            }
+        )
+
+        assert not form.is_valid()
+        assert "password2" in form.errors
+
 
 @pytest.mark.django_db
 class TestCustomUserChangeForm:
@@ -53,3 +71,7 @@ class TestCustomUserChangeForm:
 
         assert updated_user.email == "new@example.com"
         assert updated_user.name == "New Name"
+
+    def test_name_field_is_present(self):
+        form = CustomUserChangeForm()
+        assert "name" in form.fields
