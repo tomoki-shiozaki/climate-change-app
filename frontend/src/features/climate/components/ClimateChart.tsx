@@ -10,9 +10,9 @@ import {
 } from "recharts";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { fetchTemperatureData } from "../../api/climate";
-import type { TemperatureData } from "../../types/models/climate";
-import { Loading } from "../common";
+import { fetchTemperatureData } from "@/features/climate/api/climateApi";
+import type { TemperatureData } from "@/types/models/climate";
+import { Loading } from "@/components/common";
 
 const regionLabels: Record<string, string> = {
   "Northern Hemisphere": "北半球",
@@ -20,7 +20,7 @@ const regionLabels: Record<string, string> = {
   World: "世界",
 };
 
-const ClimateChart = () => {
+export const ClimateChart = () => {
   const [selectedRegion, setSelectedRegion] = useState<string>("");
 
   // 🔥 TanStack Query v5
@@ -139,5 +139,3 @@ const ClimateChart = () => {
     </div>
   );
 };
-
-export default ClimateChart;
