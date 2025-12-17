@@ -12,7 +12,8 @@ import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchTemperatureData } from "@/features/climate/api/climateApi";
 import type { TemperatureData } from "@/types/models/climate";
-import { Loading } from "@/components/common";
+import { Loading, SelectBox } from "@/components/common";
+import { ClimateChartDescription } from "@/features/climate/components/ClimateChartDescription";
 
 const regionLabels: Record<string, string> = {
   "Northern Hemisphere": "北半球",
@@ -20,10 +21,9 @@ const regionLabels: Record<string, string> = {
   World: "世界",
 };
 
-export const ClimateChart = () => {
+export const TemperatureChart = () => {
   const [selectedRegion, setSelectedRegion] = useState<string>("");
 
-  // 🔥 TanStack Query v5
   const { data, isLoading, isError } = useQuery<TemperatureData>({
     queryKey: ["temperatureData"],
     queryFn: fetchTemperatureData,
@@ -47,31 +47,30 @@ export const ClimateChart = () => {
   if (isError) return <p>データの取得に失敗しました</p>;
   if (!data) return <p>データがありません</p>;
 
+  // データに含まれる地域名の配列を取得
   const regions = Object.keys(data);
   if (regions.length === 0) return <p>地域データがありません</p>;
 
   const chartData = selectedRegion ? data[selectedRegion] ?? [] : [];
 
+  // SelectBox 用のオプション配列を作成
+  // value: 内部的に扱う地域キー
+  // label: ユーザーに表示する地域名（日本語ラベルがあればそれを使用）
+  const options = regions.map((region) => ({
+    value: region,
+    label: regionLabels[region] || region,
+  }));
+
   return (
     <div>
       {/* 地域選択 */}
-      <div className="mb-4 flex items-center">
-        <label htmlFor="region-select" className="mr-2 font-medium">
-          地域選択:
-        </label>
-        <select
-          id="region-select"
-          value={selectedRegion}
-          onChange={(e) => setSelectedRegion(e.target.value)}
-          className="border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
-        >
-          {regions.map((region) => (
-            <option key={region} value={region}>
-              {regionLabels[region] || region}
-            </option>
-          ))}
-        </select>
-      </div>
+      <SelectBox
+        id="region-select"
+        label="地域選択"
+        options={options}
+        value={selectedRegion}
+        onChange={setSelectedRegion}
+      />
 
       {/* チャート */}
       <ResponsiveContainer width="100%" height={400}>
@@ -112,30 +111,7 @@ export const ClimateChart = () => {
       </ResponsiveContainer>
 
       {/* 説明文 */}
-      <div className="mt-4 p-4 bg-gray-50 border-l-4 border-blue-400 text-gray-700 rounded">
-        <p className="mb-2">
-          このグラフは各地域の気温変化を示しています。Y軸の値は
-          <span className="font-medium">
-            1861–1890年の平均気温を基準とした変化量 (°C)
-          </span>{" "}
-          です。
-        </p>
-        <p className="mb-2">
-          値が正の場合は基準期間より高く、負の場合は低いことを表します。
-          上限値、平均値、下限値の3本の線で、年ごとの変動幅がわかります。
-        </p>
-        <p className="text-sm text-gray-500">
-          データ出典:{" "}
-          <a
-            href="https://ourworldindata.org/co2-and-greenhouse-gas-emissions"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline hover:text-blue-600"
-          >
-            Our World in Data – CO₂ and Greenhouse Gas Emissions
-          </a>
-        </p>
-      </div>
+      <ClimateChartDescription />
     </div>
   );
 };
