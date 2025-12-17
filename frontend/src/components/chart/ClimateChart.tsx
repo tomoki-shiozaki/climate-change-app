@@ -11,8 +11,8 @@ import {
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchTemperatureData } from "@/features/climate/api/climateApi";
-import type { TemperatureData } from "../../types/models/climate";
-import { Loading } from "../common";
+import type { TemperatureData } from "@/types/models/climate";
+import { Loading } from "@/components/common";
 
 const regionLabels: Record<string, string> = {
   "Northern Hemisphere": "北半球",
