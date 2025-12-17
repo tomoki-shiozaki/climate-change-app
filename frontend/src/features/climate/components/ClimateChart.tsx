@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchTemperatureData } from "@/features/climate/api/climateApi";
 import type { TemperatureData } from "@/types/models/climate";
-import { Loading } from "@/components/common";
+import { Loading, SelectBox } from "@/components/common";
 
 const regionLabels: Record<string, string> = {
   "Northern Hemisphere": "北半球",
@@ -23,7 +23,6 @@ const regionLabels: Record<string, string> = {
 export const ClimateChart = () => {
   const [selectedRegion, setSelectedRegion] = useState<string>("");
 
-  // 🔥 TanStack Query v5
   const { data, isLoading, isError } = useQuery<TemperatureData>({
     queryKey: ["temperatureData"],
     queryFn: fetchTemperatureData,
@@ -52,26 +51,21 @@ export const ClimateChart = () => {
 
   const chartData = selectedRegion ? data[selectedRegion] ?? [] : [];
 
+  const options = regions.map((region) => ({
+    value: region,
+    label: regionLabels[region] || region,
+  }));
+
   return (
     <div>
       {/* 地域選択 */}
-      <div className="mb-4 flex items-center">
-        <label htmlFor="region-select" className="mr-2 font-medium">
-          地域選択:
-        </label>
-        <select
-          id="region-select"
-          value={selectedRegion}
-          onChange={(e) => setSelectedRegion(e.target.value)}
-          className="border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
-        >
-          {regions.map((region) => (
-            <option key={region} value={region}>
-              {regionLabels[region] || region}
-            </option>
-          ))}
-        </select>
-      </div>
+      <SelectBox
+        id="region-select"
+        label="地域選択"
+        options={options}
+        value={selectedRegion}
+        onChange={setSelectedRegion}
+      />
 
       {/* チャート */}
       <ResponsiveContainer width="100%" height={400}>
