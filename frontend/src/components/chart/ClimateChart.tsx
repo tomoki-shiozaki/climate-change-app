@@ -10,7 +10,7 @@ import {
 } from "recharts";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { fetchTemperatureData } from "../../api/climate";
+import { fetchTemperatureData } from "@/features/climate/api/climateApi";
 import type { TemperatureData } from "../../types/models/climate";
 import { Loading } from "../common";
 
