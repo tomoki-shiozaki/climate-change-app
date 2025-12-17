@@ -14,7 +14,7 @@ const Home: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
         {/* 気温データ */}
         <Link
-          to="/dashboard"
+          to="/climate/temperature"
           className="p-6 rounded-2xl shadow-md bg-white hover:shadow-lg transition cursor-pointer block"
         >
           <h2 className="text-xl font-semibold mb-2">気温データ</h2>

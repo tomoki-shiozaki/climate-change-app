@@ -15,11 +15,11 @@ test("未認証時はログインにリダイレクト", () => {
 
   const { container } = render(
     <AuthContext.Provider value={mockAuthContext}>
-      <MemoryRouter initialEntries={["/dashboard"]}>
+      <MemoryRouter initialEntries={["/climate/temperature"]}>
         <Routes>
           <Route path="/login" element={<div>Login Page</div>} />
           <Route element={<PrivateLayout />}>
-            <Route path="/dashboard" element={<div>Dashboard</div>} />
+            <Route path="/climate/temperature" element={<div>Dashboard</div>} />
           </Route>
         </Routes>
       </MemoryRouter>
@@ -41,10 +41,10 @@ test("認証済み時は子ルートが表示される", () => {
 
   const { getByText } = render(
     <AuthContext.Provider value={mockAuthContext}>
-      <MemoryRouter initialEntries={["/dashboard"]}>
+      <MemoryRouter initialEntries={["/climate/temperature"]}>
         <Routes>
           <Route element={<PrivateLayout />}>
-            <Route path="/dashboard" element={<div>Dashboard</div>} />
+            <Route path="/climate/temperature" element={<div>Dashboard</div>} />
           </Route>
         </Routes>
       </MemoryRouter>
