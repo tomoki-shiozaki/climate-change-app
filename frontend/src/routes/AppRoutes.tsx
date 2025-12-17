@@ -4,7 +4,7 @@ import { PrivateLayout } from "@/routes/PrivateLayout";
 
 import { LoginPage, SignupPage } from "@/pages/auth";
 import { Home } from "@/pages/Home";
-import { Dashboard } from "@/pages/Dashboard";
+import { Dashboard } from "@/pages/climate";
 import { CO2Map } from "@/pages/CO2Map";
 import { DataPage } from "@/pages/Data";
 import { About } from "@/pages/About";
