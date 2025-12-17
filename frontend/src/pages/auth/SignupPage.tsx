@@ -2,15 +2,15 @@ import { useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import Form from "react-bootstrap/Form";
-import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
 import Alert from "react-bootstrap/Alert";
 import Spinner from "react-bootstrap/Spinner";
 import { useAuthContext } from "@/features/auth/context/useAuthContext";
 import { AxiosError } from "axios";
 import { logError } from "@/lib/logger";
+import { CenteredBox } from "@/components/layout";
 
-const Signup = () => {
+const SignupPage = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password1, setPassword1] = useState("");
@@ -32,7 +32,7 @@ const Signup = () => {
     setError(null);
 
     try {
-      // バリデーション
+      // フロント側バリデーション
       if (!username || !email || !password1 || !password2) {
         throw new Error("すべてのフィールドを入力してください。");
       }
@@ -41,7 +41,6 @@ const Signup = () => {
       }
 
       await signup({ username, email, password1, password2 });
-
       // signup 成功後にトップページへ遷移
       navigate("/");
     } catch (err: unknown) {
@@ -60,7 +59,7 @@ const Signup = () => {
   };
 
   return (
-    <Container className="mt-5" style={{ maxWidth: "500px" }}>
+    <CenteredBox>
       <h2 className="mb-4">アカウント作成</h2>
 
       {error && <Alert variant="danger">{error}</Alert>}
@@ -145,8 +144,8 @@ const Signup = () => {
           )}
         </Button>
       </Form>
-    </Container>
+    </CenteredBox>
   );
 };
 
-export default Signup;
+export default SignupPage;
