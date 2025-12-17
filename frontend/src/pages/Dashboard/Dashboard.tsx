@@ -1,4 +1,4 @@
-import ClimateChart from "../../components/chart/ClimateChart";
+import { ClimateChart } from "@/features/climate/components/ClimateChart";
 
 const Dashboard = () => {
   return (

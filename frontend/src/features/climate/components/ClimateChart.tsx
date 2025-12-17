@@ -20,7 +20,7 @@ const regionLabels: Record<string, string> = {
   World: "世界",
 };
 
-const ClimateChart = () => {
+export const ClimateChart = () => {
   const [selectedRegion, setSelectedRegion] = useState<string>("");
 
   // 🔥 TanStack Query v5
@@ -139,5 +139,3 @@ const ClimateChart = () => {
     </div>
   );
 };
-
-export default ClimateChart;
