@@ -8,6 +8,7 @@ import Spinner from "react-bootstrap/Spinner";
 import { useAuthContext } from "@/features/auth/context/useAuthContext";
 import { AxiosError } from "axios";
 import { logError } from "@/lib/logger";
+import { CenteredBox } from "@/components/layout";
 
 const LoginPage = () => {
   const [username, setUsername] = useState("");
@@ -51,7 +52,7 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="mt-5 mx-auto" style={{ maxWidth: "500px" }}>
+    <CenteredBox>
       <h2 className="mb-4">ログイン</h2>
 
       {error && <Alert variant="danger">{error}</Alert>}
@@ -104,7 +105,7 @@ const LoginPage = () => {
           )}
         </Button>
       </Form>
-    </div>
+    </CenteredBox>
   );
 };
 
