@@ -33,7 +33,7 @@ export const TemperatureChart = () => {
   const { data, isLoading, isError } = useQuery<TemperatureData>({
     queryKey: ["temperatureData"],
     queryFn: fetchTemperatureData,
-    retry: false,
+    staleTime: 1000 * 60 * 60 * 24 * 30, // 30日
   });
 
   const [selectedRegion, setSelectedRegion] = useState<string>("");
