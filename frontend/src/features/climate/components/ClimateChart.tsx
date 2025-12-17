@@ -46,11 +46,15 @@ export const ClimateChart = () => {
   if (isError) return <p>データの取得に失敗しました</p>;
   if (!data) return <p>データがありません</p>;
 
+  // データに含まれる地域名の配列を取得
   const regions = Object.keys(data);
   if (regions.length === 0) return <p>地域データがありません</p>;
 
   const chartData = selectedRegion ? data[selectedRegion] ?? [] : [];
 
+  // SelectBox 用のオプション配列を作成
+  // value: 内部的に扱う地域キー
+  // label: ユーザーに表示する地域名（日本語ラベルがあればそれを使用）
   const options = regions.map((region) => ({
     value: region,
     label: regionLabels[region] || region,
