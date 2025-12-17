@@ -1,1 +1,1 @@
-export { default as Dashboard } from "./TemperaturePage";
+export { default as TemperaturePage } from "./TemperaturePage";
