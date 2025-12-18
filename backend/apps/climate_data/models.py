@@ -5,7 +5,11 @@ from django.db import models
 # 地域マスター
 class Region(models.Model):
     name = models.CharField(max_length=255)
-    iso_code = models.CharField(max_length=100, unique=True, blank=True)
+    iso_code = models.CharField(
+        max_length=100,
+        unique=True,
+        help_text="優先順: 1) ISO A3コード、2) OWID独自コード (例: OWID_AFR)、3) 自動生成コード",
+    )
 
     class Meta:
         verbose_name = "地域"
