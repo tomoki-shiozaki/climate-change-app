@@ -15,18 +15,21 @@ test("未認証時はログインにリダイレクト", () => {
 
   const { container } = render(
     <AuthContext.Provider value={mockAuthContext}>
-      <MemoryRouter initialEntries={["/dashboard"]}>
+      <MemoryRouter initialEntries={["/climate/temperature"]}>
         <Routes>
           <Route path="/login" element={<div>Login Page</div>} />
           <Route element={<PrivateLayout />}>
-            <Route path="/dashboard" element={<div>Dashboard</div>} />
+            <Route
+              path="/climate/temperature"
+              element={<div>TemperaturePage</div>}
+            />
           </Route>
         </Routes>
       </MemoryRouter>
     </AuthContext.Provider>
   );
 
-  expect(container.innerHTML).not.toContain("Dashboard");
+  expect(container.innerHTML).not.toContain("TemperaturePage");
 });
 
 test("認証済み時は子ルートが表示される", () => {
@@ -41,15 +44,18 @@ test("認証済み時は子ルートが表示される", () => {
 
   const { getByText } = render(
     <AuthContext.Provider value={mockAuthContext}>
-      <MemoryRouter initialEntries={["/dashboard"]}>
+      <MemoryRouter initialEntries={["/climate/temperature"]}>
         <Routes>
           <Route element={<PrivateLayout />}>
-            <Route path="/dashboard" element={<div>Dashboard</div>} />
+            <Route
+              path="/climate/temperature"
+              element={<div>TemperaturePage</div>}
+            />
           </Route>
         </Routes>
       </MemoryRouter>
     </AuthContext.Provider>
   );
 
-  expect(getByText("Dashboard")).toBeTruthy();
+  expect(getByText("TemperaturePage")).toBeTruthy();
 });
