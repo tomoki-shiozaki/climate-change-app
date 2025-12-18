@@ -1,6 +1,6 @@
 from rest_framework import viewsets
 
-from apps.api.serializers.climate import ClimateDataSerializer
+from apps.api.climate.serializers.climate import ClimateDataSerializer
 from apps.climate_data.models import ClimateData
 
 
