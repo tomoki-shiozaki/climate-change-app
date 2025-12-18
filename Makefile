@@ -65,6 +65,22 @@ clean:
 	docker compose down --rmi all --volumes --remove-orphans
 
 # ==============================
+# Docker / Backend (v2)
+# ==============================
+
+up-v2:
+	docker compose --env-file backend/.env.docker.v2 up -d
+
+down-v2:
+	docker compose --env-file backend/.env.docker.v2 down
+
+migrate-v2:
+	docker compose --env-file backend/.env.docker.v2 exec backend python manage.py migrate
+
+shell-v2:
+	docker compose --env-file backend/.env.docker.v2 exec backend bash
+
+# ==============================
 # その他便利コマンド
 # ==============================
 
@@ -93,7 +109,7 @@ logs-db:
 # 任意のコマンドを一時コンテナで実行
 # 例: make run cmd="python manage.py test"
 run:
-	docker-compose run --rm backend $(cmd)
+	docker compose run --rm backend $(cmd)
 
 # ==============================
 # Docker イメージ再ビルド
@@ -129,10 +145,10 @@ full-prune:
 
 # その他
 docker-test-backend:
-	docker-compose run --rm backend pytest --cov=apps --cov-report=term-missing
+	docker compose run --rm backend pytest --cov=apps --cov-report=term-missing
 
 docker-shell:
-	docker-compose run --rm backend python manage.py shell
+	docker compose run --rm backend python manage.py shell
 
 # ============================
 # Docker 上で OpenAPI schema を生成
