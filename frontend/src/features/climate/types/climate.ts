@@ -1,4 +1,4 @@
-import type { paths } from "../api";
+import type { paths } from "@/types/api";
 
 // ClimateData型をわかりやすくエクスポート
 export type TemperatureData =
