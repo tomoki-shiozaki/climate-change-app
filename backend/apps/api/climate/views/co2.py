@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 
-from apps.api.serializers.co2 import CO2DataByYearSerializer
+from apps.api.climate.serializers.co2 import CO2DataByYearSerializer
 from apps.climate_data.models import ClimateData, Indicator
 
 

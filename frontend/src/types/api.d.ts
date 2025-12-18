@@ -4,7 +4,7 @@
  */
 
 export interface paths {
-    "/api/v1/co2-data/": {
+    "/api/v1/climate/co2-data/": {
         parameters: {
             query?: never;
             header?: never;
@@ -15,7 +15,27 @@ export interface paths {
          * @description フロント用 API
          *     /co2-data/
          */
-        get: operations["co2_data_retrieve"];
+        get: operations["climate_co2_data_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/climate/temperature/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 気温データ取得
+         * @description 地域・年ごとの気温データを返します。upper, lower, global_average を含みます。
+         */
+        get: operations["climate_temperature_retrieve"];
         put?: never;
         post?: never;
         delete?: never;
@@ -288,26 +308,6 @@ export interface paths {
         patch: operations["dj_rest_auth_user_partial_update"];
         trace?: never;
     };
-    "/api/v1/temperature/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * 気温データ取得
-         * @description 地域・年ごとの気温データを返します。upper, lower, global_average を含みます。
-         */
-        get: operations["temperature_retrieve"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -418,7 +418,7 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    co2_data_retrieve: {
+    climate_co2_data_retrieve: {
         parameters: {
             query?: never;
             header?: never;
@@ -433,6 +433,35 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["CO2DataByYear"];
+                };
+            };
+        };
+    };
+    climate_temperature_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: {
+                            year?: number;
+                            /** Format: double */
+                            upper?: number | null;
+                            /** Format: double */
+                            lower?: number | null;
+                            /** Format: double */
+                            global_average?: number | null;
+                        }[];
+                    };
                 };
             };
         };
@@ -746,35 +775,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["UserDetails"];
-                };
-            };
-        };
-    };
-    temperature_retrieve: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        [key: string]: {
-                            year?: number;
-                            /** Format: double */
-                            upper?: number | null;
-                            /** Format: double */
-                            lower?: number | null;
-                            /** Format: double */
-                            global_average?: number | null;
-                        }[];
-                    };
                 };
             };
         };
