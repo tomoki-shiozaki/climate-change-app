@@ -66,20 +66,24 @@ clean:
 
 # ==============================
 # Docker / Backend (v2)
-# 別環境（env-file 切替）用
+# 別環境（環境変数 切替）用
 # ==============================
 
 up-v2:
-	docker compose --env-file backend/.env.docker.v2 up -d
+	ENV_FILE=backend/.env.docker.v2 \
+	docker compose up -d
 
 down-v2:
-	docker compose --env-file backend/.env.docker.v2 down
+	ENV_FILE=backend/.env.docker.v2 \
+	docker compose down
 
 migrate-v2:
-	docker compose --env-file backend/.env.docker.v2 exec backend python manage.py migrate
+	ENV_FILE=backend/.env.docker.v2 \
+	docker compose exec backend python manage.py migrate
 
 shell-v2:
-	docker compose --env-file backend/.env.docker.v2 exec backend bash
+	ENV_FILE=backend/.env.docker.v2 \
+	docker compose exec backend bash
 
 # ==============================
 # その他便利コマンド
