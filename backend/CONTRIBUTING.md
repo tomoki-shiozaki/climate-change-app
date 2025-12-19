@@ -124,3 +124,28 @@ DATABASE_USER=myuser
 GENERATE_SCHEMA=True
 DJANGO_ENV=development
 ```
+
+### Docker 開発環境
+
+Docker 開発環境は`Makefile`を用いてください。例えばコンテナの起動：
+
+- v1 環境の場合:
+
+```bash
+make up
+```
+
+- v2 環境の場合:
+
+```bash
+make up-v2
+```
+
+既に起動中のコンテナを停止する場合：
+
+```bash
+make down       # v1 環境
+make down-v2    # v2 環境
+```
+
+その他のコマンドは`Makefile`を参照してください。
