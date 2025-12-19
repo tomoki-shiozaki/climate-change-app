@@ -70,20 +70,25 @@ clean:
 # ==============================
 
 up-v2:
-	ENV_FILE=backend/.env.docker.v2 \
-	docker compose up -d
+	docker compose -f docker-compose.v2.yml up -d
+
+build-up-v2:
+	docker compose -f docker-compose.v2.yml up -d --build
 
 down-v2:
-	ENV_FILE=backend/.env.docker.v2 \
-	docker compose down
+	docker compose -f docker-compose.v2.yml down
 
 migrate-v2:
-	ENV_FILE=backend/.env.docker.v2 \
-	docker compose exec backend python manage.py migrate
+	docker compose -f docker-compose.v2.yml exec backend python manage.py migrate
 
 shell-v2:
-	ENV_FILE=backend/.env.docker.v2 \
-	docker compose exec backend bash
+	docker compose -f docker-compose.v2.yml exec backend bash
+
+logs-backend-v2:
+	docker compose -f docker-compose.v2.yml logs -f backend
+
+logs-db-v2:
+	docker compose -f docker-compose.v2.yml logs -f db_v2
 
 # ==============================
 # その他便利コマンド
@@ -219,6 +224,10 @@ dev:
 # Docker環境でバックエンド起動＋フロントエンドを並行起動
 docker-dev:
 	make up
+	make run-frontend
+
+docker-dev-v2:
+	make up-v2
 	make run-frontend
 
 # Schema と API クライアントをまとめて更新
