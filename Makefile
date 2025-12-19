@@ -65,6 +65,32 @@ clean:
 	docker compose down --rmi all --volumes --remove-orphans
 
 # ==============================
+# Docker / Backend (v2)
+# 別環境（環境変数 切替）用
+# ==============================
+
+up-v2:
+	docker compose -f docker-compose.v2.yml up -d
+
+build-up-v2:
+	docker compose -f docker-compose.v2.yml up -d --build
+
+down-v2:
+	docker compose -f docker-compose.v2.yml down
+
+migrate-v2:
+	docker compose -f docker-compose.v2.yml exec backend python manage.py migrate
+
+shell-v2:
+	docker compose -f docker-compose.v2.yml exec backend bash
+
+logs-backend-v2:
+	docker compose -f docker-compose.v2.yml logs -f backend
+
+logs-db-v2:
+	docker compose -f docker-compose.v2.yml logs -f db_v2
+
+# ==============================
 # その他便利コマンド
 # ==============================
 
@@ -93,7 +119,7 @@ logs-db:
 # 任意のコマンドを一時コンテナで実行
 # 例: make run cmd="python manage.py test"
 run:
-	docker-compose run --rm backend $(cmd)
+	docker compose run --rm backend $(cmd)
 
 # ==============================
 # Docker イメージ再ビルド
@@ -129,10 +155,10 @@ full-prune:
 
 # その他
 docker-test-backend:
-	docker-compose run --rm backend pytest --cov=apps --cov-report=term-missing
+	docker compose run --rm backend pytest --cov=apps --cov-report=term-missing
 
 docker-shell:
-	docker-compose run --rm backend python manage.py shell
+	docker compose run --rm backend python manage.py shell
 
 # ============================
 # Docker 上で OpenAPI schema を生成
@@ -198,6 +224,10 @@ dev:
 # Docker環境でバックエンド起動＋フロントエンドを並行起動
 docker-dev:
 	make up
+	make run-frontend
+
+docker-dev-v2:
+	make up-v2
 	make run-frontend
 
 # Schema と API クライアントをまとめて更新

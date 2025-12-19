@@ -1,0 +1,32 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+      args:
+        UID: ${UID}
+        GID: ${GID}
+    env_file:
+      - ./backend/.env.docker.v2 # 👈 v2 用に分ける
+    ports:
+      - "8000:8000" # ホスト側も8000固定。8001などにすると環境変数で切り替えるのは面倒だったため
+    volumes:
+      - ./backend:/app # 開発用ホットリロード
+    entrypoint: ["/app/entrypoint.sh"]
+    command: python manage.py runserver 0.0.0.0:8000
+    depends_on:
+      - db_v2
+
+  db_v2:
+    image: postgres:17-trixie
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: mydb_v2 # 👈 DB名を変更
+    ports:
+      - "5433:5432" # 👈 legacy と分離
+    volumes:
+      - postgres_data_v2:/var/lib/postgresql/data
+
+volumes:
+  postgres_data_v2: # 👈 完全に別 volume
