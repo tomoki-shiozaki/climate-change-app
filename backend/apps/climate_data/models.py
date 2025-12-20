@@ -8,7 +8,13 @@ class Region(models.Model):
     iso_code = models.CharField(
         max_length=100,
         unique=True,
-        help_text="優先順: 1) ISO A3コード、2) OWID独自コード (例: OWID_AFR)、3) 自動生成コード",
+        help_text=(
+            "OWIDデータに基づく地域コード。"
+            "優先順はOWIDの仕様に従い、"
+            "1) ISO A3コード、"
+            "2) OWID独自コード (例: OWID_WRL)、"
+            "3) 上記が存在しない場合はアプリ側で自動生成"
+        ),
     )
 
     class Meta:
