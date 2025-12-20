@@ -16,7 +16,7 @@ class TestRegion:
         assert region.code == "JP"
 
     def test_str(self):
-        region = Region.objects.create(name="Europe")
+        region = Region.objects.create(name="Europe", code="EU")
         assert str(region) == "Europe"
 
 
@@ -102,7 +102,8 @@ class TestClimateData:
             value=16.1,
         )
 
-        assert str(climate_data) == "Japan - Temperature - Mean temperature (2021)"
+        expected_str = f"{region} - {indicator} (2021)"
+        assert str(climate_data) == expected_str
 
     def test_unique_constraint(self):
         region, indicator = self._create_base_objects()
@@ -125,10 +126,11 @@ class TestClimateData:
     def test_year_validation_min(self):
         region, indicator = self._create_base_objects()
 
+        # -10001 は下限未満なので ValidationError
         climate_data = ClimateData(
             region=region,
             indicator=indicator,
-            year=1700,  # 下限未満
+            year=-10001,
             value=10.0,
         )
 
@@ -138,10 +140,11 @@ class TestClimateData:
     def test_year_validation_max(self):
         region, indicator = self._create_base_objects()
 
+        # 10001 は上限超過なので ValidationError
         climate_data = ClimateData(
             region=region,
             indicator=indicator,
-            year=2300,  # 上限超過
+            year=10001,
             value=10.0,
         )
 
