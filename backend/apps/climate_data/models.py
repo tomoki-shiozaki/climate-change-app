@@ -52,7 +52,6 @@ class Indicator(models.Model):
     data_source_name = models.CharField(max_length=255)
     data_source_url = models.URLField()
     metadata_url = models.URLField(blank=True)
-    fetched_at = models.DateTimeField(auto_now=True)  # データを取得した日
 
     class Meta:
         verbose_name = "指標"
@@ -77,7 +76,10 @@ class ClimateData(models.Model):
         ]
     )
     value = models.FloatField()
-    fetched_at = models.DateTimeField(auto_now=True)  # データを取得した日
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        help_text="全件再取得バッチによりこのレコードが最後に更新された日時",
+    )
 
     class Meta:
         unique_together = ("region", "indicator", "year")  # 同一組み合わせの重複防止
