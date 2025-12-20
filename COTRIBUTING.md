@@ -91,3 +91,5 @@ OWID 独自コードには厳密な仕様はありませんが、以下が推奨
 - 注意点：
   - グリーンランドはデンマークと分離
   - 境界は de facto を基準
+
+https://ourworldindata.org/world-region-map-definitions
