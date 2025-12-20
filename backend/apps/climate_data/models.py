@@ -71,8 +71,8 @@ class ClimateData(models.Model):
     )
     year = models.IntegerField(
         validators=[
-            MinValueValidator(1800),
-            MaxValueValidator(2200),
+            MinValueValidator(-10000),
+            MaxValueValidator(10000),
         ]
     )
     value = models.FloatField()
