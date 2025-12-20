@@ -1,8 +1,8 @@
 import requests
-from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
+from apps.climate_data.constants import CLIMATE_GROUPS
 from apps.climate_data.models import ClimateData, Indicator, IndicatorGroup, Region
 from apps.climate_data.utils.fetch_helpers import fetch_csv
 
@@ -26,7 +26,7 @@ class Command(BaseCommand):
         # -----------------------------
         # 指標グループを取得または作成
         # -----------------------------
-        group_info = settings.CLIMATE_GROUPS["CO2"]
+        group_info = CLIMATE_GROUPS["CO2"]
         group, _ = IndicatorGroup.objects.get_or_create(
             name=group_info["name"],
             defaults={"description": group_info["description"]},
