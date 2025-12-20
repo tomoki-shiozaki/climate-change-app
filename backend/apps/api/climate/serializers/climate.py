@@ -28,4 +28,4 @@ class ClimateDataSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ClimateData
-        fields = ["id", "region", "indicator", "year", "value", "fetched_at"]
+        fields = ["id", "region", "indicator", "year", "value", "updated_at"]
