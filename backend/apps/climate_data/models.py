@@ -83,6 +83,9 @@ class ClimateData(models.Model):
 
     class Meta:
         unique_together = ("region", "indicator", "year")  # 同一組み合わせの重複防止
+        indexes = [
+            models.Index(fields=["indicator", "year", "region"]),
+        ]
         verbose_name = "気候データ"
         verbose_name_plural = "気候データ"
 
