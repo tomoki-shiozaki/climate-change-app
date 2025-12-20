@@ -5,7 +5,7 @@ from django.db import models
 # 地域マスター
 class Region(models.Model):
     name = models.CharField(max_length=255)
-    iso_code = models.CharField(
+    code = models.CharField(
         max_length=100,
         unique=True,
         help_text=(

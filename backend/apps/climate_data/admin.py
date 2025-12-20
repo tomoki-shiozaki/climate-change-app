@@ -4,8 +4,8 @@ from apps.climate_data.models import ClimateData, Indicator, IndicatorGroup, Reg
 
 
 class RegionAdmin(admin.ModelAdmin):
-    list_display = ("name", "iso_code")
-    search_fields = ("name", "iso_code")
+    list_display = ("name", "code")
+    search_fields = ("name", "code")
 
 
 class IndicatorGroupAdmin(admin.ModelAdmin):

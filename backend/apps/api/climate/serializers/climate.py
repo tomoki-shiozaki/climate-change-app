@@ -6,7 +6,7 @@ from apps.climate_data.models import ClimateData, Indicator, Region
 class RegionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Region
-        fields = ["id", "name", "iso_code"]
+        fields = ["id", "name", "code"]
 
 
 class IndicatorSerializer(serializers.ModelSerializer):

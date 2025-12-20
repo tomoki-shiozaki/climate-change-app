@@ -15,7 +15,7 @@ def fetch_csv(url: str):
 
 def get_or_create_region(entity: str, code: str):
     region, _ = Region.objects.get_or_create(
-        name=entity, defaults={"iso_code": code if code else f"NO_CODE_{entity}"}
+        name=entity, defaults={"code": code if code else f"NO_CODE_{entity}"}
     )
     return region
 

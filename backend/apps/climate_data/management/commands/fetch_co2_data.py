@@ -53,7 +53,7 @@ class Command(BaseCommand):
         # -----------------------------
         # キャッシュ作成
         # -----------------------------
-        region_cache = {r.iso_code: r for r in Region.objects.all()}
+        region_cache = {r.code: r for r in Region.objects.all()}
         indicator_cache = {i.name: i for i in Indicator.objects.filter(group=group)}
         # 必要な Indicator がなければ作成してキャッシュに追加
         if column_key not in indicator_cache:
@@ -104,7 +104,7 @@ class Command(BaseCommand):
             if code in region_cache:
                 region = region_cache[code]
             else:
-                region = Region.objects.create(name=entity, iso_code=code)
+                region = Region.objects.create(name=entity, code=code)
                 region_cache[code] = region
 
             value_raw = row.get(column_key)

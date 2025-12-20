@@ -10,10 +10,10 @@ class TestRegion:
     def test_create_region(self):
         region = Region.objects.create(
             name="Japan",
-            iso_code="JP",
+            code="JP",
         )
         assert region.name == "Japan"
-        assert region.iso_code == "JP"
+        assert region.code == "JP"
 
     def test_str(self):
         region = Region.objects.create(name="Europe")
@@ -69,7 +69,7 @@ class TestIndicator:
 @pytest.mark.django_db
 class TestClimateData:
     def _create_base_objects(self):
-        region = Region.objects.create(name="Japan", iso_code="JP")
+        region = Region.objects.create(name="Japan", code="JP")
         group = IndicatorGroup.objects.create(name="Temperature")
         indicator = Indicator.objects.create(
             group=group,
