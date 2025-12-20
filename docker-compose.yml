@@ -8,6 +8,8 @@ services:
         GID: ${GID}
     env_file:
       - ./backend/.env.docker
+    environment:
+      RUN_MIGRATIONS: "false" # 👈 通常起動では migrate しない
     ports:
       - "8000:8000"
     volumes:

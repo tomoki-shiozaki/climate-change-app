@@ -8,6 +8,8 @@ services:
         GID: ${GID}
     env_file:
       - ./backend/.env.docker.v2 # 👈 v2 用に分ける
+    environment:
+      RUN_MIGRATIONS: "false" # 👈 通常起動では migrate しない
     ports:
       - "8000:8000" # ホスト側も8000固定。8001などにすると環境変数で切り替えるのは面倒だったため
     volumes:
