@@ -39,7 +39,9 @@ class Command(BaseCommand):
         # CSVデータ取得
         # -----------------------------
         self.stdout.write(self.style.NOTICE("Downloading CSV data..."))
-        reader = list(fetch_csv(csv_url))  # list化して複数回アクセス可能に
+        # CSV をダウンロードして辞書のリストに変換
+        # 各要素は {'Entity': 'Japan', 'Code': 'JPN', 'Year': '2020', 'emissions_total': '36000'} のような辞書
+        reader = list(fetch_csv(csv_url))
 
         # -----------------------------
         # メタデータ取得
