@@ -33,7 +33,7 @@ class Command(BaseCommand):
         )
 
         # CSV列名も設定から取得
-        column_key = group_info.get("column_key", "emissions_total")
+        column_key = group_info["column_key"]
 
         # -----------------------------
         # CSVデータ取得
