@@ -26,6 +26,9 @@ class ClimateDataAdmin(admin.ModelAdmin):
     ordering = ("indicator", "region", "year")
     readonly_fields = ("updated_at",)
 
+    # ここで関連テーブルをまとめて取得
+    list_select_related = ("region", "indicator")
+
 
 admin.site.register(Region, RegionAdmin)
 admin.site.register(IndicatorGroup, IndicatorGroupAdmin)
