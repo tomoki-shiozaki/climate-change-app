@@ -12,18 +12,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         # -----------------------------
-        # データURLとメタデータURL
-        # -----------------------------
-        csv_url = (
-            "https://ourworldindata.org/grapher/annual-co-emissions-by-region.csv"
-            "?v=1&csvType=full&useColumnShortNames=true"
-        )
-        meta_url = (
-            "https://ourworldindata.org/grapher/annual-co-emissions-by-region.metadata.json"
-            "?v=1&csvType=full&useColumnShortNames=true"
-        )
-
-        # -----------------------------
         # 指標グループを取得または作成
         # -----------------------------
         group_info = CLIMATE_GROUPS["CO2"]
@@ -31,6 +19,12 @@ class Command(BaseCommand):
             name=group_info["name"],
             defaults={"description": group_info["description"]},
         )
+
+        # -----------------------------
+        # データURLとメタデータURL
+        # -----------------------------
+        csv_url = group_info["csv_url"]
+        meta_url = group_info["meta_url"]
 
         # CSV列名も設定から取得
         column_key = group_info["column_key"]
