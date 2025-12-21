@@ -6,6 +6,8 @@ on:
 jobs:
   create_superuser:
     runs-on: ubuntu-latest
+    # develop ブランチでのみ実行
+    if: github.ref == 'refs/heads/develop'
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL_DEVELOP }}
       SECRET_KEY: ${{ secrets.SECRET_KEY_DEVELOP }}
