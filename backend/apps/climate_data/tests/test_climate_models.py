@@ -10,14 +10,22 @@ class TestRegion:
     def test_create_region(self):
         region = Region.objects.create(
             name="Japan",
-            iso_code="JP",
+            code="JP",
         )
         assert region.name == "Japan"
-        assert region.iso_code == "JP"
+        assert region.code == "JP"
 
     def test_str(self):
-        region = Region.objects.create(name="Europe")
+        region = Region.objects.create(name="Europe", code="EU")
         assert str(region) == "Europe"
+
+    def test_generate_code_simple(self):
+        code = Region.generate_code(entity="Japan")
+        assert code == "AUTO_JAPAN"
+
+    def test_generate_code_normalizes_entity(self):
+        code = Region.generate_code(entity="  North America ")
+        assert code == "AUTO_NORTH_AMERICA"
 
 
 @pytest.mark.django_db
@@ -69,7 +77,7 @@ class TestIndicator:
 @pytest.mark.django_db
 class TestClimateData:
     def _create_base_objects(self):
-        region = Region.objects.create(name="Japan", iso_code="JP")
+        region = Region.objects.create(name="Japan", code="JP")
         group = IndicatorGroup.objects.create(name="Temperature")
         indicator = Indicator.objects.create(
             group=group,
@@ -102,7 +110,8 @@ class TestClimateData:
             value=16.1,
         )
 
-        assert str(climate_data) == "Japan - Temperature - Mean temperature (2021)"
+        expected_str = f"{region} - {indicator} (2021)"
+        assert str(climate_data) == expected_str
 
     def test_unique_constraint(self):
         region, indicator = self._create_base_objects()
@@ -125,10 +134,11 @@ class TestClimateData:
     def test_year_validation_min(self):
         region, indicator = self._create_base_objects()
 
+        # -10001 は下限未満なので ValidationError
         climate_data = ClimateData(
             region=region,
             indicator=indicator,
-            year=1700,  # 下限未満
+            year=-10001,
             value=10.0,
         )
 
@@ -138,10 +148,11 @@ class TestClimateData:
     def test_year_validation_max(self):
         region, indicator = self._create_base_objects()
 
+        # 10001 は上限超過なので ValidationError
         climate_data = ClimateData(
             region=region,
             indicator=indicator,
-            year=2300,  # 上限超過
+            year=10001,
             value=10.0,
         )
 

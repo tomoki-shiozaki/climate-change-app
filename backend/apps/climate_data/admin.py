@@ -4,8 +4,8 @@ from apps.climate_data.models import ClimateData, Indicator, IndicatorGroup, Reg
 
 
 class RegionAdmin(admin.ModelAdmin):
-    list_display = ("name", "iso_code")
-    search_fields = ("name", "iso_code")
+    list_display = ("name", "code")
+    search_fields = ("name", "code")
 
 
 class IndicatorGroupAdmin(admin.ModelAdmin):
@@ -14,18 +14,20 @@ class IndicatorGroupAdmin(admin.ModelAdmin):
 
 
 class IndicatorAdmin(admin.ModelAdmin):
-    list_display = ("name", "group", "unit", "data_source_name", "fetched_at")
+    list_display = ("name", "group", "unit", "data_source_name")
     list_filter = ("group",)
     search_fields = ("name",)
-    readonly_fields = ("fetched_at",)
 
 
 class ClimateDataAdmin(admin.ModelAdmin):
-    list_display = ("region", "indicator", "year", "value", "fetched_at")
+    list_display = ("region", "indicator", "year", "value", "updated_at")
     list_filter = ("indicator", "region")
     search_fields = ("region__name", "indicator__name")
     ordering = ("indicator", "region", "year")
-    readonly_fields = ("fetched_at",)
+    readonly_fields = ("updated_at",)
+
+    # ここで関連テーブルをまとめて取得
+    list_select_related = ("region", "indicator")
 
 
 admin.site.register(Region, RegionAdmin)

@@ -37,7 +37,7 @@ class CO2DataByYearView(GenericAPIView):
         result = {}
         for cd in queryset:
             year = cd.year
-            iso = cd.region.iso_code
+            iso = cd.region.code
             if year not in result:
                 result[year] = {}
             result[year][iso] = cd.value

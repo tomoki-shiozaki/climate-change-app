@@ -23,10 +23,13 @@ until pg_isready -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME"; do
   sleep 1
 done
 
-echo "PostgreSQL is up - running migrations and starting server..."
+echo "PostgreSQL is up"
 
-# マイグレーションを先に実行
-python manage.py migrate
+if [ "$RUN_MIGRATIONS" = "true" ]; then
+  echo "Running migrations..."
+  python manage.py migrate
+else
+  echo "Skipping migrations"
+fi
 
-# 最後にDjangoを起動
 exec "$@"
