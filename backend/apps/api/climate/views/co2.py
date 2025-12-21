@@ -12,7 +12,7 @@ from apps.climate_data.models import ClimateData, Indicator
 class CO2DataByYearView(GenericAPIView):
     """
     フロント用 API
-    /co2-data/
+    /climate/co2-data/
     """
 
     serializer_class = CO2DataByYearSerializer
