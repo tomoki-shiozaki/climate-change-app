@@ -20,12 +20,12 @@ class CO2DataByYearView(GenericAPIView):
     def get_queryset(self):
         co2_info = CLIMATE_GROUPS["CO2"]
         group_name = co2_info["group"]["name"]
-        indicator_key = co2_info["indicator"]["column_key"]
+        name = co2_info["indicator"]["name"]
 
         indicator = get_object_or_404(
             Indicator,
             group__name=group_name,
-            name=indicator_key,
+            name=name,
         )
 
         return ClimateData.objects.filter(indicator=indicator).select_related("region")
