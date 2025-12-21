@@ -62,8 +62,12 @@ class Command(BaseCommand):
         region_cache = {r.code: r for r in Region.objects.all()}
 
         # =============================
-        # 既存データ取得
+        # 既存データの一括取得 & 高速参照用マップ作成
         # =============================
+        # 今回取り込む indicator・年・地域に該当する既存 ClimateData を
+        # 事前に一括取得し、(region_id, year) をキーとした辞書に変換する。
+        # これにより、CSV 1行ごとの DB クエリを避け、高速に
+        # 「新規作成 or 既存更新」を判定できる。
         years = {
             int(row["Year"])
             for row in reader
