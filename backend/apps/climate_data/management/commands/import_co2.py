@@ -43,7 +43,6 @@ class Command(BaseCommand):
                 "description": indicator_conf["description"],
                 "data_source_name": indicator_conf["data_source_name"],
                 "data_source_url": indicator_conf["data_source_url"],
-                # meta_url は「保持したいなら」ここ
                 "metadata_url": source_conf.get("meta_url", ""),
             },
         )
@@ -90,7 +89,7 @@ class Command(BaseCommand):
         # =============================
         for row in reader:
             entity = row.get("Entity", "").strip()
-            raw_code = row.get("Code")
+            raw_code = (row.get("Code") or "").strip()
 
             code = raw_code or Region.generate_code(entity=entity)
 
@@ -124,10 +123,11 @@ class Command(BaseCommand):
 
             key = (region.pk, year)
             if key in existing_map:
-                # 既存は更新
+                # 値が変わった場合のみ更新対象にする
                 cd = existing_map[key]
-                cd.value = value
-                to_update.append(cd)
+                if cd.value != value:
+                    cd.value = value
+                    to_update.append(cd)
             else:
                 # 新規は作成
                 to_create.append(
