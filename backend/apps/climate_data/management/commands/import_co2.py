@@ -89,8 +89,10 @@ class Command(BaseCommand):
         # CSV 行処理
         # =============================
         for row in reader:
-            entity = row.get("Entity", "")
-            code = row.get("Code", "") or f"NO_CODE_{entity.replace(' ', '_')}"
+            entity = row.get("Entity", "").strip()
+            raw_code = row.get("Code")
+
+            code = raw_code or Region.generate_code(entity=entity)
 
             year_raw = row.get("Year")
             if not year_raw or not year_raw.isdigit():

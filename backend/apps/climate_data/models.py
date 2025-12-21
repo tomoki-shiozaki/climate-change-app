@@ -17,6 +17,21 @@ class Region(models.Model):
         ),
     )
 
+    @classmethod
+    def generate_code(cls, *, entity: str) -> str:
+        """
+        CSV に Code が存在しない場合の region.code を生成する。
+
+        - 外部データ由来であることを示すため AUTO_ を付与
+        - 同じ entity からは常に同じ code が生成される
+
+        例:
+        - entity="Japan" -> "AUTO_JAPAN"
+        - entity="North America" -> "AUTO_NORTH_AMERICA"
+        """
+        base = entity.strip().upper().replace(" ", "_")
+        return f"AUTO_{base}"
+
     class Meta:
         verbose_name = "地域"
         verbose_name_plural = "地域マスター"
