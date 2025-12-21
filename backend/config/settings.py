@@ -270,3 +270,14 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # ================================
 # App-specific settings
 # ================================
+
+# ================================
+# 警告無視設定（古い allauth 設定による UserWarning を無視）
+# ================================
+import warnings
+
+warnings.filterwarnings(
+    "ignore",
+    category=UserWarning,
+    message="app_settings.*is deprecated.*",
+)
