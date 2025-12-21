@@ -1,4 +1,4 @@
-name: Fetch CO2 Data
+name: Import CO2 Data
 
 # 毎月1日の午前2時に実行（UTC）
 on:
@@ -35,4 +35,4 @@ jobs:
       - name: Run CO2 data import
         run: |
           cd backend
-          python manage.py fetch_co2_data
+          python manage.py import_co2
