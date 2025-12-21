@@ -19,6 +19,14 @@ class TestRegion:
         region = Region.objects.create(name="Europe", code="EU")
         assert str(region) == "Europe"
 
+    def test_generate_code_simple(self):
+        code = Region.generate_code(entity="Japan")
+        assert code == "AUTO_JAPAN"
+
+    def test_generate_code_normalizes_entity(self):
+        code = Region.generate_code(entity="  North America ")
+        assert code == "AUTO_NORTH_AMERICA"
+
 
 @pytest.mark.django_db
 class TestIndicatorGroup:
