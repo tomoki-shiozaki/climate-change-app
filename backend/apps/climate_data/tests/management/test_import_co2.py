@@ -145,3 +145,89 @@ def test_import_updates_existing_data(mock_fetch_csv):
     # -------------------------
     cd = ClimateData.objects.get(region=region, year=2020)
     assert cd.value == 200
+
+
+@pytest.mark.django_db
+@patch("apps.climate_data.management.commands.import_co2.fetch_csv")
+def test_import_does_not_update_when_value_is_same(mock_fetch_csv):
+    """
+    既存 ClimateData と同じ値の場合、更新されないことを確認
+    """
+
+    group = IndicatorGroup.objects.create(
+        name="CO₂ Emissions",
+        description="Carbon dioxide emissions",
+    )
+    indicator = Indicator.objects.create(
+        group=group,
+        name="Total CO₂ emissions",
+        unit="tonnes",
+    )
+    region = Region.objects.create(
+        name="Japan",
+        code="JPN",
+    )
+    ClimateData.objects.create(
+        region=region,
+        indicator=indicator,
+        year=2020,
+        value=200,
+    )
+
+    mock_fetch_csv.return_value = [
+        {
+            "Entity": "Japan",
+            "Code": "JPN",
+            "Year": "2020",
+            "emissions_total": "200",
+        }
+    ]
+
+    call_command("import_co2")
+
+    cd = ClimateData.objects.get(region=region, year=2020)
+    assert cd.value == 200
+    assert ClimateData.objects.count() == 1
+
+
+@pytest.mark.django_db
+@patch("apps.climate_data.management.commands.import_co2.fetch_csv")
+@patch(
+    "apps.climate_data.management.commands.import_co2.ClimateData.objects.bulk_update"
+)
+def test_import_does_not_call_bulk_update_when_value_same(
+    mock_bulk_update, mock_fetch_csv
+):
+    """
+    値が変わらない場合に bulk_update が呼ばれないことを確認する。
+    パフォーマンス最適化のリグレッション防止用テスト。
+    """
+    group = IndicatorGroup.objects.create(
+        name="CO₂ Emissions",
+        description="Carbon dioxide emissions",
+    )
+    indicator = Indicator.objects.create(
+        group=group,
+        name="Total CO₂ emissions",
+        unit="tonnes",
+    )
+    region = Region.objects.create(name="Japan", code="JPN")
+    ClimateData.objects.create(
+        region=region,
+        indicator=indicator,
+        year=2020,
+        value=200,
+    )
+
+    mock_fetch_csv.return_value = [
+        {
+            "Entity": "Japan",
+            "Code": "JPN",
+            "Year": "2020",
+            "emissions_total": "200",
+        }
+    ]
+
+    call_command("import_co2")
+
+    mock_bulk_update.assert_not_called()
