@@ -27,7 +27,7 @@ class Region(models.Model):
 
 # 指標グループ（例：Temperature, CO2, Precipitation など）
 class IndicatorGroup(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     description = models.TextField(blank=True)
 
     class Meta:
@@ -56,6 +56,12 @@ class Indicator(models.Model):
     class Meta:
         verbose_name = "指標"
         verbose_name_plural = "指標マスター"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["group", "name"],
+                name="unique_indicator_per_group",
+            )
+        ]
 
     def __str__(self):
         return f"{self.group.name} - {self.name}"
