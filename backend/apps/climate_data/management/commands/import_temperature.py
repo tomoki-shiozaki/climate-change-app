@@ -55,7 +55,9 @@ class Command(BaseCommand):
 
                 region, _ = Region.objects.get_or_create(
                     name=entity,
-                    defaults={"code": code or f"NO_CODE_{entity}"},
+                    defaults={
+                        "code": code if code else Region.generate_code(entity=entity),
+                    },
                 )
 
                 for column_key, indicator_def in indicators_config.items():
