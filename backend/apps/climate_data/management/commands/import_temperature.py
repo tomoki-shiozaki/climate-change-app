@@ -51,13 +51,12 @@ class Command(BaseCommand):
                     continue
 
                 entity = row.get("Entity", "")
-                code = row.get("Code", "")
+                raw_code = (row.get("Code") or "").strip()
+                region_code = raw_code or Region.generate_code(entity=entity)
 
                 region, _ = Region.objects.get_or_create(
-                    name=entity,
-                    defaults={
-                        "code": code if code else Region.generate_code(entity=entity),
-                    },
+                    code=region_code,
+                    defaults={"name": entity},
                 )
 
                 for column_key, indicator_def in indicators_config.items():
