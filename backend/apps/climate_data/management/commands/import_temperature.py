@@ -4,6 +4,7 @@ from django.db import transaction
 from apps.climate_data.constants import CLIMATE_GROUPS
 from apps.climate_data.models import ClimateData, Indicator, IndicatorGroup, Region
 from apps.climate_data.utils.fetch_helpers import fetch_csv
+from apps.climate_data.utils.parse_helpers import parse_float
 
 
 class Command(BaseCommand):
@@ -60,17 +61,8 @@ class Command(BaseCommand):
                 )
 
                 for column_key, indicator_def in indicators_config.items():
-                    value_raw = row.get(column_key)
-                    if (
-                        value_raw is None
-                        or value_raw == ""
-                        or str(value_raw).lower() == "nan"
-                    ):
-                        continue
-
-                    try:
-                        value = float(value_raw)
-                    except ValueError:
+                    value = parse_float(row.get(column_key))
+                    if value is None:
                         continue
 
                     # Indicator 作成 or キャッシュ
