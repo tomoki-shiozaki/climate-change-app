@@ -1,37 +1,26 @@
-import requests
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
 from apps.climate_data.constants import CLIMATE_GROUPS
-from apps.climate_data.models import IndicatorGroup
-from apps.climate_data.utils.fetch_helpers import (
-    fetch_csv,
-    get_or_create_indicator,
-    get_or_create_region,
-    update_climate_data,
-)
+from apps.climate_data.models import ClimateData, Indicator, IndicatorGroup, Region
+from apps.climate_data.utils.fetch_helpers import fetch_csv
 
 
 class Command(BaseCommand):
-    help = "Fetch temperature anomaly data from Our World in Data"
+    help = "Import temperature anomaly data from Our World in Data"
 
     def handle(self, *args, **options):
         # -----------------------------
-        # データURLとメタデータURL
+        # Constants 取得
         # -----------------------------
-        csv_url = (
-            "https://ourworldindata.org/grapher/temperature-anomaly.csv"
-            "?v=1&csvType=full&useColumnShortNames=true"
-        )
-        meta_url = (
-            "https://ourworldindata.org/grapher/temperature-anomaly.metadata.json"
-            "?v=1&csvType=full&useColumnShortNames=true"
-        )
+        config = CLIMATE_GROUPS["TEMPERATURE"]
+        group_info = config["group"]
+        source = config["source"]
+        indicators_config = config["indicators"]
 
         # -----------------------------
-        # 指標グループを取得または作成
+        # IndicatorGroup 取得 or 作成
         # -----------------------------
-        group_info = CLIMATE_GROUPS["TEMPERATURE"]
         group, _ = IndicatorGroup.objects.get_or_create(
             name=group_info["name"],
             defaults={"description": group_info["description"]},
@@ -41,53 +30,35 @@ class Command(BaseCommand):
         # CSVデータ取得
         # -----------------------------
         self.stdout.write(self.style.NOTICE("Downloading CSV data..."))
-        reader = fetch_csv(csv_url)
+        reader = fetch_csv(source["csv_url"])
 
-        # -----------------------------
-        # メタデータ取得
-        # -----------------------------
-        self.stdout.write(self.style.NOTICE("Downloading metadata..."))
-        meta_response = requests.get(meta_url)
-        meta_response.raise_for_status()
-        meta = meta_response.json()
-
-        # -----------------------------
-        # 数値列（Numeric）のキーを取得
-        # -----------------------------
-        numeric_columns = {
-            key: info
-            for key, info in meta["columns"].items()
-            if info.get("type") == "Numeric"
-        }
-
-        indicator_cache = {}
+        indicator_cache: dict[str, Indicator] = {}
         created_count = 0
         updated_count = 0
 
         # -----------------------------
-        # トランザクション開始
+        # Import 処理
         # -----------------------------
         with transaction.atomic():
             for row in reader:
-                entity = row.get("Entity", "")
-                code = row.get("Code", "")
-                year_raw = row.get("Year", "")
+                year_raw = row.get("Year")
                 if not year_raw:
                     continue
 
                 try:
                     year = int(year_raw)
                 except ValueError:
-                    self.stdout.write(
-                        self.style.WARNING(f"Skipping invalid year: {year_raw}")
-                    )
                     continue
 
-                # 地域取得または作成
-                region = get_or_create_region(entity, code)
+                entity = row.get("Entity", "")
+                code = row.get("Code", "")
 
-                # 各数値列を処理
-                for column_key, info in numeric_columns.items():
+                region, _ = Region.objects.get_or_create(
+                    name=entity,
+                    defaults={"code": code or f"NO_CODE_{entity}"},
+                )
+
+                for column_key, indicator_def in indicators_config.items():
                     value_raw = row.get(column_key)
                     if (
                         value_raw is None
@@ -99,24 +70,34 @@ class Command(BaseCommand):
                     try:
                         value = float(value_raw)
                     except ValueError:
-                        self.stdout.write(
-                            self.style.WARNING(
-                                f"Skipping invalid value for {column_key}: {value_raw}"
-                            )
-                        )
                         continue
 
-                    # Indicator をキャッシュから取得、無ければ作成
-                    if column_key in indicator_cache:
-                        indicator = indicator_cache[column_key]
-                    else:
-                        indicator = get_or_create_indicator(
-                            group, column_key, info, csv_url, meta_url
+                    # Indicator 作成 or キャッシュ
+                    if column_key not in indicator_cache:
+
+                        indicator, _ = Indicator.objects.get_or_create(
+                            group=group,
+                            name=indicator_def["name"],
+                            defaults={
+                                "unit": indicator_def["unit"],
+                                "description": indicator_def["description"],
+                                "data_source_name": source["data_source_name"],
+                                "data_source_url": source["data_source_url"],
+                                "metadata_url": source["meta_url"],
+                            },
                         )
+
                         indicator_cache[column_key] = indicator
 
-                    # ClimateData更新または作成
-                    created = update_climate_data(region, indicator, year, value)
+                    indicator = indicator_cache[column_key]
+
+                    _, created = ClimateData.objects.update_or_create(
+                        region=region,
+                        indicator=indicator,
+                        year=year,
+                        defaults={"value": value},
+                    )
+
                     if created:
                         created_count += 1
                     else:
