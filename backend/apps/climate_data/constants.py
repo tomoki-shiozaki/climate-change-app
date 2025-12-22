@@ -2,23 +2,11 @@ CLIMATE_GROUPS = {
     "TEMPERATURE": {
         "group": {
             "name": "Temperature",
-            "description": "Temperature anomaly data from Our World in Data",
-        },
-        "indicator": {
-            # 温度データはメタデータに列ごとに情報があるので、
-            # 固定の column_key は設定しないか、代表列を入れる
-            "name": "Global average temperature anomaly",
-            "unit": "°C",
-            "description": (
-                "The difference in average land-sea surface temperature "
-                "compared to the 1861-1890 mean."
-            ),
-            # 代表列の shortName を入れておく
-            "column_key": "near_surface_temperature_anomaly",
-            "data_source_name": "Our World in Data",
-            "data_source_url": "https://ourworldindata.org/grapher/temperature-anomaly",
+            "description": "Temperature anomaly data",
         },
         "source": {
+            "data_source_name": "Our World in Data",
+            "data_source_url": "https://ourworldindata.org/grapher/temperature-anomaly",
             "csv_url": (
                 "https://ourworldindata.org/grapher/temperature-anomaly.csv"
                 "?v=1&csvType=full&useColumnShortNames=true"
@@ -27,6 +15,31 @@ CLIMATE_GROUPS = {
                 "https://ourworldindata.org/grapher/temperature-anomaly.metadata.json"
                 "?v=1&csvType=full&useColumnShortNames=true"
             ),
+        },
+        "indicators": {
+            "near_surface_temperature_anomaly": {
+                "name": "Global average temperature anomaly",
+                "unit": "°C",
+                "description": (
+                    "Global average temperature anomaly relative to 1861–1890."
+                ),
+            },
+            "near_surface_temperature_anomaly_lower": {
+                "name": "Temperature anomaly (lower bound)",
+                "unit": "°C",
+                "description": (
+                    "Lower bound of the annual temperature anomaly "
+                    "(95% confidence interval)."
+                ),
+            },
+            "near_surface_temperature_anomaly_upper": {
+                "name": "Temperature anomaly (upper bound)",
+                "unit": "°C",
+                "description": (
+                    "Upper bound of the annual temperature anomaly "
+                    "(95% confidence interval)."
+                ),
+            },
         },
     },
     "CO2": {
