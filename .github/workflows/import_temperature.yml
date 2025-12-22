@@ -1,4 +1,4 @@
-name: Fetch Temperature Data
+name: Import Temperature Data
 
 # 毎月1日の午前2時に実行（UTC）
 on:
@@ -35,4 +35,4 @@ jobs:
       - name: Run climate data import
         run: |
           cd backend
-          python manage.py fetch_temperature_data
+          python manage.py import_temperature

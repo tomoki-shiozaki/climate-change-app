@@ -1,7 +1,46 @@
 CLIMATE_GROUPS = {
     "TEMPERATURE": {
-        "name": "Temperature",
-        "description": "Temperature anomaly data from Our World in Data",
+        "group": {
+            "name": "Temperature",
+            "description": "Temperature anomaly data",
+        },
+        "source": {
+            "data_source_name": "Our World in Data",
+            "data_source_url": "https://ourworldindata.org/grapher/temperature-anomaly",
+            "csv_url": (
+                "https://ourworldindata.org/grapher/temperature-anomaly.csv"
+                "?v=1&csvType=full&useColumnShortNames=true"
+            ),
+            "meta_url": (
+                "https://ourworldindata.org/grapher/temperature-anomaly.metadata.json"
+                "?v=1&csvType=full&useColumnShortNames=true"
+            ),
+        },
+        "indicators": {
+            "near_surface_temperature_anomaly": {
+                "name": "Global average temperature anomaly",
+                "unit": "°C",
+                "description": (
+                    "Global average temperature anomaly relative to 1861–1890."
+                ),
+            },
+            "near_surface_temperature_anomaly_lower": {
+                "name": "Temperature anomaly (lower bound)",
+                "unit": "°C",
+                "description": (
+                    "Lower bound of the annual temperature anomaly "
+                    "(95% confidence interval)."
+                ),
+            },
+            "near_surface_temperature_anomaly_upper": {
+                "name": "Temperature anomaly (upper bound)",
+                "unit": "°C",
+                "description": (
+                    "Upper bound of the annual temperature anomaly "
+                    "(95% confidence interval)."
+                ),
+            },
+        },
     },
     "CO2": {
         "group": {
@@ -20,9 +59,14 @@ CLIMATE_GROUPS = {
             "data_source_url": "https://ourworldindata.org/co2-emissions",
         },
         "source": {
-            "csv_url": "https://ourworldindata.org/grapher/annual-co-emissions-by-region.csv?v=1&csvType=full&useColumnShortNames=true",
-            # meta_url は保持するならここ
-            "meta_url": "https://ourworldindata.org/grapher/annual-co-emissions-by-region.metadata.json?v=1&csvType=full&useColumnShortNames=true",
+            "csv_url": (
+                "https://ourworldindata.org/grapher/annual-co-emissions-by-region.csv"
+                "?v=1&csvType=full&useColumnShortNames=true"
+            ),
+            "meta_url": (
+                "https://ourworldindata.org/grapher/annual-co-emissions-by-region.metadata.json"
+                "?v=1&csvType=full&useColumnShortNames=true"
+            ),
         },
     },
 }
