@@ -1,10 +1,10 @@
 from typing import Dict, List, Optional, TypedDict
 
-from django.conf import settings
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.climate_data.constants import CLIMATE_GROUPS
 from apps.climate_data.models import ClimateData, Indicator
 from utils.constants import APITag
 from utils.schema import schema
@@ -26,6 +26,8 @@ class YearlyTemperature(TypedDict, total=False):
 
 
 # 地域ごとのデータ構造
+# キーは地域名（例: "World", "Northern Hemisphere", "Southern Hemisphere"）
+# 値はその地域の年ごとの気温データリスト
 TemperatureDataByRegion = Dict[str, List[YearlyTemperature]]
 
 
@@ -41,10 +43,16 @@ class TemperatureAPIView(APIView):
     """
 
     # Indicator名とフィールド名の対応マップ
-    INDICATOR_FIELD_MAP: Dict[str, str] = {
-        "Upper bound of the annual temperature anomaly (95% confidence interval)": "upper",
-        "Lower bound of the annual temperature anomaly (95% confidence interval)": "lower",
-        "Global average temperature anomaly relative to 1861-1890": "global_average",
+    temp_indicators = CLIMATE_GROUPS["TEMPERATURE"]["indicators"]
+
+    UPPER = temp_indicators["near_surface_temperature_anomaly_upper"]["name"]
+    LOWER = temp_indicators["near_surface_temperature_anomaly_lower"]["name"]
+    GLOBAL_AVG = temp_indicators["near_surface_temperature_anomaly"]["name"]
+
+    INDICATOR_FIELD_MAP = {
+        UPPER: "upper",
+        LOWER: "lower",
+        GLOBAL_AVG: "global_average",
     }
 
     @schema(
@@ -61,7 +69,7 @@ class TemperatureAPIView(APIView):
             # ===============================
             # Temperatureグループの3つの指標を取得
             # ===============================
-            group_name: str = settings.CLIMATE_GROUPS["TEMPERATURE"]["name"]
+            group_name: str = CLIMATE_GROUPS["TEMPERATURE"]["group"]["name"]
 
             temperature_indicators = Indicator.objects.filter(
                 group__name=group_name,
