@@ -4,6 +4,7 @@ from django.db import transaction
 from apps.climate_data.constants import CLIMATE_GROUPS
 from apps.climate_data.models import ClimateData, Indicator, IndicatorGroup, Region
 from apps.climate_data.utils.fetch_helpers import fetch_csv
+from apps.climate_data.utils.parse_helpers import parse_float, parse_year
 
 
 class Command(BaseCommand):
@@ -27,9 +28,7 @@ class Command(BaseCommand):
         # =============================
         group, _ = IndicatorGroup.objects.get_or_create(
             name=group_conf["name"],
-            defaults={
-                "description": group_conf["description"],
-            },
+            defaults={"description": group_conf["description"]},
         )
 
         # =============================
@@ -56,7 +55,7 @@ class Command(BaseCommand):
         reader = list(fetch_csv(csv_url))
 
         # =============================
-        # キャッシュ作成
+        # Region キャッシュ（高速化）
         # =============================
         region_cache = {r.code: r for r in Region.objects.all()}
 
@@ -68,9 +67,7 @@ class Command(BaseCommand):
         # これにより、CSV 1行ごとの DB クエリを避け、高速に
         # 「新規作成 or 既存更新」を判定できる。
         years = {
-            int(row["Year"])
-            for row in reader
-            if row.get("Year") and row["Year"].isdigit()
+            year for row in reader if (year := parse_year(row.get("Year"))) is not None
         }
 
         existing_data = ClimateData.objects.filter(
@@ -81,44 +78,22 @@ class Command(BaseCommand):
 
         existing_map = {(cd.region.pk, cd.year): cd for cd in existing_data}
 
-        to_create = []
-        to_update = []
+        to_create: list[ClimateData] = []
+        to_update: list[ClimateData] = []
 
         # =============================
         # CSV 行処理
         # =============================
         for row in reader:
-            entity = row.get("Entity", "").strip()
-            raw_code = (row.get("Code") or "").strip()
-
-            code = raw_code or Region.generate_code(entity=entity)
-
-            year_raw = row.get("Year")
-            if not year_raw or not year_raw.isdigit():
+            year = parse_year(row.get("Year"))
+            if year is None:
                 continue
 
-            year = int(year_raw)
+            # Region 取得（OWID row から）
+            region = Region.from_owid_row(row, cache=region_cache)
 
-            # Region 取得 or 作成
-            if code in region_cache:
-                region = region_cache[code]
-            else:
-                region = Region.objects.create(
-                    name=entity,
-                    code=code,
-                )
-                region_cache[code] = region
-
-            value_raw = row.get(column_key)
-            if value_raw in (None, "", "NaN", "nan"):
-                continue
-
-            try:
-                value = float(value_raw)
-            except ValueError:
-                self.stdout.write(
-                    self.style.WARNING(f"Skipping invalid value: {value_raw}")
-                )
+            value = parse_float(row.get(column_key))
+            if value is None:
                 continue
 
             key = (region.pk, year)

@@ -42,18 +42,13 @@ class Command(BaseCommand):
         # -----------------------------
         with transaction.atomic():
             for row in reader:
+                # Year parse
                 year = parse_year(row.get("Year"))
                 if year is None:
                     continue
 
-                entity = row.get("Entity", "")
-                raw_code = (row.get("Code") or "").strip()
-                region_code = raw_code or Region.generate_code(entity=entity)
-
-                region, _ = Region.objects.get_or_create(
-                    code=region_code,
-                    defaults={"name": entity},
-                )
+                # Region 取得（OWID row から）
+                region = Region.from_owid_row(row)
 
                 for column_key, indicator_def in indicators_config.items():
                     value = parse_float(row.get(column_key))
@@ -62,7 +57,6 @@ class Command(BaseCommand):
 
                     # Indicator 作成 or キャッシュ
                     if column_key not in indicator_cache:
-
                         indicator, _ = Indicator.objects.get_or_create(
                             group=group,
                             name=indicator_def["name"],
@@ -74,7 +68,6 @@ class Command(BaseCommand):
                                 "metadata_url": source["meta_url"],
                             },
                         )
-
                         indicator_cache[column_key] = indicator
 
                     indicator = indicator_cache[column_key]

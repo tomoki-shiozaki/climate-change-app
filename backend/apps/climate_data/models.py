@@ -32,6 +32,26 @@ class Region(models.Model):
         base = entity.strip().upper().replace(" ", "_")
         return f"AUTO_{base}"
 
+    @classmethod
+    def from_owid_row(cls, row, *, cache: dict[str, "Region"] | None = None):
+        entity = (row.get("Entity") or "").strip()
+        raw_code = (row.get("Code") or "").strip()
+
+        code = raw_code or cls.generate_code(entity=entity)
+
+        if cache is not None and code in cache:
+            return cache[code]
+
+        region, _ = cls.objects.get_or_create(
+            code=code,
+            defaults={"name": entity},
+        )
+
+        if cache is not None:
+            cache[code] = region
+
+        return region
+
     class Meta:
         verbose_name = "地域"
         verbose_name_plural = "地域マスター"
