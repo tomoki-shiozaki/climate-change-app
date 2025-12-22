@@ -7,6 +7,9 @@ from apps.climate_data.models import ClimateData, Indicator, IndicatorGroup, Reg
 
 @pytest.mark.django_db
 class TestRegion:
+    # -----------------------------------------
+    # 基本的な create / str / generate_code のテスト
+    # -----------------------------------------
     def test_create_region(self):
         region = Region.objects.create(
             name="Japan",
@@ -26,6 +29,56 @@ class TestRegion:
     def test_generate_code_normalizes_entity(self):
         code = Region.generate_code(entity="  North America ")
         assert code == "AUTO_NORTH_AMERICA"
+
+    # -----------------------------------------
+    # from_owid_row のテスト
+    # -----------------------------------------
+    def test_from_owid_row_with_code_creates_region(self):
+        row = {"Entity": "Japan", "Code": "JPN"}
+        region = Region.from_owid_row(row)
+
+        assert region.name == "Japan"
+        assert region.code == "JPN"
+        assert Region.objects.count() == 1
+
+    def test_from_owid_row_without_code_uses_generated_code(self):
+        row = {"Entity": "North America", "Code": ""}
+        region = Region.from_owid_row(row)
+
+        assert region.name == "North America"
+        assert region.code == "AUTO_NORTH_AMERICA"
+        assert Region.objects.count() == 1
+
+    def test_from_owid_row_is_idempotent(self):
+        row = {"Entity": "Japan", "Code": "JPN"}
+        r1 = Region.from_owid_row(row)
+        r2 = Region.from_owid_row(row)
+
+        # 同じレコードが返ること
+        assert r1.pk == r2.pk
+        assert Region.objects.count() == 1
+
+    def test_from_owid_row_uses_cache(self):
+        row = {"Entity": "Europe", "Code": "EU"}
+        cache: dict[str, Region] = {}
+
+        r1 = Region.from_owid_row(row, cache=cache)
+        r2 = Region.from_owid_row(row, cache=cache)
+
+        # キャッシュから同一オブジェクトが返ること
+        assert r1 is r2
+        assert cache["EU"] == r1
+        assert Region.objects.count() == 1
+
+    def test_from_owid_row_generated_code_with_cache(self):
+        row = {"Entity": "South America", "Code": ""}
+        cache: dict[str, Region] = {}
+
+        region = Region.from_owid_row(row, cache=cache)
+
+        assert region.code == "AUTO_SOUTH_AMERICA"
+        assert cache["AUTO_SOUTH_AMERICA"] == region
+        assert Region.objects.count() == 1
 
 
 @pytest.mark.django_db
