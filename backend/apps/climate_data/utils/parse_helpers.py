@@ -18,3 +18,17 @@ def parse_float(value_raw) -> Optional[float]:
         return None
 
     return value
+
+
+def parse_year(value_raw) -> Optional[int]:
+    """
+    CSV の Year カラムを安全に int に変換する
+
+    - None / 空文字 / 不正文字列 → None
+    """
+    try:
+        year = int(value_raw)
+    except (TypeError, ValueError):
+        return None
+
+    return year

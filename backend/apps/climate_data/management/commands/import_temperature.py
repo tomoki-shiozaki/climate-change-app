@@ -4,7 +4,7 @@ from django.db import transaction
 from apps.climate_data.constants import CLIMATE_GROUPS
 from apps.climate_data.models import ClimateData, Indicator, IndicatorGroup, Region
 from apps.climate_data.utils.fetch_helpers import fetch_csv
-from apps.climate_data.utils.parse_helpers import parse_float
+from apps.climate_data.utils.parse_helpers import parse_float, parse_year
 
 
 class Command(BaseCommand):
@@ -42,13 +42,8 @@ class Command(BaseCommand):
         # -----------------------------
         with transaction.atomic():
             for row in reader:
-                year_raw = row.get("Year")
-                if not year_raw:
-                    continue
-
-                try:
-                    year = int(year_raw)
-                except ValueError:
+                year = parse_year(row.get("Year"))
+                if year is None:
                     continue
 
                 entity = row.get("Entity", "")
