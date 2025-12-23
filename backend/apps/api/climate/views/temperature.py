@@ -49,16 +49,22 @@ class TemperatureAPIView(APIView):
     # constants / DB / API を key ベースで統一する想定。
 
     # Indicator名とフィールド名の対応マップ
-    temp_indicators = CLIMATE_GROUPS["TEMPERATURE"]["indicators"]
+    temperature_indicator_defs = CLIMATE_GROUPS["TEMPERATURE"]["indicators"]
 
-    UPPER = temp_indicators["near_surface_temperature_anomaly_upper"]["name"]
-    LOWER = temp_indicators["near_surface_temperature_anomaly_lower"]["name"]
-    GLOBAL_AVG = temp_indicators["near_surface_temperature_anomaly"]["name"]
+    UPPER_NAME = temperature_indicator_defs["near_surface_temperature_anomaly_upper"][
+        "name"
+    ]
+    LOWER_NAME = temperature_indicator_defs["near_surface_temperature_anomaly_lower"][
+        "name"
+    ]
+    GLOBAL_AVG_NAME = temperature_indicator_defs["near_surface_temperature_anomaly"][
+        "name"
+    ]
 
-    INDICATOR_FIELD_MAP = {
-        UPPER: "upper",
-        LOWER: "lower",
-        GLOBAL_AVG: "global_average",
+    INDICATOR_NAME_TO_FIELD_MAP = {
+        UPPER_NAME: "upper",
+        LOWER_NAME: "lower",
+        GLOBAL_AVG_NAME: "global_average",
     }
 
     @schema(
@@ -73,30 +79,47 @@ class TemperatureAPIView(APIView):
         """
         try:
             # ===============================
-            # Temperatureグループの3つの指標を取得
+            # 🔹 Temperature グループ名を取得
             # ===============================
+            # constants で定義されている Temperature グループの表示名を使用
             group_name: str = CLIMATE_GROUPS["TEMPERATURE"]["group"]["name"]
 
-            temperature_indicators = Indicator.objects.filter(
+            # ===============================
+            # 🔹 Temperature グループに属する3つの Indicator を取得
+            # ===============================
+            # 現在は Indicator.name をキーとして使用しているため、
+            # name が INDICATOR_NAME_TO_FIELD_MAP に含まれるものだけを取得する
+            indicators_qs = Indicator.objects.filter(
                 group__name=group_name,
-                name__in=list(self.INDICATOR_FIELD_MAP.keys()),
+                name__in=self.INDICATOR_NAME_TO_FIELD_MAP.keys(),
             )
 
-            if temperature_indicators.count() != 3:
+            # 想定している 3 指標（upper / lower / global_average）が
+            # すべて揃っていない場合はエラーとする
+            if indicators_qs.count() != 3:
                 return Response(
                     {"detail": "Not all temperature indicators found."},
                     status=status.HTTP_404_NOT_FOUND,
                 )
 
             # ===============================
-            # データ格納用辞書（region -> year -> values）
+            # 🔹 データ格納用辞書
             # ===============================
+            # 構造:
+            # {
+            #   "World": {
+            #       1900: {"year": 1900, "upper": ..., "lower": ..., "global_average": ...},
+            #       1901: {...},
+            #   },
+            #   "Northern Hemisphere": {...}
+            # }
             result: Dict[str, Dict[int, YearlyTemperature]] = {}
 
             # ===============================
-            # 各Indicator（upper/lower/global_average）ごとに処理
+            # 🔹 各 Indicator（upper/lower/global_average） ごとに ClimateData を処理
             # ===============================
-            for indicator in temperature_indicators:
+            for indicator in indicators_qs:
+                # 対象 Indicator に紐づく ClimateData を年順で取得
                 qs = (
                     ClimateData.objects.filter(indicator=indicator)
                     .select_related("region")
@@ -106,22 +129,36 @@ class TemperatureAPIView(APIView):
                 for item in qs:
                     region_name: str = item.region.name
                     year: int = item.year
-                    field_name: str = self.INDICATOR_FIELD_MAP[indicator.name]
 
-                    # 地域がまだ登録されていなければ初期化
+                    # Indicator.name から API レスポンス用フィールド名に変換
+                    # 例: "Near-surface temperature anomaly (upper)" -> "upper"
+                    field_name: str = self.INDICATOR_NAME_TO_FIELD_MAP[indicator.name]
+
+                    # ===============================
+                    # 🔹 region / year の初期化
+                    # ===============================
                     if region_name not in result:
                         result[region_name] = {}
 
-                    # 年がまだ登録されていなければ初期化
                     if year not in result[region_name]:
                         result[region_name][year] = {"year": year}
 
-                    # 該当フィールドに値を格納
+                    # ===============================
+                    # 🔹 該当フィールドに値を格納
+                    # ===============================
                     result[region_name][year][field_name] = item.value
 
             # ===============================
-            # 年ごとにリスト化してソート
+            # 🔹 year ごとの dict を list に変換してソート
             # ===============================
+            # API の返却形式:
+            # {
+            #   "World": [
+            #       {"year": 1900, "upper": ..., "lower": ..., "global_average": ...},
+            #       {"year": 1901, ...}
+            #   ],
+            #   ...
+            # }
             formatted_result: TemperatureDataByRegion = {
                 region: [data for _, data in sorted(year_dict.items())]
                 for region, year_dict in result.items()
@@ -130,7 +167,9 @@ class TemperatureAPIView(APIView):
             return Response(formatted_result, status=status.HTTP_200_OK)
 
         except Exception as e:
-            # 予期せぬエラーをキャッチ
+            # ===============================
+            # 🔹 予期せぬエラーのハンドリング
+            # ===============================
             return Response(
                 {"detail": str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
