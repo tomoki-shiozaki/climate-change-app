@@ -42,6 +42,12 @@ class TemperatureAPIView(APIView):
     Upper / Lower / Global average を含む
     """
 
+    # NOTE:
+    # 現在は Indicator.name をロジックキーとして使用している。
+    # 表示名変更の予定がないため暫定的にこの形を採用。
+    # 将来的には Indicator.key（不変識別子）をモデルに追加し、
+    # constants / DB / API を key ベースで統一する想定。
+
     # Indicator名とフィールド名の対応マップ
     temp_indicators = CLIMATE_GROUPS["TEMPERATURE"]["indicators"]
 
