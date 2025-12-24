@@ -130,18 +130,21 @@ const WorldMap: React.FC = () => {
   // year または co2Data が変わったら、色とツールチップを更新
   useEffect(() => {
     if (!geoJsonRef.current || !co2Data) return;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    geoJsonRef.current.eachLayer((layer: any) => {
-      const feature = layer.feature;
+    geoJsonRef.current.eachLayer((layer) => {
+      // layer が L.Path で feature プロパティを持つことを型として明示
+      const pathLayer = layer as L.Path & {
+        feature?: Feature<Geometry, CountryProperties>;
+      };
+      const feature = pathLayer.feature;
       if (!feature) return;
 
-      const code = feature.properties?.ISO_A3_EH; // <- EH を使用
-      const value = co2Data[year]?.[code]; // undefined のままにする
+      const code = feature.properties?.ISO_A3_EH;
+      const value = co2Data[year]?.[code];
       const countryName =
         feature.properties?.NAME_JA || feature.properties?.ADMIN || "不明";
 
       // 色を更新
-      layer.setStyle({
+      pathLayer.setStyle({
         fillColor: value === undefined ? "#d3d3d3" : getCO2Color(value),
         fillOpacity: 0.7,
         weight: 1,
@@ -149,10 +152,10 @@ const WorldMap: React.FC = () => {
       });
 
       // ツールチップ内容を更新
-      layer.setTooltipContent(
+      pathLayer.setTooltipContent(
         value === undefined
           ? `${countryName}: データなし`
-          : `${countryName}: ${value.toLocaleString()} CO2`
+          : `${countryName}: ${value.toLocaleString()} トン`
       );
     });
   }, [year, co2Data]);
