@@ -270,14 +270,14 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # ================================
 # App-specific settings
 # ================================
-CLIMATE_GROUPS = {
-    "TEMPERATURE": {
-        "name": "Temperature",
-        "description": "Temperature anomaly data from Our World in Data",
-    },
-    "CO2": {
-        "name": "CO₂ Emissions",
-        "description": "Annual total emissions of carbon dioxide (CO₂), excluding land-use change, measured in tonnes.",
-        "column_key": "emissions_total",
-    },
-}
+
+# ================================
+# 警告無視設定（古い allauth 設定による UserWarning を無視）
+# ================================
+import warnings
+
+warnings.filterwarnings(
+    "ignore",
+    category=UserWarning,
+    message="app_settings.*is deprecated.*",
+)

@@ -56,12 +56,28 @@ export const TemperatureChart = () => {
   const chartData = selectedRegion ? data[selectedRegion] ?? [] : [];
 
   // SelectBox 用のオプション配列を作成
+
+  // 順序固定用の配列
+  const order = ["World", "Northern Hemisphere", "Southern hemisphere"];
+  // order にある地域を順序通りに取得
   // value: 内部的に扱う地域キー
   // label: ユーザーに表示する地域名（日本語ラベルがあればそれを使用）
-  const options = regions.map((region) => ({
-    value: region,
-    label: regionLabels[region] || region,
-  }));
+  const orderedOptions = order
+    .filter((region) => regions.includes(region)) // データがあるものだけ
+    .map((region) => ({
+      value: region,
+      label: regionLabels[region] || region,
+    }));
+
+  // order にない地域を末尾に追加（将来地域が増えても対応）
+  const extraOptions = regions
+    .filter((region) => !order.includes(region))
+    .map((region) => ({
+      value: region,
+      label: regionLabels[region] || region,
+    }));
+
+  const options = [...orderedOptions, ...extraOptions];
 
   // 線の設定を配列でまとめて簡潔に
   const lines = [

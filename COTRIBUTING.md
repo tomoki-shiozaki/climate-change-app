@@ -18,7 +18,7 @@ echo "GID=$(id -g)" >> .env
 以下のデータソースを利用しています：
 
 - Natural Earth の国境 GeoJSON（`ISO_A3`）
-- Our World in Data（OWID）の CO₂ データ（`Code` / `iso_code`）
+- Our World in Data（OWID）の CO₂ データ（`Code` / `code`）
 
 これらを正しくマージするために、国コードの扱いを以下のように統一しています。
 
@@ -36,7 +36,7 @@ Natural Earth の GeoJSON に含まれる `ISO_A3` プロパティは
 
 ### 🔷 2. OWID の `Code` の取り扱い
 
-OWID の CO₂ データにおける `Code`（または `iso_code`）列は、
+OWID の CO₂ データにおける `Code`（または `code`）列は、
 
 - **基本的に ISO A3 と一致する**
 - ただし、国ではない地域には **ISO が存在しないため OWID 独自コード** が使われる

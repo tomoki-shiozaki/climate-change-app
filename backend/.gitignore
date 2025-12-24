@@ -1,6 +1,8 @@
+# Python
 .venv/
-.env.venv
-.env.docker
 __pycache__/
 db.sqlite3
 .coverage
+
+# Environment variables
+.env*

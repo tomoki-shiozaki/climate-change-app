@@ -2,4 +2,4 @@ import type { paths } from "@/types/api";
 
 // ClimateData型をわかりやすくエクスポート
 export type TemperatureData =
-  paths["/api/v1/temperature/"]["get"]["responses"]["200"]["content"]["application/json"];
+  paths["/api/v1/climate/temperature/"]["get"]["responses"]["200"]["content"]["application/json"];
