@@ -110,7 +110,7 @@ const WorldMap: React.FC = () => {
     const tooltipText =
       value === undefined
         ? `${countryName}: データなし`
-        : `${countryName}: ${value.toLocaleString()} CO2`;
+        : `${countryName}: ${value.toLocaleString()} トン`;
     layer.bindTooltip(tooltipText, { sticky: true });
   };
 
