@@ -34,7 +34,7 @@ const WorldMap: React.FC = () => {
   } = useQuery<CO2DataByYear>({
     queryKey: ["co2Data"],
     queryFn: fetchCO2Data,
-    staleTime: 1000 * 60 * 5, // 5分キャッシュ
+    staleTime: 1000 * 60 * 60 * 24 * 30, // 30日
   });
 
   // CO2データ取得後に minYear / maxYear / year を更新
