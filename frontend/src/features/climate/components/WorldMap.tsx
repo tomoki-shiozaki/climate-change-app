@@ -28,9 +28,9 @@ const WorldMap: React.FC = () => {
 
   // CO2データ取得
   const {
-    data: co2Data = {},
+    data: co2Data,
     isLoading,
-    error,
+    isError,
   } = useQuery<CO2DataByYear>({
     queryKey: ["co2Data"],
     queryFn: fetchCO2Data,
@@ -42,7 +42,7 @@ const WorldMap: React.FC = () => {
   useEffect(() => {
     if (!co2Data) return;
     const years = Object.keys(co2Data)
-      .map((y) => parseInt(y))
+      .map(Number)
       .filter((y) => !isNaN(y));
     if (years.length === 0) return;
 
@@ -78,7 +78,7 @@ const WorldMap: React.FC = () => {
   ): PathOptions => {
     if (!feature) return {};
     const code = feature.properties?.ISO_A3_EH; // <- EH を使用
-    const value = co2Data[year]?.[code];
+    const value = co2Data?.[year]?.[code];
     return {
       fillColor: value === undefined ? "#d3d3d3" : getCO2Color(value), // データなしは薄いグレー
       weight: 1,
@@ -93,7 +93,7 @@ const WorldMap: React.FC = () => {
     layer: Layer
   ) => {
     const code = feature.properties?.ISO_A3_EH; // <- EH を使用
-    const value = co2Data[year]?.[code];
+    const value = co2Data?.[year]?.[code];
     const countryName =
       feature.properties?.NAME_JA || feature.properties?.ADMIN || "不明";
     const tooltipText =
@@ -105,7 +105,7 @@ const WorldMap: React.FC = () => {
 
   // year または co2Data が変わったら、色とツールチップを更新
   useEffect(() => {
-    if (!geoJsonRef.current) return;
+    if (!geoJsonRef.current || !co2Data) return;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     geoJsonRef.current.eachLayer((layer: any) => {
       const feature = layer.feature;
@@ -134,7 +134,7 @@ const WorldMap: React.FC = () => {
   }, [year, co2Data]);
 
   if (isLoading) return <Loading />;
-  if (error) return <p>CO2データの取得に失敗しました</p>;
+  if (isError) return <p>CO2データの取得に失敗しました</p>;
   if (!co2Data) return <p>データがありません</p>;
 
   return (
