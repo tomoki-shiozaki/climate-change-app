@@ -36,11 +36,3 @@ export interface CountryFeatureCollection {
   type: "FeatureCollection";
   features: CountryFeature[];
 }
-
-// ---- CO2 データ ----
-// 年ごとの CO2 排出量に対応
-export interface CO2DataByYear {
-  [year: number]: {
-    [isoA3: string]: number;
-  };
-}

@@ -4,21 +4,16 @@ import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
 import type { Feature, Geometry } from "geojson";
 import type { PathOptions, Layer } from "leaflet";
 import { useQuery } from "@tanstack/react-query";
-import { apiClient } from "@/features/auth/api/apiClient";
-import type { CO2DataByYear, CountryProperties } from "@/types/geo";
+import type { CountryProperties } from "@/types/geo";
 import { Loading } from "@/components/common";
+import { fetchCO2Data } from "@/features/climate/api/climateApi";
+import type { CO2DataByYear } from "@/features/climate/types/climate";
 
 // 静的国境データ（GeoJSON）
 // geoData.ts で Natural Earth の Admin 0 – Countries をエクスポート
 import { geoData } from "@/features/climate/data/geoData";
 // CO2値に応じた色を返す関数
 import { getCO2Color } from "@/features/climate/utils/color";
-
-// CO2データ取得関数
-const fetchCO2Data = async (): Promise<CO2DataByYear> => {
-  const response = await apiClient.get("/climate/co2-data/"); // DRF エンドポイント
-  return response.data.co2_data; // Serializer の co2_data フィールド
-};
 
 const WorldMap: React.FC = () => {
   const [year, setYear] = useState(2020);
