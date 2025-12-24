@@ -41,16 +41,20 @@ const WorldMap: React.FC = () => {
   // 初期値は暫定的な設定（1750 / 2024）
   useEffect(() => {
     if (!co2Data) return;
-    const years = Object.keys(co2Data)
-      .map(Number)
-      .filter((y) => !isNaN(y));
-    if (years.length === 0) return;
 
-    setMinYear(Math.min(...years));
-    setMaxYear(Math.max(...years));
+    // データに存在する年の配列を取得
+    const years = Object.keys(co2Data).map(Number).filter(Number.isFinite);
+
+    if (!years.length) return;
+
+    const min = Math.min(...years);
+    const max = Math.max(...years);
+
+    setMinYear(min);
+    setMaxYear(max);
 
     // 初期年を最新年に設定
-    setYear(Math.max(...years));
+    setYear(max);
   }, [co2Data]);
 
   // 自動再生
