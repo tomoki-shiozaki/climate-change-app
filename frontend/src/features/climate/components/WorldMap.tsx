@@ -76,18 +76,25 @@ const WorldMap: React.FC = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const geoJsonRef = useRef<L.GeoJSON<any>>(null);
 
-  // ポリゴンスタイル
+  // 各国ポリゴンのスタイルを決める関数
+  // GeoJSON の feature を受け取り、PathOptions を返す
   const style = (
-    feature?: Feature<Geometry, CountryProperties>
+    feature?: Feature<Geometry, CountryProperties> // ? を付けて feature が undefined でも安全に処理
   ): PathOptions => {
-    if (!feature) return {};
-    const code = feature.properties?.ISO_A3_EH; // <- EH を使用
+    if (!feature) return {}; // feature が存在しなければ空オブジェクトを返す（描画時エラー回避）
+
+    // 国コード（ISO_A3_EH）を取得
+    const code = feature.properties?.ISO_A3_EH;
+
+    // その年・その国の CO2 排出量を取得
     const value = co2Data?.[year]?.[code];
+
     return {
-      fillColor: value === undefined ? "#d3d3d3" : getCO2Color(value), // データなしは薄いグレー
-      weight: 1,
-      color: "white",
-      fillOpacity: 0.7,
+      // データがない国は薄いグレー、それ以外は CO2 値に応じた色
+      fillColor: value === undefined ? "#d3d3d3" : getCO2Color(value),
+      weight: 1, // ポリゴン境界線の太さ
+      color: "white", // 境界線の色
+      fillOpacity: 0.7, // 塗りつぶしの透明度
     };
   };
 
