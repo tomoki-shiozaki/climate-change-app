@@ -5,32 +5,12 @@ import type { Feature, Geometry } from "geojson";
 import type { PathOptions, Layer } from "leaflet";
 import { useQuery } from "@tanstack/react-query";
 import { apiClient } from "@/features/auth/api/apiClient";
-import type {
-  CountryFeatureCollection,
-  CO2DataByYear,
-  CountryProperties,
-} from "@/types/geo";
+import type { CO2DataByYear, CountryProperties } from "@/types/geo";
 import { Loading } from "@/components/common";
 
 // 静的国境データ（GeoJSON）
-import countries from "@/data/ne_50m_admin_0_countries.json";
-
-// GeoJSONを前処理して ISO_A3 が "-99" の場合に ISO_A3_EH で置き換え
-const geoData: CountryFeatureCollection = {
-  ...(countries as unknown as CountryFeatureCollection),
-  features: (countries as unknown as CountryFeatureCollection).features.map(
-    (feature) => {
-      if (
-        feature.properties?.ISO_A3 === "-99" &&
-        feature.properties?.ISO_A3_EH
-      ) {
-        // unknown を string にキャスト
-        feature.properties.ISO_A3 = feature.properties.ISO_A3_EH as string;
-      }
-      return feature;
-    }
-  ),
-};
+// geoData.ts で Natural Earth の Admin 0 – Countries をエクスポート
+import { geoData } from "@/features/climate/data/geoData";
 
 // CO2値に応じた色を返す関数
 const getColor = (value: number) =>
@@ -72,11 +52,9 @@ const WorldMap: React.FC = () => {
   // CO2データが取得できたら minYear / maxYear を更新
   useEffect(() => {
     if (!co2Data) return;
-
     const years = Object.keys(co2Data)
       .map((y) => parseInt(y))
       .filter((y) => !isNaN(y));
-
     if (years.length === 0) return;
 
     setMinYear(Math.min(...years));
@@ -86,35 +64,32 @@ const WorldMap: React.FC = () => {
     setYear(Math.max(...years));
   }, [co2Data]);
 
-  // 自動再生用の useEffect
+  // 自動再生
   useEffect(() => {
     if (!isPlaying) return;
-
     const interval = setInterval(() => {
-      setYear((prevYear) => {
-        if (prevYear >= maxYear) {
+      setYear((prev) => {
+        if (prev >= maxYear) {
           clearInterval(interval); // 最後まで来たら停止
           return maxYear;
         }
-        return prevYear + 1;
+        return prev + 1;
       });
     }, 500); // 500ms ごとに1年進める
-
-    return () => clearInterval(interval); // クリーンアップ
+    return () => clearInterval(interval);
   }, [isPlaying, maxYear]);
 
   // GeoJSONレイヤーのref
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const geoJsonRef = useRef<L.GeoJSON<any>>(null);
 
-  // ポリゴンのスタイル
+  // ポリゴンスタイル
   const style = (
-    feature: Feature<Geometry, CountryProperties> | undefined
+    feature?: Feature<Geometry, CountryProperties>
   ): PathOptions => {
     if (!feature) return {};
-    const code = feature.properties?.ISO_A3;
+    const code = feature.properties?.ISO_A3_EH; // <- EH を使用
     const value = co2Data[year]?.[code];
-
     return {
       fillColor: value === undefined ? "#d3d3d3" : getColor(value), // データなしは薄いグレー
       weight: 1,
@@ -128,16 +103,14 @@ const WorldMap: React.FC = () => {
     feature: Feature<Geometry, CountryProperties>,
     layer: Layer
   ) => {
-    const code = feature.properties?.ISO_A3;
+    const code = feature.properties?.ISO_A3_EH; // <- EH を使用
     const value = co2Data[year]?.[code];
     const countryName =
       feature.properties?.NAME_JA || feature.properties?.ADMIN || "不明";
-
     const tooltipText =
       value === undefined
         ? `${countryName}: データなし`
         : `${countryName}: ${value.toLocaleString()} CO2`;
-
     layer.bindTooltip(tooltipText, { sticky: true });
   };
 
@@ -149,7 +122,7 @@ const WorldMap: React.FC = () => {
       const feature = layer.feature;
       if (!feature) return;
 
-      const code = feature.properties?.ISO_A3;
+      const code = feature.properties?.ISO_A3_EH; // <- EH を使用
       const value = co2Data[year]?.[code]; // undefined のままにする
       const countryName =
         feature.properties?.NAME_JA || feature.properties?.ADMIN || "不明";
