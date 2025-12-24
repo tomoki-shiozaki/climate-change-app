@@ -98,19 +98,32 @@ const WorldMap: React.FC = () => {
     };
   };
 
-  // 初回ツールチップ設定
+  // GeoJSON の各国ポリゴンにツールチップを設定する関数（初回）
   const onEachFeature = (
-    feature: Feature<Geometry, CountryProperties>,
-    layer: Layer
+    feature: Feature<Geometry, CountryProperties>, // GeoJSON の各 feature（国ポリゴンとそのプロパティ）
+    layer: Layer // Leaflet 上で描画されたその国ポリゴンのレイヤー
   ) => {
-    const code = feature.properties?.ISO_A3_EH; // <- EH を使用
+    // 国コード（ISO_A3_EH）を取得。CO2 データ取得のキーとして使用
+    const code = feature.properties?.ISO_A3_EH;
+
+    // その国・その年の CO2 排出量を取得
     const value = co2Data?.[year]?.[code];
+
+    // ツールチップに表示する国名を決定
+    // 日本語名(NAME_JA)があればそれを使用、なければ英語名(ADMIN)、それもなければ "不明"
     const countryName =
       feature.properties?.NAME_JA || feature.properties?.ADMIN || "不明";
+
+    // ツールチップに表示する文字列を作成
+    // データがない場合は「データなし」と表示
+    // データがある場合は数値をカンマ区切りにして「トン」で表示
     const tooltipText =
       value === undefined
         ? `${countryName}: データなし`
         : `${countryName}: ${value.toLocaleString()} トン`;
+
+    // 作成したツールチップをレイヤーに紐付け
+    // { sticky: true } はマウスをポリゴン上に置いたときにツールチップが追従する
     layer.bindTooltip(tooltipText, { sticky: true });
   };
 
