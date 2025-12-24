@@ -50,8 +50,8 @@ const WorldMap: React.FC = () => {
     const min = Math.min(...years);
     const max = Math.max(...years);
 
-    setMinYear(min);
-    setMaxYear(max);
+    setMinYear(min); // スライダーの最小年を設定
+    setMaxYear(max); // スライダーの最大年を設定
 
     // 初期年を最新年に設定
     setYear(max);
