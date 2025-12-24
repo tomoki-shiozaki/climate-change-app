@@ -16,10 +16,15 @@ import { geoData } from "@/features/climate/data/geoData";
 import { getCO2Color } from "@/features/climate/utils/color";
 
 const WorldMap: React.FC = () => {
-  const [year, setYear] = useState(2020);
-  const [minYear, setMinYear] = useState(2020);
+  // 年スライダーの状態
+  // year: 現在表示している年（初期値は暫定 2024、データ取得後に最新年に更新される）
+  // minYear: スライダーの最小年（暫定 1750、データ取得後に更新される可能性あり）
+  // maxYear: スライダーの最大年（暫定 2024、データ取得後に更新される）
+  // isPlaying: 自動再生の状態（true のときスライダーが自動で進む）
+  const [year, setYear] = useState(2024);
+  const [minYear, setMinYear] = useState(1750);
   const [maxYear, setMaxYear] = useState(2024);
-  const [isPlaying, setIsPlaying] = useState(false); // 自動再生状態
+  const [isPlaying, setIsPlaying] = useState(false);
 
   // CO2データ取得
   const {
@@ -32,7 +37,8 @@ const WorldMap: React.FC = () => {
     staleTime: 1000 * 60 * 5, // 5分キャッシュ
   });
 
-  // CO2データが取得できたら minYear / maxYear を更新
+  // CO2データ取得後に minYear / maxYear / year を更新
+  // 初期値は暫定的な設定（1750 / 2024）
   useEffect(() => {
     if (!co2Data) return;
     const years = Object.keys(co2Data)
