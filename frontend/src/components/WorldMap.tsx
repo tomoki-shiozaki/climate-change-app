@@ -9,11 +9,11 @@ import type {
   CountryFeatureCollection,
   CO2DataByYear,
   CountryProperties,
-} from "../types/geo";
+} from "@/types/geo";
 import { Loading } from "@/components/common";
 
 // 静的国境データ（GeoJSON）
-import countries from "../data/ne_50m_admin_0_countries.json";
+import countries from "@/data/ne_50m_admin_0_countries.json";
 
 // GeoJSONを前処理して ISO_A3 が "-99" の場合に ISO_A3_EH で置き換え
 const geoData: CountryFeatureCollection = {
