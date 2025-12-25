@@ -99,16 +99,19 @@ const getCountryValue = (
   return code ? co2Data?.[year]?.[code] : undefined;
 };
 
+// 指定した年と CO2 データをもとに、
+// GeoJSON Feature 用のスタイル関数を生成する
 const getCountryStyle =
   (year: number, co2Data?: CO2DataByYear) =>
   (feature?: Feature<Geometry, CountryProperties>): PathOptions => {
     if (!feature) return {};
     const value = getCountryValue(feature, year, co2Data);
     return {
+      // データがない国は薄いグレー、それ以外は CO2 値に応じた色
       fillColor: value === undefined ? "#d3d3d3" : getCO2Color(value),
-      weight: 1,
-      color: "white",
-      fillOpacity: 0.7,
+      weight: 1, // ポリゴン境界線の太さ
+      color: "white", // 境界線の色
+      fillOpacity: 0.7, // 塗りつぶしの透明度
     };
   };
 
