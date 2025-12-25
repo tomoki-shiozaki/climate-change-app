@@ -80,6 +80,10 @@ const YearControl: React.FC<YearControlProps> = ({
 // ----------------------
 // Helper Functions
 // ----------------------
+// GeoJSON (RFC 7946) の Feature では properties が null になり得るため optional chaining を使用
+// ツールチップに表示する国名を決定
+// 日本語名(NAME_JA)があればそれを使用し、なければ英語名(ADMIN)、
+// それも存在しない場合は "不明" を表示する
 const getCountryName = (feature: Feature<Geometry, CountryProperties>) =>
   feature.properties?.NAME_JA || feature.properties?.ADMIN || "不明";
 
