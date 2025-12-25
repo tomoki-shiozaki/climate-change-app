@@ -87,6 +87,9 @@ const YearControl: React.FC<YearControlProps> = ({
 const getCountryName = (feature: Feature<Geometry, CountryProperties>) =>
   feature.properties?.NAME_JA || feature.properties?.ADMIN || "不明";
 
+// GeoJSON Feature から国コード（ISO_A3_EH）を取得し、
+// 指定した年の CO2 排出量を返す。
+// 国コードが取得できない場合は undefined を返す。
 const getCountryValue = (
   feature: Feature<Geometry, CountryProperties>,
   year: number,
