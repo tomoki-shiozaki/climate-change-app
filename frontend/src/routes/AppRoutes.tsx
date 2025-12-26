@@ -6,7 +6,7 @@ import { LoginPage, SignupPage } from "@/pages/auth";
 import { Home } from "@/pages/home";
 import { CO2MapPage, TemperaturePage } from "@/pages/climate";
 import { DataPage } from "@/pages/data";
-import { About } from "@/pages/about";
+import { AboutPage } from "@/pages/about";
 
 export function AppRoutes() {
   return (
@@ -22,7 +22,7 @@ export function AppRoutes() {
           <Route path="/climate/temperature" element={<TemperaturePage />} />
           <Route path="/climate/co2" element={<CO2MapPage />} />
           <Route path="/data" element={<DataPage />} />
-          <Route path="/about" element={<About />} />
+          <Route path="/about" element={<AboutPage />} />
         </Route>
 
         {/* 404 */}
