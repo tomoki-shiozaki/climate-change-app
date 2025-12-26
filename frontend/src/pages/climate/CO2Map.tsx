@@ -1,7 +1,7 @@
 import React from "react";
 import WorldMap from "@/features/climate/components/WorldMap";
 
-export const CO2MapPage: React.FC = () => {
+const CO2MapPage: React.FC = () => {
   return (
     <div style={{ height: "100vh", width: "100%" }}>
       <h1 style={{ textAlign: "center", margin: "1rem 0" }}>
@@ -11,3 +11,5 @@ export const CO2MapPage: React.FC = () => {
     </div>
   );
 };
+
+export default CO2MapPage;

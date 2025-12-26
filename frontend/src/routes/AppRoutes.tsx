@@ -4,8 +4,7 @@ import { PrivateLayout } from "@/routes/PrivateLayout";
 
 import { LoginPage, SignupPage } from "@/pages/auth";
 import { Home } from "@/pages/Home";
-import { TemperaturePage } from "@/pages/climate";
-import { CO2MapPage } from "@/pages/climate/CO2Map";
+import { CO2MapPage, TemperaturePage } from "@/pages/climate";
 import { DataPage } from "@/pages/Data";
 import { About } from "@/pages/about";
 import { Example } from "@/pages/Example";
