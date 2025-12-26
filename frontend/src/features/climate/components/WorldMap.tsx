@@ -144,6 +144,11 @@ const updateLayerStyleAndTooltip = (
 // WorldMap Component
 // ----------------------
 const WorldMap: React.FC = () => {
+  // 年スライダーの状態
+  // year: 現在表示している年（初期値は暫定 2024、データ取得後に最新年に更新される）
+  // minYear: スライダーの最小年（暫定 1750、データ取得後に更新される可能性あり）
+  // maxYear: スライダーの最大年（暫定 2024、データ取得後に更新される）
+  // isPlaying: 自動再生の状態（true のときスライダーが自動で進む）
   const [year, setYear] = useState(2024);
   const [minYear, setMinYear] = useState(1750);
   const [maxYear, setMaxYear] = useState(2024);
@@ -156,7 +161,7 @@ const WorldMap: React.FC = () => {
   } = useQuery<CO2DataByYear>({
     queryKey: ["co2Data"],
     queryFn: fetchCO2Data,
-    staleTime: 1000 * 60 * 60 * 24 * 30,
+    staleTime: 1000 * 60 * 60 * 24 * 30, // 30日
   });
 
   const geoJsonRef = useRef<L.GeoJSON<
@@ -166,11 +171,17 @@ const WorldMap: React.FC = () => {
   // データ取得後にスライダー範囲を更新
   useEffect(() => {
     if (!co2Data) return;
+    // データに存在する年の配列を取得
     const years = Object.keys(co2Data).map(Number).filter(Number.isFinite);
     if (!years.length) return;
-    setMinYear(Math.min(...years));
-    setMaxYear(Math.max(...years));
-    setYear(Math.max(...years));
+    const min = Math.min(...years);
+    const max = Math.max(...years);
+
+    setMinYear(min); // スライダーの最小年を設定
+    setMaxYear(max); // スライダーの最大年を設定
+
+    // 初期年を最新年に設定
+    setYear(max);
   }, [co2Data]);
 
   // 自動再生
@@ -194,10 +205,13 @@ const WorldMap: React.FC = () => {
 
   const onEachFeature = useCallback(
     (_feature: Feature<Geometry, CountryProperties>, layer: Layer) => {
+      if (!co2Data) return;
+
       const pathLayer = layer as L.Path & {
         feature?: Feature<Geometry, CountryProperties>;
       };
-      updateLayerStyleAndTooltip(pathLayer, year, co2Data!);
+
+      updateLayerStyleAndTooltip(pathLayer, year, co2Data);
     },
     [year, co2Data]
   );
