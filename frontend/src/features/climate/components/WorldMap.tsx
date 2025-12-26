@@ -9,14 +9,51 @@ import { Loading } from "@/components/common";
 import { fetchCO2Data } from "@/features/climate/api/climateApi";
 import type { CO2DataByYear } from "@/features/climate/types/climate";
 
-// 静的国境データ（GeoJSON）
-// geoData.ts で Natural Earth の Admin 0 – Countries をエクスポート
+// 静的国境データ（Natural Earth）
 import { geoData } from "@/features/climate/data/geoData";
+
 // CO2値に応じた色を返す関数
 import { getCO2Color } from "@/features/climate/utils/color";
 
+/* =====================================================
+ * 小さなユーティリティ
+ * ===================================================== */
+
+// GeoJSON Feature から「国名」と「指定年の CO2 排出量」をまとめて取得する
+// - GeoJSON (RFC 7946) では properties が null になり得るため optional chaining を使用
+// - 国名は 日本語名(NAME_JA) → 英語名(ADMIN) → "不明" の優先順で決定
+// - CO2 データが存在しない場合、value は undefined になる
+const getCountryInfo = (
+  feature: Feature<Geometry, CountryProperties>,
+  year: number,
+  co2Data?: CO2DataByYear
+) => {
+  // CO2 データ取得に使う国コード
+  const code = feature.properties?.ISO_A3_EH;
+
+  // CO2 排出量（存在しない場合は undefined）
+  const value = code ? co2Data?.[year]?.[code] : undefined;
+
+  // 表示用国名（日本語 → 英語 → 不明）
+  const name =
+    feature.properties?.NAME_JA || feature.properties?.ADMIN || "不明";
+
+  return { value, name };
+};
+
+// CO2 値から塗り色を決定
+// データがなければ薄いグレー
+const getFillColor = (value?: number) =>
+  value === undefined ? "#d3d3d3" : getCO2Color(value);
+
+/* =====================================================
+ * WorldMap Component
+ * ===================================================== */
+
 const WorldMap: React.FC = () => {
+  // ----------------------
   // 年スライダーの状態
+  // ----------------------
   // year: 現在表示している年（初期値は暫定 2024、データ取得後に最新年に更新される）
   // minYear: スライダーの最小年（暫定 1750、データ取得後に更新される可能性あり）
   // maxYear: スライダーの最大年（暫定 2024、データ取得後に更新される）
@@ -26,7 +63,9 @@ const WorldMap: React.FC = () => {
   const [maxYear, setMaxYear] = useState(2024);
   const [isPlaying, setIsPlaying] = useState(false);
 
-  // CO2データ取得
+  // ----------------------
+  // CO2 データ取得
+  // ----------------------
   const {
     data: co2Data,
     isLoading,
@@ -37,14 +76,14 @@ const WorldMap: React.FC = () => {
     staleTime: 1000 * 60 * 60 * 24 * 30, // 30日
   });
 
-  // CO2データ取得後に minYear / maxYear / year を更新
-  // 初期値は暫定的な設定（1750 / 2024）
+  // ----------------------
+  // CO2 データ取得後に年範囲を更新
+  // ----------------------
   useEffect(() => {
     if (!co2Data) return;
 
-    // データに存在する年の配列を取得
+    // データに含まれる年の一覧を取得
     const years = Object.keys(co2Data).map(Number).filter(Number.isFinite);
-
     if (!years.length) return;
 
     const min = Math.min(...years);
@@ -57,9 +96,12 @@ const WorldMap: React.FC = () => {
     setYear(max);
   }, [co2Data]);
 
-  // 自動再生
+  // ----------------------
+  // 自動再生（年送り）
+  // ----------------------
   useEffect(() => {
     if (!isPlaying) return;
+
     const interval = setInterval(() => {
       setYear((prev) => {
         if (prev >= maxYear) {
@@ -69,101 +111,103 @@ const WorldMap: React.FC = () => {
         return prev + 1;
       });
     }, 500); // 500ms ごとに1年進める
+
     return () => clearInterval(interval);
   }, [isPlaying, maxYear]);
 
-  // GeoJSONレイヤーのref
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const geoJsonRef = useRef<L.GeoJSON<any>>(null);
+  // ----------------------
+  // GeoJSON レイヤーの ref
+  // ----------------------
+  const geoJsonRef = useRef<L.GeoJSON<
+    Feature<Geometry, CountryProperties>
+  > | null>(null);
 
-  // 各国ポリゴンのスタイルを決める関数
-  // GeoJSON の feature を受け取り、PathOptions を返す
+  // ----------------------
+  // 各国ポリゴンのスタイル指定
+  // ----------------------
   const style = (
-    feature?: Feature<Geometry, CountryProperties> // ? を付けて feature が undefined でも安全に処理
+    feature?: Feature<Geometry, CountryProperties>
   ): PathOptions => {
-    if (!feature) return {}; // feature が存在しなければ空オブジェクトを返す（描画時エラー回避）
+    // feature が未定義の場合は空（描画エラー防止）
+    if (!feature) return {};
 
-    // 国コード（ISO_A3_EH）を取得
-    const code = feature.properties?.ISO_A3_EH;
-
-    // その年・その国の CO2 排出量を取得
-    const value = co2Data?.[year]?.[code];
+    // 国情報（CO2値のみ使用）
+    const { value } = getCountryInfo(feature, year, co2Data);
 
     return {
-      // データがない国は薄いグレー、それ以外は CO2 値に応じた色
-      fillColor: value === undefined ? "#d3d3d3" : getCO2Color(value),
+      fillColor: getFillColor(value),
       weight: 1, // ポリゴン境界線の太さ
       color: "white", // 境界線の色
       fillOpacity: 0.7, // 塗りつぶしの透明度
     };
   };
 
-  // GeoJSON の各国ポリゴンにツールチップを設定する関数（初回）
+  // ----------------------
+  // 初回描画時：ツールチップ設定
+  // ----------------------
   const onEachFeature = (
-    feature: Feature<Geometry, CountryProperties>, // GeoJSON の各 feature（国ポリゴンとそのプロパティ）
-    layer: Layer // Leaflet 上で描画されたその国ポリゴンのレイヤー
+    feature: Feature<Geometry, CountryProperties>,
+    layer: Layer
   ) => {
-    // 国コード（ISO_A3_EH）を取得。CO2 データ取得のキーとして使用
-    const code = feature.properties?.ISO_A3_EH;
-
-    // その国・その年の CO2 排出量を取得
-    const value = co2Data?.[year]?.[code];
-
-    // ツールチップに表示する国名を決定
-    // 日本語名(NAME_JA)があればそれを使用、なければ英語名(ADMIN)、それもなければ "不明"
-    const countryName =
-      feature.properties?.NAME_JA || feature.properties?.ADMIN || "不明";
+    const { value, name } = getCountryInfo(feature, year, co2Data);
 
     // ツールチップに表示する文字列を作成
     // データがない場合は「データなし」と表示
     // データがある場合は数値をカンマ区切りにして「トン」で表示
     const tooltipText =
       value === undefined
-        ? `${countryName}: データなし`
-        : `${countryName}: ${value.toLocaleString()} トン`;
+        ? `${name}: データなし`
+        : `${name}: ${value.toLocaleString()} トン`;
 
-    // 作成したツールチップをレイヤーに紐付け
+    // マウス追従型ツールチップ
     // { sticky: true } はマウスをポリゴン上に置いたときにツールチップが追従する
     layer.bindTooltip(tooltipText, { sticky: true });
   };
 
-  // year または co2Data が変わったら、色とツールチップを更新
+  // ----------------------
+  // year / co2Data 変更時：色とツールチップ更新
+  // ----------------------
   useEffect(() => {
     if (!geoJsonRef.current || !co2Data) return;
+
     geoJsonRef.current.eachLayer((layer) => {
-      // layer が L.Path で feature プロパティを持つことを型として明示
+      // Leaflet の Path かつ feature を持つと仮定して型付け
       const pathLayer = layer as L.Path & {
         feature?: Feature<Geometry, CountryProperties>;
       };
+
       const feature = pathLayer.feature;
       if (!feature) return;
 
-      const code = feature.properties?.ISO_A3_EH;
-      const value = co2Data[year]?.[code];
-      const countryName =
-        feature.properties?.NAME_JA || feature.properties?.ADMIN || "不明";
+      const { value, name } = getCountryInfo(feature, year, co2Data);
 
-      // 色を更新
+      // スタイル更新
       pathLayer.setStyle({
-        fillColor: value === undefined ? "#d3d3d3" : getCO2Color(value),
+        fillColor: getFillColor(value),
         fillOpacity: 0.7,
         weight: 1,
         color: "white",
       });
 
-      // ツールチップ内容を更新
+      // ツールチップ更新
       pathLayer.setTooltipContent(
         value === undefined
-          ? `${countryName}: データなし`
-          : `${countryName}: ${value.toLocaleString()} トン`
+          ? `${name}: データなし`
+          : `${name}: ${value.toLocaleString()} トン`
       );
     });
   }, [year, co2Data]);
 
+  // ----------------------
+  // 状態別レンダリング
+  // ----------------------
   if (isLoading) return <Loading />;
   if (isError) return <p>CO2データの取得に失敗しました</p>;
   if (!co2Data) return <p>データがありません</p>;
 
+  // ----------------------
+  // 描画
+  // ----------------------
   return (
     <div style={{ height: "100vh", width: "100%", position: "relative" }}>
       {/* 年スライダーを下部中央に配置 */}
@@ -192,11 +236,12 @@ const WorldMap: React.FC = () => {
           max={maxYear}
           value={year}
           onChange={(e) => setYear(Number(e.target.value))}
-          style={{ width: 400 }} // スライダー長め
+          style={{ width: 400 }}
         />
         <span style={{ fontWeight: "bold" }}>{year}</span>
       </div>
 
+      {/* 地図 */}
       <MapContainer
         center={[20, 0]}
         zoom={2}
