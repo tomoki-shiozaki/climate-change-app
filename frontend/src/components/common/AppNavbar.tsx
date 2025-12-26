@@ -6,7 +6,7 @@ import { useAuthContext } from "@/features/auth/context/useAuthContext";
 const mainLinks = [
   { to: "/", label: "ホーム" },
   { to: "/climate/temperature", label: "気温データ" },
-  { to: "/co2-map", label: "CO₂排出量" },
+  { to: "/climate/co2", label: "CO₂排出量" },
   { to: "/renewable", label: "再エネ利用" },
 ];
 

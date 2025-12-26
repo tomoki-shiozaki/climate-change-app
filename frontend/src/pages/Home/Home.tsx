@@ -25,7 +25,7 @@ const Home: React.FC = () => {
 
         {/* CO₂排出量 */}
         <Link
-          to="/co2-map"
+          to="/climate/co2"
           className="p-6 rounded-2xl shadow-md bg-white hover:shadow-lg transition cursor-pointer block"
         >
           <h2 className="text-xl font-semibold mb-2">CO₂排出量</h2>
