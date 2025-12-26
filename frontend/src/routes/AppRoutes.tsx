@@ -3,7 +3,7 @@ import { AppLayout } from "@/components/layout";
 import { PrivateLayout } from "@/routes/PrivateLayout";
 
 import { LoginPage, SignupPage } from "@/pages/auth";
-import { Home } from "@/pages/Home";
+import { Home } from "@/pages/home";
 import { CO2MapPage, TemperaturePage } from "@/pages/climate";
 import { DataPage } from "@/pages/data";
 import { About } from "@/pages/about";
