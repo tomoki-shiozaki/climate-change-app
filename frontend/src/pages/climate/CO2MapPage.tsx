@@ -1,5 +1,5 @@
 import React from "react";
-import WorldMap from "@/features/climate/components/WorldMap";
+import { CO2WorldMap } from "@/features/climate/components/WorldMap";
 
 const CO2MapPage: React.FC = () => {
   return (
@@ -7,7 +7,7 @@ const CO2MapPage: React.FC = () => {
       <h1 style={{ textAlign: "center", margin: "1rem 0" }}>
         世界のCO₂排出量マップ
       </h1>
-      <WorldMap />
+      <CO2WorldMap />
     </div>
   );
 };
