@@ -21,7 +21,7 @@ import {
  * WorldMap Component
  * ===================================================== */
 
-const WorldMap: React.FC = () => {
+export const CO2WorldMap: React.FC = () => {
   // ----------------------
   // 年スライダーの状態
   // ----------------------
@@ -232,5 +232,3 @@ const WorldMap: React.FC = () => {
     </div>
   );
 };
-
-export default WorldMap;
