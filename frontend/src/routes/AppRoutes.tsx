@@ -5,7 +5,7 @@ import { PrivateLayout } from "@/routes/PrivateLayout";
 import { LoginPage, SignupPage } from "@/pages/auth";
 import { Home } from "@/pages/Home";
 import { TemperaturePage } from "@/pages/climate";
-import { CO2Map } from "@/pages/CO2Map";
+import { CO2MapPage } from "@/pages/CO2Map";
 import { DataPage } from "@/pages/Data";
 import { About } from "@/pages/about";
 import { Example } from "@/pages/Example";
@@ -22,7 +22,7 @@ export function AppRoutes() {
         <Route element={<PrivateLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/climate/temperature" element={<TemperaturePage />} />
-          <Route path="/co2-map" element={<CO2Map />} />
+          <Route path="/climate/co2" element={<CO2MapPage />} />
           <Route path="/example" element={<Example />} />
           <Route path="/data" element={<DataPage />} />
           <Route path="/about" element={<About />} />
