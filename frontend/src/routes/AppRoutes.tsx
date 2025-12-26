@@ -7,7 +7,7 @@ import { Home } from "@/pages/Home";
 import { TemperaturePage } from "@/pages/climate";
 import { CO2Map } from "@/pages/CO2Map";
 import { DataPage } from "@/pages/Data";
-import { About } from "@/pages/About";
+import { About } from "@/pages/about";
 import { Example } from "@/pages/Example";
 
 export function AppRoutes() {
