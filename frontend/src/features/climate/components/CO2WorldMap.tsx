@@ -8,6 +8,7 @@ import type { CountryProperties } from "@/types/geo";
 import { Loading } from "@/components/common";
 import { fetchCO2Data } from "@/features/climate/api/climateApi";
 import type { CO2DataByYear } from "@/features/climate/types/climate";
+import { useYearAutoPlay } from "@/features/climate/hooks/useYearAutoPlay";
 
 // 静的国境データ（Natural Earth）
 import { geoData } from "@/features/climate/data/geoData";
@@ -29,10 +30,14 @@ export const CO2WorldMap: React.FC = () => {
   // minYear: スライダーの最小年（暫定 1750、データ取得後に更新される可能性あり）
   // maxYear: スライダーの最大年（暫定 2024、データ取得後に更新される）
   // isPlaying: 自動再生の状態（true のときスライダーが自動で進む）
-  const [year, setYear] = useState(2024);
   const [minYear, setMinYear] = useState(1750);
   const [maxYear, setMaxYear] = useState(2024);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [year, setYear] = useYearAutoPlay({
+    initialYear: 2024,
+    maxYear,
+    isPlaying,
+  });
 
   // ----------------------
   // CO2 データ取得
@@ -65,26 +70,7 @@ export const CO2WorldMap: React.FC = () => {
 
     // 初期年を最新年に設定
     setYear(max);
-  }, [co2Data]);
-
-  // ----------------------
-  // 自動再生（年送り）
-  // ----------------------
-  useEffect(() => {
-    if (!isPlaying) return;
-
-    const interval = setInterval(() => {
-      setYear((prev) => {
-        if (prev >= maxYear) {
-          clearInterval(interval); // 最後まで来たら停止
-          return maxYear;
-        }
-        return prev + 1;
-      });
-    }, 500); // 500ms ごとに1年進める
-
-    return () => clearInterval(interval);
-  }, [isPlaying, maxYear]);
+  }, [co2Data, setYear]);
 
   // ----------------------
   // GeoJSON レイヤーの ref
