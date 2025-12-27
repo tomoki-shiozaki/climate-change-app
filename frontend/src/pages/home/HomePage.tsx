@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const Home: React.FC = () => {
+const HomePage: React.FC = () => {
   return (
     <div className="px-6 py-16 text-center max-w-3xl mx-auto">
       <h1 className="text-4xl font-bold mb-6">気候変動データアプリ</h1>
@@ -25,7 +25,7 @@ const Home: React.FC = () => {
 
         {/* CO₂排出量 */}
         <Link
-          to="/co2-map"
+          to="/climate/co2"
           className="p-6 rounded-2xl shadow-md bg-white hover:shadow-lg transition cursor-pointer block"
         >
           <h2 className="text-xl font-semibold mb-2">CO₂排出量</h2>
@@ -46,4 +46,4 @@ const Home: React.FC = () => {
   );
 };
 
-export default Home;
+export default HomePage;

@@ -3,12 +3,10 @@ import { AppLayout } from "@/components/layout";
 import { PrivateLayout } from "@/routes/PrivateLayout";
 
 import { LoginPage, SignupPage } from "@/pages/auth";
-import { Home } from "@/pages/Home";
-import { TemperaturePage } from "@/pages/climate";
-import { CO2Map } from "@/pages/CO2Map";
-import { DataPage } from "@/pages/Data";
-import { About } from "@/pages/About";
-import { Example } from "@/pages/Example";
+import { HomePage } from "@/pages/home";
+import { CO2MapPage, TemperaturePage } from "@/pages/climate";
+import { DataPage } from "@/pages/data";
+import { AboutPage } from "@/pages/about";
 
 export function AppRoutes() {
   return (
@@ -20,12 +18,11 @@ export function AppRoutes() {
 
         {/* 認証必須ページ */}
         <Route element={<PrivateLayout />}>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<HomePage />} />
           <Route path="/climate/temperature" element={<TemperaturePage />} />
-          <Route path="/co2-map" element={<CO2Map />} />
-          <Route path="/example" element={<Example />} />
+          <Route path="/climate/co2" element={<CO2MapPage />} />
           <Route path="/data" element={<DataPage />} />
-          <Route path="/about" element={<About />} />
+          <Route path="/about" element={<AboutPage />} />
         </Route>
 
         {/* 404 */}

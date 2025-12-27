@@ -11,9 +11,10 @@ export type MultiPolygonCoordinates = Position[][][];
 
 // ---- 国プロパティ ----
 export interface CountryProperties {
-  ISO_A3: string;
-  NAME: string;
-  [key: string]: unknown;
+  ISO_A3_EH: string; // 拡張版 ISO_A3. 正式な ISO A3 コードとして使用
+  NAME_JA: string;
+  ADMIN: string;
+  [key: string]: unknown; // その他のプロパティ
 }
 
 // ---- Feature ----
@@ -35,12 +36,4 @@ export interface CountryFeature {
 export interface CountryFeatureCollection {
   type: "FeatureCollection";
   features: CountryFeature[];
-}
-
-// ---- CO2 データ ----
-// 年ごとの CO2 排出量に対応
-export interface CO2DataByYear {
-  [year: number]: {
-    [isoA3: string]: number;
-  };
 }
