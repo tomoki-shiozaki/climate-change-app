@@ -1,15 +1,14 @@
-import { Container } from "react-bootstrap";
 import { AppNavbar, Footer, ErrorToast } from "@/components/common";
 import { Outlet } from "react-router-dom";
 
 export function AppLayout() {
   return (
-    <div className="d-flex flex-column min-vh-100">
+    <div className="flex min-h-screen flex-col">
       <AppNavbar />
 
-      <Container className="mt-4 flex-grow-1">
+      <main className="mx-auto w-full max-w-7xl flex-1 px-4 pt-4">
         <Outlet />
-      </Container>
+      </main>
 
       <ErrorToast />
       <Footer />
