@@ -15,7 +15,7 @@ describe("getCountryInfo", () => {
       NAME_JA: "",
       ADMIN: "",
       ...props,
-    } as CountryProperties,
+    },
     geometry: { type: "Point", coordinates: [0, 0] },
   });
 
