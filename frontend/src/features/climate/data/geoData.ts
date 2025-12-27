@@ -9,6 +9,6 @@ import countriesJson from "@/data/ne_50m_admin_0_countries.json";
 import type { CountryFeatureCollection } from "@/types/geo";
 
 export const geoData: CountryFeatureCollection =
-  countriesJson as CountryFeatureCollection;
+  countriesJson as unknown as CountryFeatureCollection;
 
 // WorldMap 側では geoData.features[i].properties.ISO_A3_EH を ISO_A3 として使用
