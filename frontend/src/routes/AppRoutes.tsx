@@ -3,7 +3,7 @@ import { AppLayout } from "@/components/layout";
 import { PrivateLayout } from "@/routes/PrivateLayout";
 
 import { LoginPage, SignupPage } from "@/pages/auth";
-import { Home } from "@/pages/home";
+import { HomePage } from "@/pages/home";
 import { CO2MapPage, TemperaturePage } from "@/pages/climate";
 import { DataPage } from "@/pages/data";
 import { AboutPage } from "@/pages/about";
@@ -18,7 +18,7 @@ export function AppRoutes() {
 
         {/* 認証必須ページ */}
         <Route element={<PrivateLayout />}>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<HomePage />} />
           <Route path="/climate/temperature" element={<TemperaturePage />} />
           <Route path="/climate/co2" element={<CO2MapPage />} />
           <Route path="/data" element={<DataPage />} />
