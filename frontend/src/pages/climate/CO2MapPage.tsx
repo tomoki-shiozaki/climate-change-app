@@ -1,5 +1,5 @@
 import React from "react";
-import { CO2WorldMap } from "@/features/climate/components/WorldMap";
+import { CO2WorldMap } from "@/features/climate/components/CO2WorldMap";
 
 const CO2MapPage: React.FC = () => {
   return (

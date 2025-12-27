@@ -12,7 +12,8 @@ export type MultiPolygonCoordinates = Position[][][];
 // ---- 国プロパティ ----
 export interface CountryProperties {
   ISO_A3_EH: string; // 拡張版 ISO_A3. 正式な ISO A3 コードとして使用
-  NAME: string;
+  NAME_JA: string;
+  ADMIN: string;
   [key: string]: unknown; // その他のプロパティ
 }
 
