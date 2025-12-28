@@ -70,6 +70,35 @@
 </div>
 ```
 
+### 位置決め（Position）のルール
+
+- Tailwind では `relative`, `absolute`, `fixed`, `sticky` が使用可能
+- 基本ルール：
+  - 絶対配置 (`absolute`) の子要素がある場合は、**必ず親に `relative` を付与**
+  - `relative` は親の基準位置を決めるため、見た目には影響しないが子要素の配置に必須
+
+### サイズ指定（Width / Height）のルール
+
+- Tailwind では `w-full`（横幅を親に合わせる）と `h-full`（高さを親に合わせる）が使用可能
+- 基本ルール：
+  - 親のサイズに合わせて子要素を伸ばしたい場合のみ付与
+  - 不要な場合は付けない（Tailwind 最小限原則に従う）
+- 例：
+
+<div className="w-full h-64 bg-gray-200">
+  <div className="h-full bg-blue-200">親の高さに合わせる</div>
+</div>
+
+#### 例
+
+```tsx
+<div className="relative w-full h-64 bg-gray-200">
+  <button className="absolute bottom-2 right-2 px-2 py-1 bg-blue-500 text-white">
+    クリック
+  </button>
+</div>
+```
+
 ## 4. コンポーネントの self-contained ルール
 
 - 装飾系クラス（色・角丸・影・文字サイズ）はコンポーネント内で完結する
@@ -121,3 +150,7 @@
 - コンポーネントは self-contained を意識する
 - 不要なクラスは付けない
 - 親依存のレイアウトは明示する
+
+```
+
+```
