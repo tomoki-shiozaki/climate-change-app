@@ -172,6 +172,102 @@
 
 ---
 
+## 4. コンポーネント装飾ルール（角丸・背景・影・境界線）
+
+コンポーネントの見た目を統一するための装飾系ルールです。
+
+### 角丸（Border Radius）
+
+- Tailwind スケールで統一
+
+  - 小：`rounded-sm`
+  - 標準：`rounded-md`
+  - 大：`rounded-lg`
+  - 完全円：`rounded-full`
+
+- 用途例
+
+  - ボタン、スライダー、カード、モーダル、入力フォームなど
+  - 特別な強調をしたい場合は大きめの角丸 (`rounded-lg`) を使用
+  - フラットなデザインやリストアイテムなど、角丸不要な場合は `rounded-none`
+
+- プロジェクト内での方針
+
+  - 基本は「標準角丸（`rounded-md`）」で統一
+  - 強調要素や浮き上がり感を出す場合のみ大きめの角丸にする
+  - 用途ごとのルールをドキュメント化しておくと統一感が維持できる
+
+- メリット
+
+  - UI 全体の統一感を出せる
+  - 柔らかい印象を与えることでユーザーに優しい印象になる
+  - 強調や階層構造を角丸のサイズで視覚的に表現できる
+
+- コード例
+
+```tsx
+<button className="rounded-md px-4 py-2 bg-blue-500 text-white"> 標準ボタン </button>
+<div className="rounded-lg p-4 bg-white shadow-md"> 強調カード </div>
+```
+
+### 背景色（Background）
+
+- テーマに沿った色を使用：`bg-white`, `bg-gray-100`, `bg-blue-500`
+- 透明度付き背景も統一：`bg-white/90` のように `/` 記法で透明度を指定
+- 用途例：年スライダーやモーダルの背景
+- 親に依存せずコンポーネント内で完結させる
+
+### 影（Shadow）
+
+- 強調や浮き上がりに使用
+- Tailwind スケール：
+  - 小：`shadow-sm`
+  - 標準：`shadow-md`
+  - 大：`shadow-lg`
+
+### 境界線（Border）
+
+- **用途**
+
+  - コンポーネントの輪郭を明示する
+  - 背景色とのコントラストを調整する
+  - UI 要素の階層構造や強調を視覚的に表現する
+  - ボタン、カード、入力フォーム、モーダルなどで利用
+
+- **Tailwind での基本クラス**
+
+  - `border` → デフォルト 1px の枠線
+  - `border-0` / `border-none` → 枠線を消す
+  - `border-t` / `border-b` / `border-l` / `border-r` → 特定の方向だけ枠線
+  - `border-2` / `border-4` → 太さを変更
+  - `border-gray-300` / `border-blue-500` など → 色を指定
+
+- **実務的なポイント**
+
+  - 枠線の色は背景やテーマに合わせて調整
+  - 高さや角丸との組み合わせで見た目の印象が変わる
+  - 不要な枠線は付けない（STYLE_GUIDE の最小限原則に従う）
+  - UI 要素の区切りや強調に効果的に使う
+
+- **コード例**
+
+```tsx
+<div className="rounded-md border border-gray-300 px-4 py-2 bg-white">
+  枠線付きカード
+</div>
+
+<button className="rounded-full border-2 border-blue-500 px-4 py-3">
+  枠線付き丸ボタン
+</button>
+```
+
+### 余白（Padding / Margin）
+
+- 装飾系と組み合わせて使用：`px-*`, `py-*`, `m-*`
+- Tailwind スケールに沿って統一（例：2 / 4 / 6）
+
+---
+
 ## 5. Tailwind クラスの最小限原則
 
 - 不要なクラスは付けない
