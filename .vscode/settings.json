@@ -27,5 +27,10 @@
   },
 
   // 🧰 TypeScript の import 自動更新
-  "typescript.updateImportsOnFileMove.enabled": "always"
+  "typescript.updateImportsOnFileMove.enabled": "always",
+
+  // 🎨 Tailwind v4 / shadcn-ui 用（CSS at-rule 警告を無効化）
+  "css.lint.unknownAtRules": "ignore",
+  "scss.lint.unknownAtRules": "ignore",
+  "less.lint.unknownAtRules": "ignore"
 }
