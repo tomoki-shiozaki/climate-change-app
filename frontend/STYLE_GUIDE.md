@@ -45,6 +45,12 @@
 
 - 親子関係で縦横に並べたい場合に使用
 - 残りスペースを埋めたい要素には `flex-1` を付与
+- 主軸方向の揃え方：
+  - `justify-start` / `justify-center` / `justify-end` / `justify-between` / `justify-around` / `justify-evenly`
+- 交差軸方向の揃え方：
+  - `items-start` / `items-center` / `items-end` / `items-stretch` / `items-baseline`
+- 複数行に折り返す場合：
+  - `flex-wrap` / `flex-nowrap`
 - 例：ページ全体を縦方向に並べ、マップ部分を残りの高さに広げる
 
 ```tsx
@@ -53,6 +59,24 @@
   <div className="flex-1">
     <CO2WorldMap />
   </div>
+</div>
+```
+
+横方向に並べる例（ボタン群など）：
+
+```tsx
+<div className="flex flex-row items-center justify-between gap-4">
+  <button>前へ</button>
+  <button>再生</button>
+  <button>次へ</button>
+</div>
+```
+
+縦方向に中央寄せしたい場合：
+
+```tsx
+<div className="flex flex-col justify-center items-center h-64 bg-gray-100">
+  <p className="text-lg">中央のテキスト</p>
 </div>
 ```
 
@@ -76,6 +100,47 @@
 - 基本ルール：
   - 絶対配置 (`absolute`) の子要素がある場合は、**必ず親に `relative` を付与**
   - `relative` は親の基準位置を決めるため、見た目には影響しないが子要素の配置に必須
+
+### UI コンポーネントの配置・装飾ルール（例：年スライダー）
+
+#### 親要素
+
+- 絶対配置の子要素がある場合は `relative` を付与
+
+#### 横中央配置
+
+- `left-1/2` + `-translate-x-1/2` で中央揃え
+
+#### 縦位置
+
+- `top-*` または `bottom-*` の Tailwind スケールで指定（例：`bottom-16`）
+
+#### 重なり順
+
+- 必要に応じて `z-*` で調整（例：`z-[1000]`）
+
+#### Flex レイアウト
+
+- 子要素を横並びにする場合は `flex items-center gap-*` を使用
+
+#### 装飾
+
+- 背景：テーマに沿って `bg-white/90` のように透明度も統一
+- 角丸：`rounded-md` / `rounded-lg` などスケールで統一
+- 余白：`px-*` / `py-*` で統一
+- 影：`shadow-sm`, `shadow-md`, `shadow-lg` で統一
+
+#### コード例
+
+```tsx
+<div className="absolute bottom-16 left-1/2 -translate-x-1/2 flex items-center gap-2 rounded-lg bg-white/90 px-4 py-2 shadow-md">
+  <button className="rounded-md border px-3 py-1 text-sm hover:bg-gray-100">
+    再生
+  </button>
+  <input type="range" className="w-80" />
+  <span className="font-semibold">2024</span>
+</div>
+```
 
 ### サイズ指定（Width / Height）のルール
 
@@ -150,7 +215,3 @@
 - コンポーネントは self-contained を意識する
 - 不要なクラスは付けない
 - 親依存のレイアウトは明示する
-
-```
-
-```
