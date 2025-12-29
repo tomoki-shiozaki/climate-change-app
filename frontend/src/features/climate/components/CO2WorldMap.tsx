@@ -9,6 +9,7 @@ import { Loading } from "@/components/common";
 import { fetchCO2Data } from "@/features/climate/api/climateApi";
 import type { CO2DataByYear } from "@/features/climate/types/climate";
 import { useYearAutoPlay } from "@/features/climate/hooks/useYearAutoPlay";
+import { Button } from "@/components/ui/button";
 
 // 静的国境データ（Natural Earth）
 import { geoData } from "@/features/climate/data/geoData";
@@ -166,44 +167,31 @@ export const CO2WorldMap: React.FC = () => {
   // 描画
   // ----------------------
   return (
-    <div style={{ height: "100vh", width: "100%", position: "relative" }}>
-      {/* 年スライダーを下部中央に配置 */}
-      <div
-        style={{
-          position: "absolute",
-          bottom: 60,
-          left: "50%",
-          transform: "translateX(-50%)",
-          zIndex: 1000,
-          background: "rgba(255, 255, 255, 0.9)",
-          padding: "10px 15px",
-          borderRadius: 8,
-          boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
-          display: "flex",
-          alignItems: "center",
-          gap: "10px",
-        }}
-      >
-        <button onClick={() => setIsPlaying(!isPlaying)}>
+    <div className="relative w-full h-[90vh]">
+      {/* 年スライダー */}
+      <div className="absolute bottom-16 left-1/2 z-[1000] -translate-x-1/2 flex items-center gap-2 rounded-lg bg-white/90 px-4 py-2 shadow-md">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setIsPlaying(!isPlaying)}
+        >
           {isPlaying ? "停止" : "再生"}
-        </button>
+        </Button>
+
         <input
           type="range"
           min={minYear}
           max={maxYear}
           value={year}
           onChange={(e) => setYear(Number(e.target.value))}
-          style={{ width: 400 }}
+          className="w-80"
         />
-        <span style={{ fontWeight: "bold" }}>{year}</span>
+
+        <span className="font-semibold">{year}</span>
       </div>
 
       {/* 地図 */}
-      <MapContainer
-        center={[20, 0]}
-        zoom={2}
-        style={{ height: "100%", width: "100%" }}
-      >
+      <MapContainer center={[20, 0]} zoom={2} className="h-full w-full">
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
