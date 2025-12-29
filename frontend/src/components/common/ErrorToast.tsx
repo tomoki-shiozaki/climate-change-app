@@ -1,17 +1,36 @@
-import Toast from "react-bootstrap/Toast";
-import { useErrorContext } from "../../context/error";
+import { useEffect } from "react";
+import { useErrorContext } from "@/context/error";
+import { toast } from "sonner";
+import { Toaster } from "@/components/ui/sonner";
 
 const ErrorToast = () => {
   const { error, clearError } = useErrorContext();
 
-  if (!error) return null;
+  useEffect(() => {
+    if (error) {
+      // 前のトーストを消して重複防止
+      toast.dismiss();
+
+      toast.error(error, {
+        duration: 5000, // 5秒で自動消滅
+        action: {
+          label: "閉じる",
+          onClick: clearError,
+        },
+        description: " ", // 空文字でもOK
+      });
+    }
+  }, [error, clearError]);
 
   return (
-    <div className="position-fixed top-0 end-0 p-3" style={{ zIndex: 1050 }}>
-      <Toast bg="danger" show autohide delay={5000} onClose={clearError}>
-        <Toast.Body className="text-white">{error}</Toast.Body>
-      </Toast>
-    </div>
+    <>
+      {/* グローバル Toaster は一度だけ置く */}
+      <Toaster
+        position="top-right"
+        richColors
+        className="max-w-xs p-2" // 幅とパディング調整
+      />
+    </>
   );
 };
 
