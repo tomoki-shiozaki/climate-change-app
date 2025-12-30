@@ -60,7 +60,7 @@ export const AppNavbar = () => {
       <div className="container mx-auto flex flex-col md:flex-row md:items-center md:justify-between px-4 py-3">
         {/* 上段：ブランド + ハンバーガー */}
         <div className="flex items-center justify-between w-full md:w-auto">
-          <Link to="/" className="text-lg font-bold">
+          <Link to="/" className="text-lg font-bold whitespace-nowrap">
             気候変動データアプリ
           </Link>
           <button
