@@ -1,8 +1,15 @@
-import { Navbar, Nav, NavDropdown, Button } from "react-bootstrap";
 import { Link, useLocation } from "react-router-dom";
 import { useAuthContext } from "@/features/auth/context/useAuthContext";
+import { Button } from "@/components/ui/button";
+import {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  NavigationMenuContent,
+} from "@/components/ui/navigation-menu";
 
-// メインリンクの配列
 const mainLinks = [
   { to: "/", label: "ホーム" },
   { to: "/climate/temperature", label: "気温データ" },
@@ -10,38 +17,35 @@ const mainLinks = [
   { to: "/renewable", label: "再エネ利用" },
 ];
 
-// ドロップダウンリンクの配列
 const dropdownLinks = [
   { to: "/data", label: "データ" },
   { to: "/about", label: "概要" },
   { to: "/faq", label: "FAQ" },
 ];
 
-type AuthNavProps = {
+const AuthNav: React.FC<{
   currentUsername: string | null;
   logout: () => void;
-};
-
-const AuthNav: React.FC<AuthNavProps> = ({ currentUsername, logout }) => {
+}> = ({ currentUsername, logout }) => {
   if (currentUsername) {
     return (
-      <>
-        <span className="text-light small">{currentUsername} さん</span>
-        <Button variant="outline-light" size="sm" onClick={logout}>
+      <div className="flex items-center gap-2">
+        <span className="text-white text-sm">{currentUsername} さん</span>
+        <Button variant="outline" size="sm" onClick={logout}>
           ログアウト
         </Button>
-      </>
+      </div>
     );
   } else {
     return (
-      <>
-        <Nav.Link as={Link} to="/login" eventKey="/login">
-          ログイン
-        </Nav.Link>
-        <Nav.Link as={Link} to="/signup" eventKey="/signup">
-          新規登録
-        </Nav.Link>
-      </>
+      <div className="flex items-center gap-2">
+        <Button asChild variant="ghost" size="sm">
+          <Link to="/login">ログイン</Link>
+        </Button>
+        <Button asChild variant="secondary" size="sm">
+          <Link to="/signup">新規登録</Link>
+        </Button>
+      </div>
     );
   }
 };
@@ -51,50 +55,54 @@ export const AppNavbar = () => {
   const { currentUsername, logout } = useAuthContext();
 
   return (
-    <Navbar bg="primary" variant="dark" expand="md">
-      <div className="container-fluid">
-        <Navbar.Brand as={Link} to="/">
+    <header className="bg-blue-500 text-white">
+      <div className="container mx-auto flex items-center justify-between py-2 px-4">
+        <Link to="/" className="text-lg font-bold">
           気候変動データアプリ
-        </Navbar.Brand>
+        </Link>
 
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
-          {/* 左側：メインリンク */}
-          {/* 単独リンク：主要機能 */}
-          <Nav
-            className="me-auto align-items-center"
-            variant="pills"
-            activeKey={location.pathname}
-          >
+        {/* ナビゲーション */}
+        <NavigationMenu>
+          <NavigationMenuList className="flex items-center space-x-4">
+            {/* メインリンク */}
             {mainLinks.map((link) => (
-              <Nav.Item key={link.to}>
-                <Nav.Link as={Link} to={link.to} eventKey={link.to}>
-                  {link.label}
-                </Nav.Link>
-              </Nav.Item>
-            ))}
-            {/* 補助情報は折りたたみメニュー */}
-            {/* ドロップダウン */}
-            <NavDropdown title="データ・概要" id="nav-dropdown">
-              {dropdownLinks.map((link) => (
-                <NavDropdown.Item
-                  key={link.to}
-                  as={Link}
-                  to={link.to}
-                  eventKey={link.to}
+              <NavigationMenuItem key={link.to}>
+                <NavigationMenuLink
+                  asChild
+                  className={`px-3 py-1 rounded transition-colors ${
+                    location.pathname === link.to
+                      ? "bg-blue-700 font-semibold"
+                      : "text-white hover:bg-blue-600"
+                  }`}
                 >
-                  {link.label}
-                </NavDropdown.Item>
-              ))}
-            </NavDropdown>
-          </Nav>
+                  <Link to={link.to}>{link.label}</Link>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+            ))}
 
-          {/* 右側：ログイン関連 */}
-          <Nav className="ms-auto align-items-center" style={{ gap: "10px" }}>
-            <AuthNav currentUsername={currentUsername} logout={logout} />
-          </Nav>
-        </Navbar.Collapse>
+            {/* ドロップダウンリンク */}
+            <NavigationMenuItem>
+              <NavigationMenuTrigger className="px-3 py-1 rounded text-white hover:bg-blue-600">
+                データ・概要
+              </NavigationMenuTrigger>
+              <NavigationMenuContent className="flex flex-col space-y-1 bg-blue-600 text-white p-2 rounded shadow-md">
+                {dropdownLinks.map((link) => (
+                  <NavigationMenuLink
+                    asChild
+                    key={link.to}
+                    className="px-3 py-1 rounded hover:bg-blue-700"
+                  >
+                    <Link to={link.to}>{link.label}</Link>
+                  </NavigationMenuLink>
+                ))}
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
+
+        {/* 認証ナビ */}
+        <AuthNav currentUsername={currentUsername} logout={logout} />
       </div>
-    </Navbar>
+    </header>
   );
 };
