@@ -22,6 +22,27 @@ const dropdownLinks = [
   { to: "/faq", label: "FAQ" },
 ];
 
+type NavbarLinkProps = {
+  to: string;
+  active?: boolean;
+  children: React.ReactNode;
+};
+
+function NavbarLink({ to, active, children }: NavbarLinkProps) {
+  return (
+    <Link
+      to={to}
+      className={`px-3 py-1 rounded-md transition-colors ${
+        active
+          ? "text-white font-semibold"
+          : "text-white/80 hover:text-white hover:bg-blue-400"
+      }`}
+    >
+      {children}
+    </Link>
+  );
+}
+
 type AuthNavProps = {
   currentUsername: string | null;
   logout: () => void;
@@ -40,23 +61,8 @@ const AuthNav: React.FC<AuthNavProps> = ({ currentUsername, logout }) => {
   }
   return (
     <div className="flex gap-2">
-      <Button
-        asChild
-        variant="ghost"
-        size="sm"
-        className="text-white hover:bg-blue-500"
-      >
-        <Link to="/login">ログイン</Link>
-      </Button>
-
-      <Button
-        asChild
-        variant="ghost"
-        size="sm"
-        className="text-white hover:bg-blue-500"
-      >
-        <Link to="/signup">新規登録</Link>
-      </Button>
+      <NavbarLink to="/login">ログイン</NavbarLink>
+      <NavbarLink to="/signup">新規登録</NavbarLink>
     </div>
   );
 };
@@ -96,8 +102,8 @@ export const AppNavbar = () => {
                 to={link.to}
                 className={`px-3 py-1 rounded ${
                   location.pathname === link.to
-                    ? "bg-white text-blue-600"
-                    : "hover:bg-blue-500"
+                    ? "text-white font-semibold"
+                    : "text-white/80 hover:text-white hover:bg-blue-400"
                 }`}
               >
                 {link.label}
@@ -106,14 +112,31 @@ export const AppNavbar = () => {
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-white/80 hover:text-white hover:bg-white/10"
+                >
                   データ・概要
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="bg-white text-black z-[9999]">
+              <DropdownMenuContent
+                className="
+                  z-[9999]
+                  bg-blue-50/95
+                  text-blue-900
+                  border border-blue-100
+                  shadow-lg
+                "
+              >
                 {dropdownLinks.map((link) => (
                   <DropdownMenuItem asChild key={link.to}>
-                    <Link to={link.to}>{link.label}</Link>
+                    <Link
+                      to={link.to}
+                      className="block w-full px-2 py-1 rounded hover:bg-blue-100"
+                    >
+                      {link.label}
+                    </Link>
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
