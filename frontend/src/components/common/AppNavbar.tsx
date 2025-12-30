@@ -9,6 +9,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 
+/* ======================
+   ナビ定義
+====================== */
+
 const mainLinks = [
   { to: "/", label: "ホーム" },
   { to: "/climate/temperature", label: "気温データ" },
@@ -21,6 +25,10 @@ const dropdownLinks = [
   { to: "/about", label: "概要" },
   { to: "/faq", label: "FAQ" },
 ];
+
+/* ======================
+   共通 NavbarLink
+====================== */
 
 type NavbarLinkProps = {
   to: string;
@@ -43,6 +51,10 @@ function NavbarLink({ to, active, children }: NavbarLinkProps) {
   );
 }
 
+/* ======================
+   認証エリア
+====================== */
+
 type AuthNavProps = {
   currentUsername: string | null;
   logout: () => void;
@@ -53,12 +65,18 @@ const AuthNav: React.FC<AuthNavProps> = ({ currentUsername, logout }) => {
     return (
       <div className="flex items-center gap-2">
         <span className="text-sm text-white">{currentUsername} さん</span>
-        <Button variant="ghost" size="sm" onClick={logout}>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="text-white/80 hover:text-white hover:bg-white/10"
+          onClick={logout}
+        >
           ログアウト
         </Button>
       </div>
     );
   }
+
   return (
     <div className="flex gap-2">
       <NavbarLink to="/login">ログイン</NavbarLink>
@@ -66,6 +84,10 @@ const AuthNav: React.FC<AuthNavProps> = ({ currentUsername, logout }) => {
     </div>
   );
 };
+
+/* ======================
+   Navbar 本体
+====================== */
 
 export const AppNavbar = () => {
   const location = useLocation();
@@ -75,51 +97,56 @@ export const AppNavbar = () => {
   return (
     <nav className="bg-blue-500 text-white relative z-50">
       <div className="container mx-auto flex flex-col md:flex-row md:items-center md:justify-between px-4 py-3">
-        {/* 上段：ブランド + ハンバーガー */}
+        {/* 上段：ロゴ + ハンバーガー */}
         <div className="flex items-center justify-between w-full md:w-auto">
           <Link to="/" className="text-lg font-bold whitespace-nowrap">
             気候変動データアプリ
           </Link>
+
           <button
-            className="md:hidden p-2 rounded hover:bg-blue-500"
-            onClick={() => setIsOpen(!isOpen)}
+            className="md:hidden p-2 rounded hover:bg-blue-400"
+            onClick={() => setIsOpen((v) => !v)}
           >
             <span className="sr-only">メニュー切替</span>☰
           </button>
         </div>
 
-        {/* 下段：リンク & 認証 */}
+        {/* 下段：ナビ + 認証 */}
         <div
           className={`w-full md:flex md:items-center md:gap-4 mt-2 md:mt-0 ${
             isOpen ? "block" : "hidden"
           }`}
         >
-          {/* 左：メインリンク + ドロップダウン */}
+          {/* 左：ナビゲーション */}
           <div className="flex flex-col md:flex-row md:items-center md:gap-4">
             {mainLinks.map((link) => (
-              <Link
+              <NavbarLink
                 key={link.to}
                 to={link.to}
-                className={`px-3 py-1 rounded ${
-                  location.pathname === link.to
-                    ? "text-white font-semibold"
-                    : "text-white/80 hover:text-white hover:bg-blue-400"
-                }`}
+                active={location.pathname === link.to}
               >
                 {link.label}
-              </Link>
+              </NavbarLink>
             ))}
 
+            {/* Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-white/80 hover:text-white hover:bg-white/10"
+                  className="
+                    w-full md:w-auto
+                    justify-start
+                    text-white/80
+                    hover:text-white
+                    hover:bg-white/10
+                  "
                 >
                   データ・概要
                 </Button>
               </DropdownMenuTrigger>
+
               <DropdownMenuContent
                 className="
                   z-[9999]
@@ -129,16 +156,24 @@ export const AppNavbar = () => {
                   shadow-lg
                 "
               >
-                {dropdownLinks.map((link) => (
-                  <DropdownMenuItem asChild key={link.to}>
-                    <Link
-                      to={link.to}
-                      className="block w-full px-2 py-1 rounded hover:bg-blue-100"
-                    >
-                      {link.label}
-                    </Link>
-                  </DropdownMenuItem>
-                ))}
+                {dropdownLinks.map((link) => {
+                  const isActive = location.pathname === link.to;
+
+                  return (
+                    <DropdownMenuItem asChild key={link.to}>
+                      <Link
+                        to={link.to}
+                        className={`block w-full px-2 py-1 rounded ${
+                          isActive
+                            ? "bg-blue-100 font-medium"
+                            : "hover:bg-blue-100"
+                        }`}
+                      >
+                        {link.label}
+                      </Link>
+                    </DropdownMenuItem>
+                  );
+                })}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
