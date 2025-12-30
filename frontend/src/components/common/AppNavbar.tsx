@@ -32,7 +32,7 @@ const AuthNav: React.FC<AuthNavProps> = ({ currentUsername, logout }) => {
     return (
       <div className="flex items-center gap-2">
         <span className="text-sm text-white">{currentUsername} さん</span>
-        <Button variant="outline" size="sm" onClick={logout}>
+        <Button variant="ghost" size="sm" onClick={logout}>
           ログアウト
         </Button>
       </div>
@@ -95,7 +95,7 @@ export const AppNavbar = () => {
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="secondary" size="sm">
+                <Button variant="ghost" size="sm">
                   データ・概要
                 </Button>
               </DropdownMenuTrigger>
