@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Spinner } from "@/components/ui/spinner";
 import { CenteredBox } from "@/components/layout";
 
 const LoginPage = () => {
@@ -100,7 +101,14 @@ const LoginPage = () => {
             </div>
 
             <Button type="submit" className="w-full" disabled={isSubmitting}>
-              {isSubmitting ? "ログイン中..." : "ログイン"}
+              {isSubmitting ? (
+                <div className="flex items-center justify-center gap-2">
+                  <Spinner className="h-4 w-4" />
+                  <span>ログイン中...</span>
+                </div>
+              ) : (
+                "ログイン"
+              )}
             </Button>
           </form>
         </CardContent>
