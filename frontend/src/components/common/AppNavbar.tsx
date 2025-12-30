@@ -40,10 +40,21 @@ const AuthNav: React.FC<AuthNavProps> = ({ currentUsername, logout }) => {
   }
   return (
     <div className="flex gap-2">
-      <Button asChild variant="link" size="sm">
+      <Button
+        asChild
+        variant="ghost"
+        size="sm"
+        className="text-white hover:bg-blue-500"
+      >
         <Link to="/login">ログイン</Link>
       </Button>
-      <Button asChild variant="link" size="sm">
+
+      <Button
+        asChild
+        variant="ghost"
+        size="sm"
+        className="text-white hover:bg-blue-500"
+      >
         <Link to="/signup">新規登録</Link>
       </Button>
     </div>
@@ -56,7 +67,7 @@ export const AppNavbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav className="bg-blue-600 text-white">
+    <nav className="bg-blue-500 text-white relative z-50">
       <div className="container mx-auto flex flex-col md:flex-row md:items-center md:justify-between px-4 py-3">
         {/* 上段：ブランド + ハンバーガー */}
         <div className="flex items-center justify-between w-full md:w-auto">
@@ -99,7 +110,7 @@ export const AppNavbar = () => {
                   データ・概要
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="bg-white text-black">
+              <DropdownMenuContent className="bg-white text-black z-[9999]">
                 {dropdownLinks.map((link) => (
                   <DropdownMenuItem asChild key={link.to}>
                     <Link to={link.to}>{link.label}</Link>
