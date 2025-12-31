@@ -1,7 +1,7 @@
 from django.urls import path
 
-from apps.api.health.views import ping
+from apps.api.health.views import PingView
 
 urlpatterns = [
-    path("ping/", ping, name="ping"),
+    path("ping/", PingView.as_view(), name="ping"),
 ]
