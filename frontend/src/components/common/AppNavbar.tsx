@@ -40,10 +40,10 @@ function NavbarLink({ to, active, children }: NavbarLinkProps) {
   return (
     <Link
       to={to}
-      className={`px-3 py-1 rounded-md transition-colors ${
+      className={`px-2 py-1 rounded-md transition-colors ${
         active
-          ? "text-white font-semibold"
-          : "text-white/80 hover:text-white hover:bg-blue-400"
+          ? "text-white font-semibold bg-white/20"
+          : "text-white/80 hover:text-white hover:bg-white/10"
       }`}
     >
       {children}

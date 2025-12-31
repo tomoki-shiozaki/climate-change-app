@@ -315,7 +315,7 @@
 
 #### 実務での活用イメージ
 
-````tsx
+```tsx
 <div className="bg-blue-50 p-4 rounded-md">
   カード背景（サブカラー）
 </div>
@@ -327,6 +327,7 @@
 <div className="border border-blue-200 p-2 rounded-md">
   補助的なボーダー
 </div>
+```
 
 ### 角丸（Border Radius）
 
@@ -360,7 +361,7 @@
 ```tsx
 <button className="rounded-md px-4 py-2 bg-blue-500 text-white"> 標準ボタン </button>
 <div className="rounded-lg p-4 bg-white shadow-md"> 強調カード </div>
-````
+```
 
 ### 背景色（Background）
 
@@ -525,3 +526,7 @@
 - コンポーネントは self-contained を意識する
 - 不要なクラスは付けない
 - 親依存のレイアウトは明示する
+
+```
+
+```
