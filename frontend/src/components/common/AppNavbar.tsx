@@ -96,7 +96,14 @@ export const AppNavbar = () => {
 
   return (
     <nav className="bg-blue-500 text-white relative z-50">
-      <div className="container mx-auto flex flex-col md:flex-row md:items-center md:justify-between px-4 py-3">
+      <div
+        className="
+          container mx-auto
+          flex flex-col md:flex-row
+          md:items-center md:justify-between
+          px-4 py-2
+      "
+      >
         {/* 上段：ロゴ + ハンバーガー */}
         <div className="flex items-center justify-between w-full md:w-auto">
           <Link to="/" className="text-lg font-bold whitespace-nowrap">
