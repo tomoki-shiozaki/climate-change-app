@@ -5,9 +5,5 @@ type CenteredBoxProps = {
 };
 
 export function CenteredBox({ children }: CenteredBoxProps) {
-  return (
-    <div className="mt-5 mx-auto" style={{ maxWidth: "500px" }}>
-      {children}
-    </div>
-  );
+  return <div className="mt-4 flex justify-center">{children}</div>;
 }

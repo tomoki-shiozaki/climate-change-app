@@ -132,12 +132,62 @@
 </div>
 ```
 
+### Gap（要素間隔）
+
+`gap-*` は Flex / Grid における **子要素同士の間隔**を制御するために使用する。
+
+### 基本方針
+
+- 並び（Flex / Grid）の要素間隔は **margin より gap を優先**
+- gap は **親要素でまとめて制御**する
+- 子要素に不要な margin を持たせない
+
+---
+
+### 推奨スケール
+
+| 用途                            | 推奨クラス |
+| ------------------------------- | ---------- |
+| 密な UI（アイコン＋テキスト等） | `gap-1`    |
+| 標準（ボタン群、ナビ項目）      | `gap-2`    |
+| ゆとり（カード内、操作群）      | `gap-4`    |
+| セクション級の分離              | `gap-6`    |
+
+※ 原則として `gap-8` 以上はレイアウトレベルでのみ使用する。
+
+---
+
+### 方向との関係
+
+- `flex-row` → 横方向の間隔
+- `flex-col` → 縦方向の間隔
+- 並び方向が変わっても gap の数値は原則維持する
+
+---
+
+### 使用例
+
+```tsx
+// ナビゲーション・ボタン群
+<div className="flex items-center gap-2">
+  <Button />
+  <Button />
+</div>
+
+// カード内の要素
+<div className="flex flex-col gap-4">
+  <h3>タイトル</h3>
+  <p>本文</p>
+</div>
+```
+
 ### 位置決め（Position）のルール
 
-- Tailwind では `relative`, `absolute`, `fixed`, `sticky` が使用可能
+- Tailwind では `relative`, `absolute`, `fixed`, `sticky` を使用する
 - 基本ルール：
-  - 絶対配置 (`absolute`) の子要素がある場合は、**必ず親に `relative` を付与**
-  - `relative` は親の基準位置を決めるため、見た目には影響しないが子要素の配置に必須
+  - `absolute` な子要素を **意図した親要素基準で配置したい場合**、親に必ず `relative` を付与する
+  - `relative` 自体は通常レイアウトや見た目に影響しない
+  - UI コンテナ（Navbar / Card / Modal など）は、将来の拡張に備えて原則 `relative` を付与してよい
 
 ### UI コンポーネントの配置・装飾ルール（例：年スライダー）
 
@@ -163,10 +213,60 @@
 
 #### 装飾
 
-- 背景：テーマに沿って `bg-white/90` のように透明度も統一
-- 角丸：`rounded-md` / `rounded-lg` などスケールで統一
-- 余白：`px-*` / `py-*` で統一
-- 影：`shadow-sm`, `shadow-md`, `shadow-lg` で統一
+- **背景（Background）**
+
+  - テーマカラーやサブカラーで統一
+  - 透明度付き背景も `/` 記法で統一（例：`bg-white/90`, `bg-gray-800/70`）
+  - モーダルやスライダーなど、下の背景が透ける場合に使用
+
+- **角丸（Border Radius）**
+
+  - Tailwind スケールで統一
+    - 小：`rounded-sm`
+    - 標準：`rounded-md`
+    - 大：`rounded-lg`
+    - 完全円：`rounded-full`
+  - ボタンやカードなど、強調や浮き上がり感を出したい場合のみ大きめの角丸を使用
+
+- **影（Shadow）**
+
+  - 浮き上がり感や階層を表現
+  - Tailwind スケール：`shadow-sm` / `shadow` / `shadow-md` / `shadow-lg` / `shadow-xl`
+  - 内側影は `shadow-inner`
+  - 不要な影は付けず、重要な UI コンポーネントのみ
+
+- **境界線（Border）**
+
+  - 輪郭を明示、背景とのコントラスト調整に使用
+  - Tailwind クラス：`border`, `border-t`, `border-b`, `border-gray-200` など
+  - 強調や階層を表現するために利用
+
+- **余白（Padding / Margin）**
+
+  - 要素間のスペースを調整してレイアウトを整える
+  - Tailwind スケール：`m-1`〜`m-8`, `p-1`〜`p-8`
+  - コンポーネント内では `px-*` / `py-*` で統一
+
+- **テキスト（Color / Font）**
+
+  - 文字色はテーマに沿って統一：`text-gray-800`（本文）、`text-blue-500`（リンク・強調）
+  - フォントサイズや太さも一貫性を持たせる：`text-base`, `font-semibold`
+
+- **透明度（Opacity）**
+  - 背景や文字に透明度を付与して階層や重なりを表現
+  - Tailwind では `/` 記法や `opacity-*` を使用
+
+#### コード例
+
+````tsx
+<div className="bg-blue-50/90 p-4 rounded-md shadow-md border border-blue-100">
+  コンポーネント内の装飾例
+</div>
+
+<button className="bg-blue-500 text-white px-4 py-2 rounded-md shadow hover:bg-blue-600">
+  メインボタン
+</button>
+
 
 #### コード例
 
@@ -178,7 +278,7 @@
   <input type="range" className="w-80" />
   <span className="font-semibold">2024</span>
 </div>
-```
+````
 
 ### サイズ指定（Width / Height）のルール
 
@@ -266,7 +366,7 @@
 
 #### 実務での活用イメージ
 
-````tsx
+```tsx
 <div className="bg-blue-50 p-4 rounded-md">
   カード背景（サブカラー）
 </div>
@@ -278,6 +378,7 @@
 <div className="border border-blue-200 p-2 rounded-md">
   補助的なボーダー
 </div>
+```
 
 ### 角丸（Border Radius）
 
@@ -311,7 +412,7 @@
 ```tsx
 <button className="rounded-md px-4 py-2 bg-blue-500 text-white"> 標準ボタン </button>
 <div className="rounded-lg p-4 bg-white shadow-md"> 強調カード </div>
-````
+```
 
 ### 背景色（Background）
 
@@ -422,7 +523,34 @@
 
 ---
 
-## 5. Tailwind クラスの最小限原則
+## 5. UI コンポーネント設計
+
+### 5.1 ナビゲーション
+
+#### ナビゲーションの色ルール
+
+- ナビゲーションは本文とは別の UI レイヤーとみなす
+- 背景色が異なる場合、本文と文字色を揃える必要はない
+- 文字色は背景とのコントラストを最優先する
+- ナビ内では色スケール（100% / 80% / hover）を統一する
+
+### 5-2. レイヤー・重なり順（z-index）のルール
+
+- ドロップダウン、モーダル、通知など UI コンポーネントの z-index は統一する
+- 推奨値の例：
+
+| 用途               | 推奨 z-index Tailwind | 補足                                   |
+| ------------------ | --------------------- | -------------------------------------- |
+| ヘッダー / ナビ    | z-50                  | 通常の固定ヘッダーなど                 |
+| ドロップダウン     | z-50〜z-[500]         | マップやキャンバス上の要素より上に出す |
+| モーダル           | z-[1000]              | UI の最前面表示用                      |
+| フルスクリーン通知 | z-[2000]              | 画面全体に重なる通知                   |
+
+- **注意**：
+  - 必要以上に大きな値（例：z-[9999]）は極力避ける
+  - Leaflet や Canvas など特定ライブラリ上に表示する場合は、マップの z-index を確認し、それ以上の値を指定する
+
+## 6. Tailwind クラスの最小限原則
 
 - 不要なクラスは付けない
 - 重複する余白や幅は削除する
@@ -431,7 +559,7 @@
 
 ---
 
-## 6. レスポンシブ対応
+## 7. レスポンシブ対応
 
 - 基本はモバイルファースト
 - Tailwind のブレークポイントを活用
@@ -442,30 +570,31 @@
 
 ---
 
-## 7. コード例の記法
+## 8. コード例の記法
 
-- クラスは意味ごとに改行して書くと可読性が向上する
-- 例：見出しの場合
+- クラスが多い場合は、意味ごとに改行して書くと可読性が向上する
+- レイアウトコンテナやナビゲーションなど、責務が多い要素で特に有効
+- 小さな要素では無理に改行しなくてよい
 
-  h1 要素に次のようにクラスを付与するイメージ
+#### 例：レイアウトコンテナ（Navbar 内部）
 
-  - text-2xl
-  - font-semibold
-  - mb-6
-  - text-center
-
-  → 上記を組み合わせて見出しを作る
+```tsx
+<div
+  className="
+    container mx-auto
+    flex flex-col md:flex-row
+    md:items-center md:justify-between
+    px-4 py-3
+  "
+>
+```
 
 ---
 
-## 8. まとめ
+## 9. まとめ
 
 - フォントサイズ・太さ・余白は統一する
 - Flex / Grid は必要な部分だけ使用する
 - コンポーネントは self-contained を意識する
 - 不要なクラスは付けない
 - 親依存のレイアウトは明示する
-
-```
-
-```
