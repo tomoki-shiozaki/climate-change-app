@@ -6,7 +6,6 @@ import App from "./App.tsx";
 
 // グローバル CSS 読み込み
 import "./index.css";
-import "bootstrap/dist/css/bootstrap.min.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

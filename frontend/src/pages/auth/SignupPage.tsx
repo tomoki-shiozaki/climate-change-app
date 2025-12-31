@@ -1,149 +1,149 @@
-import { useState } from "react";
-import type { ChangeEvent, FormEvent } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
-import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/Button";
-import Alert from "react-bootstrap/Alert";
-import Spinner from "react-bootstrap/Spinner";
-import { useAuthContext } from "@/features/auth/context/useAuthContext";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
+
+import {
+  signupSchema,
+  type SignupFormValues,
+} from "@/features/auth/schemas/signupSchema";
+import { useAuthContext } from "@/features/auth/context/useAuthContext";
 import { logError } from "@/lib/logger";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Spinner } from "@/components/ui/spinner";
 import { CenteredBox } from "@/components/layout";
 
 const SignupPage = () => {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password1, setPassword1] = useState("");
-  const [password2, setPassword2] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-
   const navigate = useNavigate();
   const { signup, currentUsername } = useAuthContext();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    setError,
+  } = useForm<SignupFormValues>({
+    resolver: zodResolver(signupSchema),
+  });
 
   // すでにログイン済みならトップページへリダイレクト
   if (currentUsername) {
     return <Navigate to="/" replace />;
   }
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-
+  const onSubmit = async (data: SignupFormValues) => {
     try {
-      // フロント側バリデーション
-      if (!username || !email || !password1 || !password2) {
-        throw new Error("すべてのフィールドを入力してください。");
-      }
-      if (password1 !== password2) {
-        throw new Error("パスワードが一致しません。");
-      }
-
-      await signup({ username, email, password1, password2 });
-      // signup 成功後にトップページへ遷移
-      navigate("/");
+      await signup(data);
+      navigate("/"); // 登録成功後にホームへ
     } catch (err: unknown) {
       logError(err);
 
       if (err instanceof AxiosError) {
-        setError(err.message);
-      } else if (err instanceof Error) {
-        setError(err.message);
+        setError("root", { message: err.message });
       } else {
-        setError("登録に失敗しました。入力内容を確認してください。");
+        setError("root", {
+          message: "登録に失敗しました。入力内容を確認してください。",
+        });
       }
-    } finally {
-      setLoading(false);
     }
   };
 
   return (
     <CenteredBox>
-      <h2 className="mb-4">アカウント作成</h2>
+      <Card className="w-[360px]">
+        <CardHeader>
+          <CardTitle>アカウント作成</CardTitle>
+        </CardHeader>
 
-      {error && <Alert variant="danger">{error}</Alert>}
-
-      <Form onSubmit={handleSubmit}>
-        <Form.Group className="mb-3">
-          <Form.Label>ユーザー名</Form.Label>
-          <Form.Control
-            type="text"
-            placeholder="ユーザー名を入力"
-            value={username}
-            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              setUsername(e.target.value)
-            }
-            required
-            disabled={loading}
-          />
-        </Form.Group>
-
-        <Form.Group className="mb-3">
-          <Form.Label>メールアドレス</Form.Label>
-          <Form.Control
-            type="email"
-            placeholder="メールアドレスを入力"
-            value={email}
-            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              setEmail(e.target.value)
-            }
-            required
-            disabled={loading}
-          />
-        </Form.Group>
-
-        <Form.Group className="mb-3">
-          <Form.Label>パスワード</Form.Label>
-          <Form.Control
-            type="password"
-            placeholder="パスワードを入力"
-            value={password1}
-            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              setPassword1(e.target.value)
-            }
-            required
-            disabled={loading}
-          />
-        </Form.Group>
-
-        <Form.Group className="mb-3">
-          <Form.Label>パスワード（確認用）</Form.Label>
-          <Form.Control
-            type="password"
-            placeholder="確認用パスワードを入力"
-            value={password2}
-            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              setPassword2(e.target.value)
-            }
-            required
-            disabled={loading}
-          />
-        </Form.Group>
-
-        <Button
-          variant="primary"
-          type="submit"
-          className="w-100"
-          disabled={loading}
-        >
-          {loading ? (
-            <>
-              <Spinner
-                as="span"
-                animation="border"
-                size="sm"
-                role="status"
-                aria-hidden="true"
-                className="me-2"
-              />
-              登録中...
-            </>
-          ) : (
-            "登録"
+        <CardContent>
+          {errors.root && (
+            <Alert variant="destructive" className="mb-4">
+              <AlertDescription>{errors.root.message}</AlertDescription>
+            </Alert>
           )}
-        </Button>
-      </Form>
+
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div className="space-y-1">
+              <Label htmlFor="username">ユーザー名</Label>
+              <Input
+                id="username"
+                placeholder="ユーザー名を入力"
+                disabled={isSubmitting}
+                {...register("username")}
+              />
+              {errors.username && (
+                <p className="text-sm text-destructive">
+                  {errors.username.message}
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-1">
+              <Label htmlFor="email">メールアドレス</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="メールアドレスを入力"
+                disabled={isSubmitting}
+                {...register("email")}
+              />
+              {errors.email && (
+                <p className="text-sm text-destructive">
+                  {errors.email.message}
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-1">
+              <Label htmlFor="password1">パスワード</Label>
+              <Input
+                id="password1"
+                type="password"
+                placeholder="パスワードを入力"
+                disabled={isSubmitting}
+                {...register("password1")}
+              />
+              {errors.password1 && (
+                <p className="text-sm text-destructive">
+                  {errors.password1.message}
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-1">
+              <Label htmlFor="password2">パスワード（確認用）</Label>
+              <Input
+                id="password2"
+                type="password"
+                placeholder="確認用パスワードを入力"
+                disabled={isSubmitting}
+                {...register("password2")}
+              />
+              {errors.password2 && (
+                <p className="text-sm text-destructive">
+                  {errors.password2.message}
+                </p>
+              )}
+            </div>
+
+            <Button type="submit" className="w-full" disabled={isSubmitting}>
+              {isSubmitting ? (
+                <div className="flex items-center justify-center gap-2">
+                  <Spinner className="h-4 w-4" />
+                  <span>登録中...</span>
+                </div>
+              ) : (
+                "登録"
+              )}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
     </CenteredBox>
   );
 };
