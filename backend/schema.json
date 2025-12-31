@@ -712,6 +712,39 @@
                     }
                 }
             }
+        },
+        "/api/v1/health/ping/": {
+            "get": {
+                "operationId": "health_ping_retrieve",
+                "description": "ウォームアップ用 ping",
+                "tags": [
+                    "health"
+                ],
+                "security": [
+                    {
+                        "jwtAuth": []
+                    },
+                    {
+                        "jwtHeaderAuth": []
+                    },
+                    {
+                        "jwtCookieAuth": []
+                    },
+                    {}
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Ping"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -864,6 +897,17 @@
                     }
                 }
             },
+            "Ping": {
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "message"
+                ]
+            },
             "Register": {
                 "type": "object",
                 "properties": {
@@ -920,8 +964,7 @@
                         "readOnly": true
                     },
                     "refresh": {
-                        "type": "string",
-                        "writeOnly": true
+                        "type": "string"
                     }
                 },
                 "required": [
