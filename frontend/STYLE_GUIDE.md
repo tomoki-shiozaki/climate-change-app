@@ -183,10 +183,11 @@
 
 ### 位置決め（Position）のルール
 
-- Tailwind では `relative`, `absolute`, `fixed`, `sticky` が使用可能
+- Tailwind では `relative`, `absolute`, `fixed`, `sticky` を使用する
 - 基本ルール：
-  - 絶対配置 (`absolute`) の子要素がある場合は、**必ず親に `relative` を付与**
-  - `relative` は親の基準位置を決めるため、見た目には影響しないが子要素の配置に必須
+  - `absolute` な子要素を **意図した親要素基準で配置したい場合**、親に必ず `relative` を付与する
+  - `relative` 自体は通常レイアウトや見た目に影響しない
+  - UI コンテナ（Navbar / Card / Modal など）は、将来の拡張に備えて原則 `relative` を付与してよい
 
 ### UI コンポーネントの配置・装飾ルール（例：年スライダー）
 
@@ -505,17 +506,22 @@
 
 ## 8. コード例の記法
 
-- クラスは意味ごとに改行して書くと可読性が向上する
-- 例：見出しの場合
+- クラスが多い場合は、意味ごとに改行して書くと可読性が向上する
+- レイアウトコンテナやナビゲーションなど、責務が多い要素で特に有効
+- 小さな要素では無理に改行しなくてよい
 
-  h1 要素に次のようにクラスを付与するイメージ
+#### 例：レイアウトコンテナ（Navbar 内部）
 
-  - text-2xl
-  - font-semibold
-  - mb-6
-  - text-center
-
-  → 上記を組み合わせて見出しを作る
+```tsx
+<div
+  className="
+    container mx-auto
+    flex flex-col md:flex-row
+    md:items-center md:justify-between
+    px-4 py-3
+  "
+>
+```
 
 ---
 
@@ -526,7 +532,3 @@
 - コンポーネントは self-contained を意識する
 - 不要なクラスは付けない
 - 親依存のレイアウトは明示する
-
-```
-
-```
