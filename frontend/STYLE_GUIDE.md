@@ -213,10 +213,60 @@
 
 #### 装飾
 
-- 背景：テーマに沿って `bg-white/90` のように透明度も統一
-- 角丸：`rounded-md` / `rounded-lg` などスケールで統一
-- 余白：`px-*` / `py-*` で統一
-- 影：`shadow-sm`, `shadow-md`, `shadow-lg` で統一
+- **背景（Background）**
+
+  - テーマカラーやサブカラーで統一
+  - 透明度付き背景も `/` 記法で統一（例：`bg-white/90`, `bg-gray-800/70`）
+  - モーダルやスライダーなど、下の背景が透ける場合に使用
+
+- **角丸（Border Radius）**
+
+  - Tailwind スケールで統一
+    - 小：`rounded-sm`
+    - 標準：`rounded-md`
+    - 大：`rounded-lg`
+    - 完全円：`rounded-full`
+  - ボタンやカードなど、強調や浮き上がり感を出したい場合のみ大きめの角丸を使用
+
+- **影（Shadow）**
+
+  - 浮き上がり感や階層を表現
+  - Tailwind スケール：`shadow-sm` / `shadow` / `shadow-md` / `shadow-lg` / `shadow-xl`
+  - 内側影は `shadow-inner`
+  - 不要な影は付けず、重要な UI コンポーネントのみ
+
+- **境界線（Border）**
+
+  - 輪郭を明示、背景とのコントラスト調整に使用
+  - Tailwind クラス：`border`, `border-t`, `border-b`, `border-gray-200` など
+  - 強調や階層を表現するために利用
+
+- **余白（Padding / Margin）**
+
+  - 要素間のスペースを調整してレイアウトを整える
+  - Tailwind スケール：`m-1`〜`m-8`, `p-1`〜`p-8`
+  - コンポーネント内では `px-*` / `py-*` で統一
+
+- **テキスト（Color / Font）**
+
+  - 文字色はテーマに沿って統一：`text-gray-800`（本文）、`text-blue-500`（リンク・強調）
+  - フォントサイズや太さも一貫性を持たせる：`text-base`, `font-semibold`
+
+- **透明度（Opacity）**
+  - 背景や文字に透明度を付与して階層や重なりを表現
+  - Tailwind では `/` 記法や `opacity-*` を使用
+
+#### コード例
+
+````tsx
+<div className="bg-blue-50/90 p-4 rounded-md shadow-md border border-blue-100">
+  コンポーネント内の装飾例
+</div>
+
+<button className="bg-blue-500 text-white px-4 py-2 rounded-md shadow hover:bg-blue-600">
+  メインボタン
+</button>
+
 
 #### コード例
 
@@ -228,7 +278,7 @@
   <input type="range" className="w-80" />
   <span className="font-semibold">2024</span>
 </div>
-```
+````
 
 ### サイズ指定（Width / Height）のルール
 
