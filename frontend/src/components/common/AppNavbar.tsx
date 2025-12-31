@@ -105,13 +105,13 @@ export const AppNavbar = () => {
       "
       >
         {/* 上段：ロゴ + ハンバーガー */}
-        <div className="flex items-center justify-between w-full md:w-auto">
+        <div className="flex items-center justify-between w-full md:w-auto md:mr-6">
           <Link to="/" className="text-lg font-bold whitespace-nowrap">
             気候変動データアプリ
           </Link>
 
           <button
-            className="md:hidden p-2 rounded hover:bg-blue-400"
+            className="md:hidden p-2 rounded hover:bg-white/10"
             onClick={() => setIsOpen((v) => !v)}
           >
             <span className="sr-only">メニュー切替</span>☰
@@ -156,7 +156,7 @@ export const AppNavbar = () => {
 
               <DropdownMenuContent
                 className="
-                  z-[9999]
+                  z-[400]
                   bg-blue-50/95
                   text-blue-900
                   border border-blue-100
@@ -171,9 +171,7 @@ export const AppNavbar = () => {
                       <Link
                         to={link.to}
                         className={`block w-full px-2 py-1 rounded ${
-                          isActive
-                            ? "bg-blue-100 font-medium"
-                            : "hover:bg-blue-100"
+                          isActive ? "bg-blue-100 font-medium" : ""
                         }`}
                       >
                         {link.label}
