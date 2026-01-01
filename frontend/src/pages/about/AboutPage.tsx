@@ -1,17 +1,11 @@
+import { PageLayout } from "@/components/layout/PageLayout";
+
 const AboutPage = () => {
   return (
-    <div className="max-w-3xl mx-auto px-6 py-12">
-      <h1 className="text-3xl font-bold mb-8 text-center">
-        このサイトについて
-      </h1>
-
-      <section className="mb-6">
-        <p className="text-gray-700 leading-relaxed">
-          このアプリは、世界の気温データをグラフで可視化し、
-          気候変動や地域ごとの差を直感的に理解することを目的としています。
-        </p>
-      </section>
-
+    <PageLayout
+      title="このサイトについて"
+      description="このアプリは世界の気温データをグラフで可視化し、気候変動や地域ごとの差を直感的に理解することを目的としています。"
+    >
       <section className="mb-6">
         <p className="text-gray-700 leading-relaxed">
           使用している気温データは{" "}
@@ -29,11 +23,10 @@ const AboutPage = () => {
 
       <section>
         <p className="text-gray-700 leading-relaxed">
-          ダッシュボードで地域ごとの気温変化を確認したり、
-          データページで詳細情報や更新状況を確認することができます。
+          ダッシュボードで地域ごとの気温変化を確認したり、データページで詳細情報や更新状況を確認することができます。
         </p>
       </section>
-    </div>
+    </PageLayout>
   );
 };
 
