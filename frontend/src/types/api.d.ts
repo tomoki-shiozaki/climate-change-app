@@ -308,6 +308,23 @@ export interface paths {
         patch: operations["dj_rest_auth_user_partial_update"];
         trace?: never;
     };
+    "/api/v1/health/ping/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description ウォームアップ用 ping */
+        get: operations["health_ping_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -378,6 +395,9 @@ export interface components {
             first_name?: string;
             /** 姓 */
             last_name?: string;
+        };
+        Ping: {
+            message: string;
         };
         Register: {
             username: string;
@@ -788,6 +808,25 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["UserDetails"];
+                };
+            };
+        };
+    };
+    health_ping_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Ping"];
                 };
             };
         };
