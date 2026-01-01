@@ -32,8 +32,9 @@ const DataPage = () => {
           </h3>
           <p className="text-gray-800 mb-2">
             年平均気温の長期推移データ（HadCRUT5、Met Office Hadley
-            Centre提供、1861–1890平均値との差、単位: ℃）を使用しています。
+            Centre提供）を使用しています。
           </p>
+          <p className="text-gray-800 mb-2">単位: ℃、対象期間: 1850年から。</p>
           <p className="text-sm text-blue-500 underline mb-1">
             詳細ページ:{" "}
             <a
