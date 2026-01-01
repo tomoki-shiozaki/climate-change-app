@@ -4,9 +4,9 @@ const DataPage = () => {
   return (
     <PageLayout
       title="データについて"
-      description="このページでは、使用している気温データの出典や内容、更新方法、注意事項について説明しています。"
+      description="このページでは、使用している気候データの出典や内容、更新方法、注意事項について説明しています。"
     >
-      <section className="mb-8">
+      <section className="mb-6">
         <h2 className="text-xl font-semibold mb-2">データソース</h2>
         <p className="text-gray-700 leading-relaxed">
           本アプリの気温データは{" "}
@@ -26,14 +26,14 @@ const DataPage = () => {
         </p>
       </section>
 
-      <section className="mb-8">
+      <section className="mb-6">
         <h2 className="text-xl font-semibold mb-2">利用しているデータの内容</h2>
         <p className="text-gray-700 leading-relaxed">
           年平均気温の長期推移データを使用し、地域ごとの気温変化を可視化できるよう年次データを抽出して加工しています。
         </p>
       </section>
 
-      <section className="mb-8">
+      <section className="mb-6">
         <h2 className="text-xl font-semibold mb-2">更新について</h2>
         <p className="text-gray-700 leading-relaxed">
           本アプリの気温データは、Our World in Data の API
