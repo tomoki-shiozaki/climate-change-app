@@ -6,6 +6,7 @@ const DataPage = () => {
       title="データについて"
       description="このページでは、使用している気候データの出典や内容、更新方法、注意事項について説明しています。"
     >
+      {/* データソースセクション */}
       <section className="mb-6 leading-relaxed">
         <h2 className="text-xl font-semibold mb-4 text-gray-800">
           データソース
@@ -20,7 +21,7 @@ const DataPage = () => {
             className="font-semibold text-blue-500 underline"
           >
             Our World in Data – CO₂ and Greenhouse Gas Emissions
-          </a>
+          </a>{" "}
           から取得しています。
         </p>
 
@@ -31,15 +32,14 @@ const DataPage = () => {
           </h3>
           <p className="text-gray-800 mb-2">
             年平均気温の長期推移データ（HadCRUT5、Met Office Hadley
-            Centre提供）を使用しています。
+            Centre提供、1861–1890平均値との差、単位: ℃）を使用しています。
           </p>
-          <p className="text-gray-800 mb-2">
-            詳細ページ：{" "}
+          <p className="text-sm text-blue-500 underline mb-1">
+            詳細ページ:{" "}
             <a
               href="https://ourworldindata.org/grapher/temperature-anomaly"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-semibold text-blue-500 underline"
             >
               Temperature anomaly
             </a>
@@ -55,15 +55,15 @@ const DataPage = () => {
             CO₂排出量データ
           </h3>
           <p className="text-gray-800 mb-2">
-            国別の年間 CO₂ 排出量データを使用しています。
+            国別の年間 CO₂ 排出量データを使用しています（単位: MtCO₂、対象期間:
+            1850–最新年）。
           </p>
-          <p className="text-gray-800 mb-2">
-            詳細ページ：{" "}
+          <p className="text-sm text-blue-500 underline mb-1">
+            詳細ページ:{" "}
             <a
               href="https://ourworldindata.org/grapher/annual-co-emissions-by-region"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-semibold text-blue-500 underline"
             >
               Annual CO₂ emissions by region
             </a>
@@ -74,23 +74,32 @@ const DataPage = () => {
         </div>
       </section>
 
+      {/* データ内容セクション */}
       <section className="mb-6">
-        <h2 className="text-xl font-semibold mb-2">利用しているデータの内容</h2>
+        <h2 className="text-xl font-semibold mb-2 text-gray-800">
+          利用しているデータの内容
+        </h2>
         <p className="text-gray-700 leading-relaxed">
-          年平均気温の長期推移データを使用し、地域ごとの気温変化を可視化できるよう年次データを抽出して加工しています。
+          年平均気温の長期推移データを使用し、地域ごとの気温変化や年間 CO₂
+          排出量の変化を可視化できるよう、年次データを抽出・加工しています。
         </p>
       </section>
 
+      {/* 更新セクション */}
       <section className="mb-6">
-        <h2 className="text-xl font-semibold mb-2">更新について</h2>
+        <h2 className="text-xl font-semibold mb-2 text-gray-800">
+          更新について
+        </h2>
         <p className="text-gray-700 leading-relaxed">
-          本アプリの気温データは、Our World in Data の API
-          から定期的に取得し、自動的にデータベースを更新しています。これにより、常に最新のデータに基づいてグラフや比較を表示できます。
+          本アプリの気温データおよび CO₂ 排出量データは、Our World in Data の
+          API
+          から定期的に取得し、自動的にデータベースを更新しています。常に最新のデータに基づいてグラフや比較を表示できます。
         </p>
       </section>
 
+      {/* 注意事項セクション */}
       <section>
-        <h2 className="text-xl font-semibold mb-2">注意事項</h2>
+        <h2 className="text-xl font-semibold mb-2 text-gray-800">注意事項</h2>
         <p className="text-gray-700 leading-relaxed">
           本アプリは学習・可視化を目的としており、正確な分析や研究目的で使用する場合は、必ず一次データおよび
           OWID の原典情報を参照してください。
