@@ -7,9 +7,11 @@ const DataPage = () => {
       description="このページでは、使用している気候データの出典や内容、更新方法、注意事項について説明しています。"
     >
       <section className="mb-6">
-        <h2 className="text-xl font-semibold mb-2">データソース</h2>
-        <p className="text-gray-700 leading-relaxed">
-          本アプリの気温データは{" "}
+        <h2 className="text-xl font-semibold mb-4 text-gray-800">
+          データソース
+        </h2>
+        <p className="text-gray-800 mb-4 leading-relaxed">
+          気温データ、CO₂排出量データはいずれも{" "}
           <a
             href="https://ourworldindata.org/co2-and-greenhouse-gas-emissions"
             target="_blank"
@@ -18,12 +20,51 @@ const DataPage = () => {
           >
             Our World in Data – CO₂ and Greenhouse Gas Emissions
           </a>{" "}
-          ページから取得したデータセット（HadCRUT5、Met Office Hadley Centre
-          提供）を基にしています。
+          から取得しています。
         </p>
-        <p className="text-gray-500 text-sm mt-2">
-          ※ OWID のデータは CC BY 4.0 ライセンスのもと提供されています。
-        </p>
+
+        <div className="mb-4 leading-relaxed">
+          <h3 className="text-lg font-semibold mb-2 text-gray-700">
+            気温データ
+          </h3>
+          <p className="text-gray-800">
+            年平均気温の長期推移データ（HadCRUT5、Met Office Hadley
+            Centre提供）を使用しています。
+          </p>
+          <p className="text-gray-800">
+            詳細ページ：{" "}
+            <a
+              href="https://ourworldindata.org/grapher/temperature-anomaly"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 underline"
+            >
+              Temperature anomaly
+            </a>
+          </p>
+          <p className="text-gray-500 text-sm mt-1">※ CC BY 4.0 ライセンス</p>
+        </div>
+
+        <div className="mb-4 leading-relaxed">
+          <h3 className="text-lg font-semibold mb-2 text-gray-700">
+            CO₂排出量データ
+          </h3>
+          <p className="text-gray-800">
+            国別の年間 CO₂ 排出量データを使用しています。
+          </p>
+          <p className="text-gray-800">
+            詳細ページ：{" "}
+            <a
+              href="https://ourworldindata.org/grapher/annual-co-emissions-by-region"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 underline"
+            >
+              Annual CO₂ emissions by region
+            </a>
+          </p>
+          <p className="text-gray-500 text-sm mt-1">※ CC BY 4.0 ライセンス</p>
+        </div>
       </section>
 
       <section className="mb-6">
