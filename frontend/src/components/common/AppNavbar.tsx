@@ -23,7 +23,6 @@ const mainLinks = [
 const dropdownLinks = [
   { to: "/about", label: "このサイトについて" },
   { to: "/data", label: "データ" },
-  { to: "/faq", label: "FAQ" },
 ];
 
 /* ======================
