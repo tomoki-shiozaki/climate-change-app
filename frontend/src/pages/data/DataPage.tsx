@@ -78,26 +78,26 @@ const DataPage = () => {
         </div>
       </section>
 
-      {/* データ内容セクション */}
+      {/* データ概要セクション */}
       <section className="mb-6">
-        <h2 className="text-xl font-semibold mb-2 text-gray-800">
-          利用しているデータの内容
+        <h2 className="text-xl font-semibold mb-4 text-gray-800">
+          データの概要
         </h2>
         <p className="text-gray-700 leading-relaxed">
-          年平均気温の長期推移データを使用し、地域ごとの気温変化や年間 CO₂
-          排出量の変化を可視化できるよう、年次データを抽出・加工しています。
+          Our World in Data
+          の気候データを取得し、必要な情報を抽出・整理してグラフや地図などで可視化しています。
         </p>
       </section>
 
       {/* 更新セクション */}
       <section className="mb-6">
-        <h2 className="text-xl font-semibold mb-2 text-gray-800">
+        <h2 className="text-xl font-semibold mb-4 text-gray-800">
           更新について
         </h2>
         <p className="text-gray-700 leading-relaxed">
-          本アプリの気温データおよび CO₂ 排出量データは、Our World in Data の
-          API
-          から定期的に取得し、自動的にデータベースを更新しています。常に最新のデータに基づいてグラフや比較を表示できます。
+          このアプリで使用している気候データは、Our World in Data
+          から定期的に取得して更新しています。常に最新のデータに基づき、 気温や
+          CO₂ 排出量の変化などを確認できます。
         </p>
       </section>
 
