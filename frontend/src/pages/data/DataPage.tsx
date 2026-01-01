@@ -105,8 +105,8 @@ const DataPage = () => {
       <section>
         <h2 className="text-xl font-semibold mb-2 text-gray-800">注意事項</h2>
         <p className="text-gray-700 leading-relaxed">
-          本アプリは学習・可視化を目的としており、正確な分析や研究目的で使用する場合は、必ず一次データおよび
-          OWID の原典情報を参照してください。
+          本アプリは学習・可視化を目的としています。正確な分析や研究で使用する場合は、
+          必ず一次データや OWID の原典情報をご確認ください。
         </p>
       </section>
     </PageLayout>
