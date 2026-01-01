@@ -1,9 +1,11 @@
+import { PageLayout } from "@/components/layout/PageLayout";
+
 const DataPage = () => {
   return (
-    <div className="max-w-3xl mx-auto px-6 py-12">
-      <h1 className="text-3xl font-bold mb-8 text-center">データについて</h1>
-
-      {/* データソース */}
+    <PageLayout
+      title="データについて"
+      description="このページでは、使用している気温データの出典や内容、更新方法、注意事項について説明しています。"
+    >
       <section className="mb-8">
         <h2 className="text-xl font-semibold mb-2">データソース</h2>
         <p className="text-gray-700 leading-relaxed">
@@ -24,34 +26,29 @@ const DataPage = () => {
         </p>
       </section>
 
-      {/* 利用しているデータの内容 */}
       <section className="mb-8">
         <h2 className="text-xl font-semibold mb-2">利用しているデータの内容</h2>
         <p className="text-gray-700 leading-relaxed">
-          年平均気温の長期推移データを使用し、地域ごとの気温変化を可視化できるよう
-          年次データを抽出して加工しています。
+          年平均気温の長期推移データを使用し、地域ごとの気温変化を可視化できるよう年次データを抽出して加工しています。
         </p>
       </section>
 
-      {/* 更新について */}
       <section className="mb-8">
         <h2 className="text-xl font-semibold mb-2">更新について</h2>
         <p className="text-gray-700 leading-relaxed">
-          本アプリの気温データは、Our World in Data の API から定期的に取得し、
-          自動的にデータベースを更新しています。
-          これにより、常に最新のデータに基づいてグラフや比較を表示できます。
+          本アプリの気温データは、Our World in Data の API
+          から定期的に取得し、自動的にデータベースを更新しています。これにより、常に最新のデータに基づいてグラフや比較を表示できます。
         </p>
       </section>
 
-      {/* 注意事項 */}
       <section>
         <h2 className="text-xl font-semibold mb-2">注意事項</h2>
         <p className="text-gray-700 leading-relaxed">
-          本アプリは学習・可視化を目的としており、正確な分析や研究目的で使用する場合は、
-          必ず一次データおよび OWID の原典情報を参照してください。
+          本アプリは学習・可視化を目的としており、正確な分析や研究目的で使用する場合は、必ず一次データおよび
+          OWID の原典情報を参照してください。
         </p>
       </section>
-    </div>
+    </PageLayout>
   );
 };
 
