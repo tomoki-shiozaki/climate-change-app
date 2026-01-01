@@ -21,9 +21,8 @@ const mainLinks = [
 ];
 
 const dropdownLinks = [
+  { to: "/about", label: "このサイトについて" },
   { to: "/data", label: "データ" },
-  { to: "/about", label: "概要" },
-  { to: "/faq", label: "FAQ" },
 ];
 
 /* ======================
@@ -150,7 +149,7 @@ export const AppNavbar = () => {
                     hover:bg-white/10
                   "
                 >
-                  データ・概要
+                  サイト情報
                 </Button>
               </DropdownMenuTrigger>
 
