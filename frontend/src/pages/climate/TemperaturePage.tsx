@@ -9,8 +9,8 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 const TemperaturePage = () => {
   return (
     <PageLayout
-      title="世界・北半球・南半球の気温チャート"
-      description="世界、北半球、南半球それぞれの気温変化をグラフで表示しています。"
+      title="世界・北半球・南半球の気温グラフ"
+      description="世界、北半球、南半球それぞれの気温変化を折れ線グラフで表示しています。"
     >
       {/* グラフ本体 */}
       <Card>
