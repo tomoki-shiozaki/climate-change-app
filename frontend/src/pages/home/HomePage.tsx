@@ -1,6 +1,6 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { HomeLayout } from "@/components/layout/HomeLayout";
+import { CardLink } from "@/components/common/CardLink";
 
 const HomePage: React.FC = () => {
   return (
@@ -11,26 +11,24 @@ const HomePage: React.FC = () => {
     >
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* 気温データ */}
-        <Link
-          to="/climate/temperature"
-          className="p-6 rounded-2xl shadow-md bg-white hover:shadow-lg transition block"
-        >
-          <h2 className="text-xl font-semibold mb-2">気温データ</h2>
+        <CardLink to="/climate/temperature">
+          <h2 className="text-xl font-semibold text-blue-600 mb-2">
+            気温データ
+          </h2>
           <p className="text-gray-500 text-sm">
             年度ごとの気温変化をグラフで確認できます。
           </p>
-        </Link>
+        </CardLink>
 
         {/* CO₂排出量 */}
-        <Link
-          to="/climate/co2"
-          className="p-6 rounded-2xl shadow-md bg-white hover:shadow-lg transition block"
-        >
-          <h2 className="text-xl font-semibold mb-2">CO₂排出量</h2>
+        <CardLink to="/climate/co2">
+          <h2 className="text-xl font-semibold text-blue-600 mb-2">
+            CO₂排出量
+          </h2>
           <p className="text-gray-500 text-sm">
             国・地域ごとの排出量推移を可視化
           </p>
-        </Link>
+        </CardLink>
 
         {/* 再エネ利用 */}
         <div className="p-6 rounded-2xl shadow-md bg-white opacity-70">
