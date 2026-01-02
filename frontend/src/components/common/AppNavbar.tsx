@@ -15,15 +15,13 @@ import { Button } from "@/components/ui/button";
 
 const mainLinks = [
   { to: "/", label: "ホーム" },
-  { to: "/climate/temperature", label: "気温データ" },
-  { to: "/climate/co2", label: "CO₂排出量" },
-  { to: "/renewable", label: "再エネ利用" },
+  { to: "/climate/temperature", label: "気温グラフ" },
+  { to: "/climate/co2", label: "CO₂排出量マップ" },
 ];
 
 const dropdownLinks = [
+  { to: "/about", label: "このサイトについて" },
   { to: "/data", label: "データ" },
-  { to: "/about", label: "概要" },
-  { to: "/faq", label: "FAQ" },
 ];
 
 /* ======================
@@ -150,7 +148,7 @@ export const AppNavbar = () => {
                     hover:bg-white/10
                   "
                 >
-                  データ・概要
+                  サイト情報
                 </Button>
               </DropdownMenuTrigger>
 

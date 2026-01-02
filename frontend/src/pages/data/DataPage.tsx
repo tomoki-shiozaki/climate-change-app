@@ -1,57 +1,115 @@
+import { PageLayout } from "@/components/layout/PageLayout";
+
 const DataPage = () => {
   return (
-    <div className="max-w-3xl mx-auto px-6 py-12">
-      <h1 className="text-3xl font-bold mb-8 text-center">データについて</h1>
+    <PageLayout
+      title="データについて"
+      description="このページでは、使用している気候データの出典や内容、更新方法、注意事項について説明しています。"
+    >
+      {/* データソースセクション */}
+      <section className="mb-6 leading-relaxed">
+        <h2 className="text-xl font-semibold mb-4 text-gray-800">
+          データソース
+        </h2>
 
-      {/* データソース */}
-      <section className="mb-8">
-        <h2 className="text-xl font-semibold mb-2">データソース</h2>
-        <p className="text-gray-700 leading-relaxed">
-          本アプリの気温データは{" "}
+        <p className="mb-6 text-gray-800">
+          気温データ、CO₂排出量データはいずれも{" "}
           <a
             href="https://ourworldindata.org/co2-and-greenhouse-gas-emissions"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-blue-600 underline"
+            className="font-semibold text-blue-500 underline"
           >
             Our World in Data – CO₂ and Greenhouse Gas Emissions
           </a>{" "}
-          ページから取得したデータセット（HadCRUT5、Met Office Hadley Centre
-          提供）を基にしています。
+          から取得しています。
         </p>
-        <p className="text-gray-500 text-sm mt-2">
-          ※ OWID のデータは CC BY 4.0 ライセンスのもと提供されています。
-        </p>
+
+        {/* 気温データカード */}
+        <div className="bg-white p-4 sm:p-6 rounded-md shadow-sm mb-4">
+          <h3 className="text-lg font-semibold mb-2 text-gray-700">
+            気温データ
+          </h3>
+          <p className="text-gray-800 mb-2">
+            年平均気温の長期推移データ（HadCRUT5、Met Office Hadley
+            Centre提供）を使用しています。
+          </p>
+          <p className="text-gray-800 mb-2">単位: ℃、対象期間: 1850年から。</p>
+          <p className="text-sm text-blue-500 underline mb-1">
+            詳細ページ:{" "}
+            <a
+              href="https://ourworldindata.org/grapher/temperature-anomaly"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Temperature anomaly
+            </a>
+          </p>
+          <p className="text-sm text-gray-600 mt-2 border-t border-gray-200 pt-2">
+            ※ CC BY 4.0 ライセンス
+          </p>
+        </div>
+
+        {/* CO₂排出量データカード */}
+        <div className="bg-white p-4 sm:p-6 rounded-md shadow-sm mb-4">
+          <h3 className="text-lg font-semibold mb-2 text-gray-700">
+            CO₂排出量データ
+          </h3>
+          <p className="text-gray-800 mb-2">
+            国別の年間 CO₂ 排出量データ（領域ベース）を使用しています。
+            <br />
+            ※ 輸入品由来の排出や国際航空・国際船舶は含まれません。
+            <br />
+            単位: トン、対象期間: 1750年から。
+          </p>
+          <p className="text-sm text-blue-500 underline mb-1">
+            詳細ページ:{" "}
+            <a
+              href="https://ourworldindata.org/grapher/annual-co-emissions-by-region"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Annual CO₂ emissions by region
+            </a>
+          </p>
+          <p className="text-sm text-gray-600 mt-2 border-t border-gray-200 pt-2">
+            ※ CC BY 4.0 ライセンス
+          </p>
+        </div>
       </section>
 
-      {/* 利用しているデータの内容 */}
-      <section className="mb-8">
-        <h2 className="text-xl font-semibold mb-2">利用しているデータの内容</h2>
+      {/* データ概要セクション */}
+      <section className="mb-6">
+        <h2 className="text-xl font-semibold mb-4 text-gray-800">
+          データの概要
+        </h2>
         <p className="text-gray-700 leading-relaxed">
-          年平均気温の長期推移データを使用し、地域ごとの気温変化を可視化できるよう
-          年次データを抽出して加工しています。
+          Our World in Data
+          の気候データを取得し、必要な情報を抽出・整理してグラフや地図などで可視化しています。
         </p>
       </section>
 
-      {/* 更新について */}
-      <section className="mb-8">
-        <h2 className="text-xl font-semibold mb-2">更新について</h2>
+      {/* 更新セクション */}
+      <section className="mb-6">
+        <h2 className="text-xl font-semibold mb-4 text-gray-800">
+          更新について
+        </h2>
         <p className="text-gray-700 leading-relaxed">
-          本アプリの気温データは、Our World in Data の API から定期的に取得し、
-          自動的にデータベースを更新しています。
-          これにより、常に最新のデータに基づいてグラフや比較を表示できます。
+          このアプリで使用している気候データは、Our World in Data
+          から定期的に取得して更新しています。常に最新のデータに基づき、 気温や
+          CO₂ 排出量の変化などを確認できます。
         </p>
       </section>
 
-      {/* 注意事項 */}
+      {/* 注意事項セクション */}
       <section>
-        <h2 className="text-xl font-semibold mb-2">注意事項</h2>
+        <h2 className="text-xl font-semibold mb-2 text-gray-800">注意事項</h2>
         <p className="text-gray-700 leading-relaxed">
-          本アプリは学習・可視化を目的としており、正確な分析や研究目的で使用する場合は、
-          必ず一次データおよび OWID の原典情報を参照してください。
+          本アプリは学習・可視化を目的としています。正確な分析や研究で使用する場合は、
+          必ず一次データや OWID の原典情報をご確認ください。
         </p>
       </section>
-    </div>
+    </PageLayout>
   );
 };
 

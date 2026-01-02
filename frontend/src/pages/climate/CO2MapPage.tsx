@@ -1,15 +1,37 @@
-import React from "react";
-import { CO2WorldMap } from "@/features/climate/components/CO2WorldMap";
+import { PageLayout } from "@/components/layout/PageLayout";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import {
+  CO2WorldMap,
+  CO2MapExplanation,
+  CO2DataSource,
+} from "@/features/climate/components";
 
-const CO2MapPage: React.FC = () => {
+const CO2MapPage = () => {
   return (
-    <div>
-      <h1 className="text-center text-2xl font-semibold mb-6">
-        世界のCO₂排出量マップ
-      </h1>
+    <PageLayout
+      title="世界のCO₂排出量マップ"
+      description="各国のCO₂排出量（年間総量）を地図上で可視化し、国ごとの違いを確認できます。"
+    >
+      {/* マップ本体 */}
+      <Card>
+        <CardContent>
+          <CO2WorldMap />
+        </CardContent>
 
-      <CO2WorldMap />
-    </div>
+        {/* データ出典 */}
+        <CardFooter>
+          <CO2DataSource />
+        </CardFooter>
+      </Card>
+
+      {/* 説明カード*/}
+
+      <Card>
+        <CardContent>
+          <CO2MapExplanation />
+        </CardContent>
+      </Card>
+    </PageLayout>
   );
 };
 
