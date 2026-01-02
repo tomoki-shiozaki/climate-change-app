@@ -15,8 +15,8 @@ import { Button } from "@/components/ui/button";
 
 const mainLinks = [
   { to: "/", label: "ホーム" },
-  { to: "/climate/temperature", label: "気温データ" },
-  { to: "/climate/co2", label: "CO₂排出量" },
+  { to: "/climate/temperature", label: "気温グラフ" },
+  { to: "/climate/co2", label: "CO₂排出量マップ" },
 ];
 
 const dropdownLinks = [

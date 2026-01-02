@@ -13,20 +13,20 @@ const HomePage: React.FC = () => {
         {/* 気温データ */}
         <CardLink to="/climate/temperature">
           <h2 className="text-xl font-semibold text-blue-600 mb-2">
-            気温データ
+            気温グラフ
           </h2>
           <p className="text-gray-500 text-sm">
-            年度ごとの気温変化をグラフで確認できます。
+            世界・北半球・南半球の年度ごとの気温変化をグラフで確認できます。
           </p>
         </CardLink>
 
         {/* CO₂排出量 */}
         <CardLink to="/climate/co2">
           <h2 className="text-xl font-semibold text-blue-600 mb-2">
-            CO₂排出量
+            CO₂排出量マップ
           </h2>
           <p className="text-gray-500 text-sm">
-            国・地域ごとの排出量推移を可視化
+            国・地域ごとのCO₂排出量の推移を地図で確認できます。
           </p>
         </CardLink>
       </div>

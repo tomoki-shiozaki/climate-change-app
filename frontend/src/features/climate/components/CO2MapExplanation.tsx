@@ -3,7 +3,7 @@ export const CO2MapExplanation = () => {
     <div className="space-y-2 text-base leading-relaxed text-gray-800">
       <p>
         このマップは、各国の
-        <span className="font-semibold">CO₂排出量の規模</span>
+        <span className="font-semibold">CO₂排出量（年間総量）</span>
         を地理的に可視化したものです。
       </p>
 
@@ -14,8 +14,8 @@ export const CO2MapExplanation = () => {
       </p>
 
       <p>
-        マップを通じて、排出量が特定の地域や国に集中していることや、
-        世界全体での分布傾向を把握することができます。
+        マップ下部中央の年スライダーバーで、CO₂排出量の年推移を確認できます。
+        「再生」ボタンを使うと、変化を自動再生で見ることも可能です。
       </p>
     </div>
   );

@@ -10,7 +10,7 @@ const CO2MapPage = () => {
   return (
     <PageLayout
       title="世界のCO₂排出量マップ"
-      description="各国のCO₂排出量を地図上で可視化し、国ごとの違いを確認できます。"
+      description="各国のCO₂排出量（年間総量）を地図上で可視化し、国ごとの違いを確認できます。"
     >
       {/* マップ本体 */}
       <Card>
