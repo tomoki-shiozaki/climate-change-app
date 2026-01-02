@@ -9,7 +9,7 @@ const HomePage: React.FC = () => {
       description="このアプリは、世界の気候変動に関するデータをわかりやすく可視化し、
       地域ごとの動向を比較できるツールです。"
     >
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* 気温データ */}
         <CardLink to="/climate/temperature">
           <h2 className="text-xl font-semibold text-blue-600 mb-2">
@@ -29,14 +29,6 @@ const HomePage: React.FC = () => {
             国・地域ごとの排出量推移を可視化
           </p>
         </CardLink>
-
-        {/* 再エネ利用 */}
-        <div className="p-6 rounded-2xl shadow-md bg-white opacity-70">
-          <h2 className="text-xl font-semibold mb-2">再エネ利用（予定）</h2>
-          <p className="text-gray-500 text-sm">
-            再生可能エネルギー利用率の変化を表示（今後追加予定）
-          </p>
-        </div>
       </div>
     </HomeLayout>
   );
