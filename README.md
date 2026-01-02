@@ -1,4 +1,4 @@
-# 気候変動データ閲覧アプリ
+# 気候変動データアプリ
 
 [![Build Status](https://github.com/tomoki-shiozaki/climate-change-app/actions/workflows/ci.yml/badge.svg)](https://github.com/tomoki-shiozaki/climate-change-app/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/tomoki-shiozaki/climate-change-app/graph/badge.svg?token=UH6D9YYQXM)](https://codecov.io/gh/tomoki-shiozaki/climate-change-app)

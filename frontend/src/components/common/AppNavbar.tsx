@@ -17,7 +17,6 @@ const mainLinks = [
   { to: "/", label: "ホーム" },
   { to: "/climate/temperature", label: "気温データ" },
   { to: "/climate/co2", label: "CO₂排出量" },
-  { to: "/renewable", label: "再エネ利用" },
 ];
 
 const dropdownLinks = [
