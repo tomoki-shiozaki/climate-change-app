@@ -1,5 +1,9 @@
 # 気候変動データアプリ
 
+※ 本プロジェクトは v1（React 版）です。  
+新バージョン v2（Next.js フロントエンド版）は [こちら](https://github.com/tomoki-shiozaki/climate-change-app-v2) です。
+v2 ではフロントエンドを Next.js に移行し、今後も機能追加や改善を予定しています。
+
 [![Build Status](https://github.com/tomoki-shiozaki/climate-change-app/actions/workflows/ci.yml/badge.svg)](https://github.com/tomoki-shiozaki/climate-change-app/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/tomoki-shiozaki/climate-change-app/graph/badge.svg?token=UH6D9YYQXM)](https://codecov.io/gh/tomoki-shiozaki/climate-change-app)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
