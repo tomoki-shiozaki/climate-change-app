@@ -1,5 +1,5 @@
 import "leaflet/dist/leaflet.css";
-import React, { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
 import type { Feature, Geometry } from "geojson";
 import type { PathOptions, Layer } from "leaflet";
@@ -19,17 +19,17 @@ import {
   getFillColor,
 } from "@/features/climate/utils/mapUtils";
 
+// ----------------------
+// 定数（初期値）
+// ----------------------
+const DEFAULT_MIN_YEAR = 1750;
+const DEFAULT_MAX_YEAR = 2024;
+
 /* =====================================================
  * WorldMap Component
  * ===================================================== */
 
-export const CO2WorldMap: React.FC = () => {
-  // ----------------------
-  // 定数（初期値）
-  // ----------------------
-  const DEFAULT_MIN_YEAR = 1750;
-  const DEFAULT_MAX_YEAR = 2024;
-
+export const CO2WorldMap = () => {
   // ----------------------
   // CO2 データ取得
   // ----------------------
