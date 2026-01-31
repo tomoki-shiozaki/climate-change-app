@@ -27,30 +27,30 @@ package "Climate Domain" {
 
   entity "指標マスター" as Indicator {
     +id <<PK>>
-    group_id <<FK>>
+    group <<FK>>
     name
     unit
     description
     data_source_name
     data_source_url
     metadata_url
-    <<UNIQUE(group_id, name)>>
+    <<UNIQUE(group, name)>>
   }
 
   entity "気候データ" as ClimateData {
     +id <<PK>>
-    region_id <<FK>>
-    indicator_id <<FK>>
+    region <<FK>>
+    indicator <<FK>>
     year
     value
     updated_at
-    <<UNIQUE(region_id, indicator_id, year)>>
+    <<UNIQUE(region, indicator, year)>>
   }
 
-  IndicatorGroup ||--o{ Indicator : group_id
+  IndicatorGroup ||--o{ Indicator : group
 
-  Region ||--o{ ClimateData : region_id
-  Indicator ||--o{ ClimateData : indicator_id
+  Region ||--o{ ClimateData : region
+  Indicator ||--o{ ClimateData : indicator
 }
 
 note bottom of User
