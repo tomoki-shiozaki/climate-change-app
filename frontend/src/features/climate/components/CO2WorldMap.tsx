@@ -1,5 +1,5 @@
 import "leaflet/dist/leaflet.css";
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
 import type { Feature, Geometry } from "geojson";
 import type { PathOptions, Layer } from "leaflet";
@@ -19,27 +19,17 @@ import {
   getFillColor,
 } from "@/features/climate/utils/mapUtils";
 
+// ----------------------
+// 定数（初期値）
+// ----------------------
+const DEFAULT_MIN_YEAR = 1750;
+const DEFAULT_MAX_YEAR = 2024;
+
 /* =====================================================
  * WorldMap Component
  * ===================================================== */
 
-export const CO2WorldMap: React.FC = () => {
-  // ----------------------
-  // 年スライダーの状態
-  // ----------------------
-  // year: 現在表示している年（初期値は暫定 2024、データ取得後に最新年に更新される）
-  // minYear: スライダーの最小年（暫定 1750、データ取得後に更新される可能性あり）
-  // maxYear: スライダーの最大年（暫定 2024、データ取得後に更新される）
-  // isPlaying: 自動再生の状態（true のときスライダーが自動で進む）
-  const [minYear, setMinYear] = useState(1750);
-  const [maxYear, setMaxYear] = useState(2024);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [year, setYear] = useYearAutoPlay({
-    initialYear: 2024,
-    maxYear,
-    isPlaying,
-  });
-
+export const CO2WorldMap = () => {
   // ----------------------
   // CO2 データ取得
   // ----------------------
@@ -54,24 +44,55 @@ export const CO2WorldMap: React.FC = () => {
   });
 
   // ----------------------
-  // CO2 データ取得後に年範囲を更新
+  // 年の範囲（CO2 データから派生）
+  // ----------------------
+  const { minYear, maxYear } = useMemo(() => {
+    if (!co2Data) {
+      return {
+        minYear: DEFAULT_MIN_YEAR,
+        maxYear: DEFAULT_MAX_YEAR,
+      };
+    }
+
+    const years = Object.keys(co2Data).map(Number).filter(Number.isFinite);
+
+    if (!years.length) {
+      return {
+        minYear: DEFAULT_MIN_YEAR,
+        maxYear: DEFAULT_MAX_YEAR,
+      };
+    }
+
+    return {
+      minYear: Math.min(...years),
+      maxYear: Math.max(...years),
+    };
+  }, [co2Data]);
+
+  // ----------------------
+  // 年スライダー関連 state
+  // ----------------------
+  // year:
+  //   現在表示している年。
+  //   初期値は暫定値で、CO2 データ取得後に最新年へ更新される。
+  // isPlaying:
+  //   年スライダーの自動再生状態。
+  //   true のとき、年が一定間隔で進む。
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const [year, setYear] = useYearAutoPlay({
+    initialYear: DEFAULT_MAX_YEAR,
+    maxYear,
+    isPlaying,
+  });
+
+  // ----------------------
+  // CO2 データ取得後：表示年を最新年に合わせる
   // ----------------------
   useEffect(() => {
     if (!co2Data) return;
-
-    // データに含まれる年の一覧を取得
-    const years = Object.keys(co2Data).map(Number).filter(Number.isFinite);
-    if (!years.length) return;
-
-    const min = Math.min(...years);
-    const max = Math.max(...years);
-
-    setMinYear(min); // スライダーの最小年を設定
-    setMaxYear(max); // スライダーの最大年を設定
-
-    // 初期年を最新年に設定
-    setYear(max);
-  }, [co2Data, setYear]);
+    setYear(maxYear);
+  }, [co2Data, maxYear, setYear]);
 
   // ----------------------
   // GeoJSON レイヤーの ref
@@ -84,7 +105,7 @@ export const CO2WorldMap: React.FC = () => {
   // 各国ポリゴンのスタイル指定
   // ----------------------
   const style = (
-    feature?: Feature<Geometry, CountryProperties>
+    feature?: Feature<Geometry, CountryProperties>,
   ): PathOptions => {
     // feature が未定義の場合は空（描画エラー防止）
     if (!feature) return {};
@@ -105,7 +126,7 @@ export const CO2WorldMap: React.FC = () => {
   // ----------------------
   const onEachFeature = (
     feature: Feature<Geometry, CountryProperties>,
-    layer: Layer
+    layer: Layer,
   ) => {
     const { value, name } = getCountryInfo(feature, year, co2Data);
 
@@ -151,7 +172,7 @@ export const CO2WorldMap: React.FC = () => {
       pathLayer.setTooltipContent(
         value === undefined
           ? `${name}: データなし`
-          : `${name}: ${value.toLocaleString()} トン`
+          : `${name}: ${value.toLocaleString()} トン`,
       );
     });
   }, [year, co2Data]);
