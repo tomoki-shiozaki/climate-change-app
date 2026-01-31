@@ -43,6 +43,16 @@
 
 ---
 
+## 2.1 ER図
+
+![ER Diagram](er/er/er.svg)
+
+- Region / Indicator / ClimateData を中心とした時系列データモデル
+- IndicatorGroup による指標分類
+- User は現在は認証専用
+
+---
+
 ## 3. ターゲットユーザー
 
 - 気候変動に関心のある一般ユーザー・学生・学習者

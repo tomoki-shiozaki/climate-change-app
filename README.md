@@ -55,5 +55,5 @@ Django REST Framework（API）と React（UI）を使った、気候変動デー
 
 ## ドキュメント
 
-- 詳細なシステム構成、開発構想や設計案などは
+- 詳細なシステム構成、ER図、開発構想や設計案などは
   [docs/README.md](docs/README.md) をご覧ください。
